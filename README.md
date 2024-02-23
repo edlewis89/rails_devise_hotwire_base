@@ -24,3 +24,4 @@ Things you may want to cover:
 * ...
 # rails_devise_hotwire_base
 # rails_devise_hotwire_base
+# rails_devise_hotwire_base
