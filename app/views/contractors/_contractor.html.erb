@@ -1,0 +1,14 @@
+<div id="<%= dom_id contractor %>">
+  <p>
+    <strong>Name:</strong>
+    <%= contractor.name %>
+  </p>
+
+  <p>
+    <strong>Description:</strong>
+    <%= contractor.description %>
+  </p>
+  <%= link_to "Show this contractor", contractor %> |
+  <%= button_to "Edit this contractor", edit_contractor_path(contractor), method: :post %> |
+  <%= button_to "Destroy this contractor", contractor_path(contractor), method: :delete %>
+</div>
