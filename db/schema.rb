@@ -17,8 +17,35 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_000534) do
   create_table "contractors", force: :cascade do |t|
     t.string "name"
     t.text "description"
+    t.string "email"
+    t.string "phone_number"
+    t.string "city"
+    t.string "state"
+    t.string "zipcode"
+    t.string "website"
+    t.boolean "have_insurance", default: false
+    t.boolean "have_license", default: false
+    t.string "license_number"
+    t.string "insurance_provider"
+    t.string "insurance_policy_number"
+    t.string "service_area"
+    t.integer "years_of_experience", default: 0
+    t.string "specializations", default: [], array: true
+    t.string "certifications", default: [], array: true
+    t.string "languages_spoken", default: [], array: true
+    t.decimal "hourly_rate", precision: 8, scale: 2, default: "0.0"
+    t.boolean "active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_contractors_on_active"
+    t.index ["city"], name: "index_contractors_on_city"
+    t.index ["email"], name: "index_contractors_on_email", unique: true
+    t.index ["have_insurance"], name: "index_contractors_on_have_insurance"
+    t.index ["have_license"], name: "index_contractors_on_have_license"
+    t.index ["name"], name: "index_contractors_on_name"
+    t.index ["phone_number"], name: "index_contractors_on_phone_number"
+    t.index ["state"], name: "index_contractors_on_state"
+    t.index ["zipcode"], name: "index_contractors_on_zipcode"
   end
 
   create_table "homeowners", force: :cascade do |t|
@@ -34,6 +61,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_000534) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.integer "role", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true

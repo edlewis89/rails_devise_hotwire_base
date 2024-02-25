@@ -1,14 +1,54 @@
-<div id="<%= dom_id contractor %>">
-  <p>
-    <strong>Name:</strong>
-    <%= contractor.name %>
-  </p>
+<div id="<%= dom_id contractor %>" class="card mb-3">
+  <div class="card-body">
+    <div class="container">
+      <% attributes = [
+        { label: "Name:", value: contractor.name },
+        { label: "Description:", value: contractor.description },
+        { label: "Email:", value: contractor.email },
+        { label: "Phone #:", value: contractor.phone_number },
+        { label: "City:", value: contractor.city },
+        { label: "State:", value: contractor.state },
+        { label: "Zipcode:", value: contractor.zipcode },
+        { label: "License #:", value: contractor.license_number },
+        { label: "Insurance Provider:", value: contractor.insurance_provider },
+        { label: "Insurance Policy #:", value: contractor.insurance_policy_number },
+        { label: "License:", value: contractor.have_license },
+        { label: "Insurance:", value: contractor.have_insurance },
+        { label: "Service Area:", value: contractor.service_area },
+        { label: "Experience (yrs):", value: contractor.years_of_experience },
+        { label: "Specializations:", value: contractor.specializations.join(', ') },
+        { label: "Certifications:", value: contractor.certifications.join(', ') },
+        { label: "Languages Spoken:", value: contractor.languages_spoken.join(', ') },
+        { label: "Hourly Rate:", value: contractor.hourly_rate },
+        { label: "Active:", value: contractor.active }
+      ] %>
 
-  <p>
-    <strong>Description:</strong>
-    <%= contractor.description %>
-  </p>
-  <%= link_to "Show this contractor", contractor %> |
-  <%= button_to "Edit this contractor", edit_contractor_path(contractor), method: :post %> |
-  <%= button_to "Destroy this contractor", contractor_path(contractor), method: :delete %>
+      <div class="row">
+        <% attributes.each_slice(5) do |slice| %>
+          <% slice.each do |attr| %>
+            <div class="col-md-3">
+              <div class="row">
+                <div class="col text-right">
+                  <strong><%= attr[:label] %></strong>
+                </div>
+                <div class="col">
+                  <%= attr[:value] %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="d-flex justify-content-end">
+            <%= link_to "Show", contractor, class: "btn btn-primary mr-1" %>
+            <%= link_to "Edit", edit_contractor_path(contractor), method: :post, class: "btn btn-secondary mr-1" %>
+            <%= button_to "Destroy", contractor_path(contractor), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->contractors#destroy" } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

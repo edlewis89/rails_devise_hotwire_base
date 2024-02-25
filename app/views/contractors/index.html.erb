@@ -1,18 +1,16 @@
-<p style="color: green"><%= notice %></p>
+<div class="container">
+  <h1>Contractors</h1>
 
-<h1>Contractors</h1>
+  <div id="contractors">
+    <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
 
-<div id="new_contractor">
-  <%= render partial: "contractors/form", locals: { contractor: Contractor.new } %>
+    <%= render @contractors %>
+
+    <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
+  </div>
+
+
+  <div class="text-right">
+    <%= link_to "New contractor", new_contractor_path, class: "btn btn-primary" %>
+  </div>
 </div>
-
-
-<div id="contractors">
-  <% @contractors.each do |contractor| %>
-
-    <%= render contractor %>
-
-  <% end %>
-</div>
-
-<%= link_to "New contractor", new_contractor_path %>

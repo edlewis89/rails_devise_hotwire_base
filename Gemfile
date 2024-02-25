@@ -48,6 +48,10 @@ gem "bootsnap", require: false
 gem 'devise', github: 'heartcombo/devise', branch: 'main'
 gem 'simple_form', '~> 5.2'
 
+gem 'will_paginate', '~> 3.3'
+
+gem 'will_paginate-bootstrap'
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 

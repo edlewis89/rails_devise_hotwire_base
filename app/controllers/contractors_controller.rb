@@ -3,7 +3,7 @@ class ContractorsController < ApplicationController
 
   # GET /contractors or /contractors.json
   def index
-    @contractors = Contractor.order(created_at: :desc)
+    @contractors = Contractor.order(created_at: :desc).paginate(page: params[:page], per_page: 5)
   end
 
   # GET /contractors/1 or /contractors/1.json
@@ -17,11 +17,10 @@ class ContractorsController < ApplicationController
 
   # GET /contractors/1/edit
   def edit
+    @contractor = Contractor.find(params[:id])
     respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream:
-          turbo_stream.update(@contractor, partial: "contractors/form", locals: { contractor: @contractor })
-      end
+      format.html # Render HTML template for editing
+      format.turbo_stream { render turbo_stream: turbo_stream.replace(@contractor, partial: "contractors/form", locals: { contractor: @contractor }) }
     end
   end
 
@@ -65,7 +64,7 @@ class ContractorsController < ApplicationController
             turbo_stream.update(@contractor,
                                 partial: "contractors/contractor",
                                 locals: { contractor: @contractor }),
-            turbo_stream.replace("flash", partial: "shared/flash", locals: { msg_type: :alert, message: "Contract #{@contractor.name} Updated" })
+            turbo_stream.update("flash", partial: "shared/flash", locals: { msg_type: :alert, message: "Contract #{@contractor.name} Updated" })
           ]
 
 
@@ -78,7 +77,7 @@ class ContractorsController < ApplicationController
             turbo_stream.update(@contractor,
                                 partial: "contractors/form",
                                 locals: { contractor: @contractor }),
-            turbo_stream.replace("flash", partial: "shared/flash", locals: { msg_type: :error, message: full_messages(@contractor.errors.full_messages) })
+            turbo_stream.update("flash", partial: "shared/flash", locals: { msg_type: :error, message: full_messages(@contractor.errors.full_messages) })
           ]
 
         end
@@ -97,7 +96,7 @@ class ContractorsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: [
           turbo_stream.remove(@contractor),
-          turbo_stream.replace("flash", partial: "shared/flash", locals: { msg_type: :alert, message: "Contractor deleted" })
+          turbo_stream.update("flash", partial: "shared/flash", locals: { msg_type: :alert, message: "Contractor deleted" })
         ]
 
       end
@@ -114,6 +113,28 @@ class ContractorsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def contractor_params
-      params.require(:contractor).permit(:name, :description)
+      params.require(:contractor).permit(
+        :name,
+        :description,
+        :email,
+        :phone_number,
+        :city,
+        :state,
+        :zipcode,
+        :website,
+        :license_number,
+        :insurance_provider,
+        :insurance_policy_number,
+        :have_insurance,
+        :have_license,
+        :service_area,
+        :years_of_experience,
+        :specializations,
+        :certifications,
+        :languages_spoken,
+        :hourly_rate,
+        :active
+      # Add other attributes here
+      )
     end
 end

@@ -1,10 +1,9 @@
-<p style="color: green"><%= notice %></p>
 
-<%= render @contractor %>
+<div class="container">
+  <h1>Contractor</h1>
+  <%= render @contractor %>
 
-<div>
-  <%= link_to "Edit this contractor", edit_contractor_path(@contractor) %> |
-  <%= link_to "Back to contractors", contractors_path %>
-
-  <%= button_to "Destroy this contractor", @contractor, method: :delete %>
+  <div class="text-right">
+    <%= link_to "Back to contractors", contractors_path, class: "btn  btn-primary" %>
+  </div>
 </div>
