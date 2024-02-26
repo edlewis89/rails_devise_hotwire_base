@@ -21,7 +21,8 @@ class Contractor < ApplicationRecord
 
   mount_uploader :image, ImageUploader
 
-  index_name 'contractors'
+  # Define a scope for active records
+  scope :active, -> { where(active: true) }
 
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'false' do
@@ -48,36 +49,47 @@ class Contractor < ApplicationRecord
     end
   end
 
-  after_commit lambda { __elasticsearch__.index_document  },  on: :create
-  # after_touch  lambda { __elasticsearch__.index_document  },  on: :touch
-  after_commit lambda { __elasticsearch__.update_document },  on: :update
-  after_commit lambda { __elasticsearch__.delete_document },  on: :destroy
+  before_commit on: [:create, :update] do
+    ensure_index_exists unless index_exists?
+    #__elasticsearch__.index_document if condition_met_for_index?
+  end
+
+  after_commit on: [:create] do
+    ensure_index_exists unless index_exists?
+    #__elasticsearch__.index_document if condition_met_for_index?
+  end
+
+  after_commit on: [:update] do
+    binding.pry
+    ensure_index_exists unless index_exists?
+    if condition_met_for_update?
+      __elasticsearch__.update_document
+    else
+      __elasticsearch__.delete_document
+    end
+  end
+
+  after_commit on: [:destroy] do
+    begin
+      if __elasticsearch__.record_exists?
+        __elasticsearch__.delete_document
+      end
+    rescue => e
+      Rails.logger.error("Error deleting document from Elasticsearch: #{e.message}")
+    end
+  end
+
+  # after_commit :index_document_on_create, on: :create
+  # after_commit :update_document_on_update, on: :update
+  # after_commit :delete_document_on_destroy, on: :destroy
 
   def self.search(query)
     #__elasticsearch__.search(params[:q], [self, Category]).results.to_a.map(&:to_hash)
     __elasticsearch__.search(query) if query.present?
   end
 
-  def self.to_table_array(data, aggs, final_table = nil, row = [])
-    final_table = [aggs.keys] if final_table.nil?
-    hash_tree = data.deep_find(aggs.keys.first)
-
-    if aggs.values.uniq.length == 1 && aggs.values.uniq == [:data]
-      aggs.keys.each do |agg|
-        row << data[agg]["value"]
-      end
-      final_table << row
-    else
-      hash_tree["buckets"].each_with_index do |h, index|
-        row.pop if index > 0
-        aggs.shift if index == 0
-
-        row << h["key_as_string"]
-        final_table = to_table_array(h, aggs.clone, final_table, row.clone)
-      end
-    end
-
-    final_table
+  def self.search_in_elasticsearch(query)
+    ElasticsearchHelper.search_if_index_exists(index_name, query)
   end
 
   def as_indexed_json(options = {})
@@ -143,4 +155,64 @@ class Contractor < ApplicationRecord
 
     errors.add(:license_number, 'has already been taken')
   end
+
+  def condition_met_for_destroy?
+    binding.pry
+    condition_met? && document_exists?(index_name, self.id)
+  end
+
+  def condition_met_for_index?
+    condition_met?
+  end
+
+  def condition_met_for_update?
+    condition_met?
+  end
+
+  def condition_met?
+    # Define your condition here
+    index_exists?
+
+    active?
+  end
+
+  def index_exists?
+    ElasticsearchHelper.index_exists?(index_name)
+  end
+
+  def ensure_index_exists
+    ElasticsearchHelper.create_index(index_name, elasticsearch_mappings)
+  end
+
+  def index_name
+    "contractors"
+  end
+
+  # Class method to get the Elasticsearch mappings
+  def self.elasticsearch_mappings(_klass)
+    mappings_hash = _klass.mappings.to_hash
+    if mappings_hash.nil?
+      Rails.logger.error("Mappings are not defined for the #{_klass.name} model.")
+      return {}
+    else
+      return mappings_hash
+    end
+  end
+
+  def self.create_index_with_mappings!
+    ElasticsearchHelper.create_index_with_mappings!(self.index_name, elasticsearch_mappings(self))
+  end
+
+  def self.index_exists?
+    ElasticsearchHelper.index_exists?(self.index_name)
+  end
+
+  # def document_exists?(index_name, document_id)
+  #   binding.pry
+  #   # Perform a search to check if the document exists
+  #   response = __elasticsearch__.client.search(index: index_name, body: { query: { match: { _id: document_id } } })
+  #
+  #   # If the document exists, return true
+  #   response["hits"]["total"]["value"] > 0
+  # end
 end
