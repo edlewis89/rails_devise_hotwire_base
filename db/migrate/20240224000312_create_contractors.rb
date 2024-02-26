@@ -1,6 +1,8 @@
 class CreateContractors < ActiveRecord::Migration[6.0]
   def change
     create_table :contractors do |t|
+      t.decimal :hourly_rate, precision: 8, scale: 2, default: 0.00
+      t.boolean :active, default: false
       t.string :name
       t.text :description
       t.string :email
@@ -8,6 +10,7 @@ class CreateContractors < ActiveRecord::Migration[6.0]
       t.string :city
       t.string :state
       t.string :zipcode
+      t.string :image
       t.string :website
       t.boolean :have_insurance, default: false
       t.boolean :have_license, default: false
@@ -19,8 +22,6 @@ class CreateContractors < ActiveRecord::Migration[6.0]
       t.string :specializations, array: true, default: []
       t.string :certifications, array: true, default: []
       t.string :languages_spoken, array: true, default: []
-      t.decimal :hourly_rate, precision: 8, scale: 2, default: 0.0
-      t.boolean :active, default: true
 
       t.timestamps
     end

@@ -27,6 +27,13 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
+        <%= f.label 'Photo', class: "control-label col-sm-4" %>
+        <div class="col-sm-8">
+          <%= f.file_field :image  %>
+        </div>
+      </div>
+
+      <div class="form-group">
         <%= f.label :name, class: "control-label col-sm-4" %>
         <div class="col-sm-8">
           <%= f.input :name, label: false, placeholder: "Enter name", input_html: { class: "form-control" } %>
@@ -51,7 +58,7 @@
       <div class="form-group">
         <%= f.label :certifications, class: "control-label col-sm-4" %>
         <div class="col-sm-8">
-          <%= f.input :certifications, label: false, placeholder: "Enter certifications (comma separated)", input_html: { class: "form-control" } %>
+          <%= f.input :certifications_array, label: false, placeholder: "Enter certifications (comma separated)", input_html: { class: "form-control" } %>
         </div>
       </div>
 
@@ -65,14 +72,14 @@
       <div class="form-group">
         <%= f.label :specializations, class: "control-label col-sm-4" %>
         <div class="col-sm-8">
-          <%= f.input :specializations, label: false, placeholder: "Enter specializations (comma separated)", input_html: { class: "form-control" } %>
+          <%= f.input :specializations_array, label: false, placeholder: "Enter specializations (comma separated)", input_html: { class: "form-control" } %>
         </div>
       </div>
 
       <div class="form-group">
         <%= f.label :languages_spoken, class: "control-label col-sm-4" %>
         <div class="col-sm-8">
-          <%= f.input :languages_spoken, label: false, placeholder: "Enter languages spoken (comma separated)", input_html: { class: "form-control" } %>
+          <%= f.input :languages_array, label: false, placeholder: "Enter languages spoken (comma separated)", input_html: { class: "form-control" } %>
         </div>
       </div>
 

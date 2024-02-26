@@ -4,10 +4,11 @@ Rails.application.routes.draw do
 
   post '/send_data', to: 'home#send_data'
 
-
-
   resources :homeowners
   resources :contractors do
+    collection do
+      get 'index', as: :search
+    end
     member do
       post :edit
     end
@@ -21,5 +22,5 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  root 'contractors#index'
+  root 'home#index'
 end

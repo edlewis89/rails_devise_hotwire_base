@@ -9,8 +9,11 @@
 <!--    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Bootstrap JavaScript (optional, only if you need Bootstrap features that require JS) -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
@@ -66,56 +69,75 @@
             flex: 1; /* Take remaining vertical space */
         }
     </style>
-
   </head>
-
   <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarScroll">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Contractors</a>
-            </li>
-            <% if signed_in? %>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  My Requests
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-              </li>
-            <% end %>
-          </ul>
-          <% if signed_in? %>
-            <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete }  %>
-          <% else %>
-            <%= link_to "Log in", user_session_path %>
-          <% end %>
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
-        </div>
-      </div>
-    </nav>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <%= link_to 'Home', root_path, class: "nav-link", data: { turbo: "false" } %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Contractors', contractors_path, class: "nav-link", data: { turbo: "false" } %>
+          </li>
 
-    <div class="container-fluid text-center">
+
+          <% if signed_in? %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                My Requests
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" aria-disabled="<%= signed_in?%>">
+                Logged in as <%= current_user.email %>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link disabled" aria-disabled="true">
+                Role: <%= current_user&.role %>
+              </a>
+            </li>
+
+            <li class="nav-item" style="margin-left: auto;">
+              <a href="<%= destroy_user_session_path %>" class="nav-link" data-turbo-method="delete">
+                Log out
+              </a>
+            </li>
+          <% else %>
+            <li class="nav-item">
+              <%= link_to 'Log in', user_session_path, class: "nav-link", data: { turbo: "false" } %>
+            </li>
+          <% end %>
+
+        </ul>
+        <form class="d-flex" role="search" action="<%= search_contractors_path %>" method="get">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  <div class="container-fluid text-center">
       <div class="row content">
         <div class="col-sm-2 sidenav">
           <p><a href="#">Link</a></p>

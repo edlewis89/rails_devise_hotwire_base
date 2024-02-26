@@ -1,3 +1,4 @@
+Connected to Elasticsearch: true
                                   Prefix Verb   URI Pattern                                                                                       Controller#Action
                         new_user_session GET    /users/sign_in(.:format)                                                                          devise/sessions#new
                             user_session POST   /users/sign_in(.:format)                                                                          devise/sessions#create
@@ -23,6 +24,7 @@
                                          PATCH  /homeowners/:id(.:format)                                                                         homeowners#update
                                          PUT    /homeowners/:id(.:format)                                                                         homeowners#update
                                          DELETE /homeowners/:id(.:format)                                                                         homeowners#destroy
+                      search_contractors GET    /contractors/index(.:format)                                                                      contractors#index
                          edit_contractor POST   /contractors/:id/edit(.:format)                                                                   contractors#edit
                              contractors GET    /contractors(.:format)                                                                            contractors#index
                                          POST   /contractors(.:format)                                                                            contractors#create
@@ -32,7 +34,7 @@
                                          PATCH  /contractors/:id(.:format)                                                                        contractors#update
                                          PUT    /contractors/:id(.:format)                                                                        contractors#update
                                          DELETE /contractors/:id(.:format)                                                                        contractors#destroy
-                                    root GET    /                                                                                                 contractors#index
+                                    root GET    /                                                                                                 home#index
         turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                             turbo/native/navigation#recede
         turbo_resume_historical_location GET    /resume_historical_location(.:format)                                                             turbo/native/navigation#resume
        turbo_refresh_historical_location GET    /refresh_historical_location(.:format)                                                            turbo/native/navigation#refresh

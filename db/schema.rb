@@ -15,6 +15,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_000534) do
   enable_extension "plpgsql"
 
   create_table "contractors", force: :cascade do |t|
+    t.decimal "hourly_rate", precision: 8, scale: 2, default: "0.0"
+    t.boolean "active", default: false
     t.string "name"
     t.text "description"
     t.string "email"
@@ -22,6 +24,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_000534) do
     t.string "city"
     t.string "state"
     t.string "zipcode"
+    t.string "image"
     t.string "website"
     t.boolean "have_insurance", default: false
     t.boolean "have_license", default: false
@@ -33,8 +36,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_000534) do
     t.string "specializations", default: [], array: true
     t.string "certifications", default: [], array: true
     t.string "languages_spoken", default: [], array: true
-    t.decimal "hourly_rate", precision: 8, scale: 2, default: "0.0"
-    t.boolean "active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_contractors_on_active"
@@ -56,6 +57,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_000534) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "birthdate"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"

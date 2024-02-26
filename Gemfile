@@ -46,11 +46,20 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bootsnap", require: false
 
 gem 'devise', github: 'heartcombo/devise', branch: 'main'
+gem "devise-i18n"
+gem "devise-bootstrap5"
+
 gem 'simple_form', '~> 5.2'
 
 gem 'will_paginate', '~> 3.3'
-
 gem 'will_paginate-bootstrap'
+
+gem 'rmagick'
+gem 'carrierwave'
+
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
+gem 'elasticsearch-ruby'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -58,6 +67,7 @@ gem 'will_paginate-bootstrap'
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', '~> 1.9', platforms: %i[mri mingw x64_mingw]
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
   gem 'pry-byebug', '~> 3.10'
 
@@ -100,3 +110,5 @@ group :test do
   gem 'capybara', '~> 3.39'
   gem 'selenium-webdriver', '~> 4.16'
 end
+
+gem "pundit", "~> 2.3"
