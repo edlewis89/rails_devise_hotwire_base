@@ -1,11 +1,9 @@
-# frozen_string_literal: true
-
 class DeviseCreateUsers < ActiveRecord::Migration[7.1]
   def change
     create_table :users do |t|
+      #t.references :user, null: true, foreign_key: true, index: true
+
       ## Database authenticatable
-      t.string :name,               null: true
-      t.string :birthdate,          null: true
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: ""
 
@@ -18,6 +16,14 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
 
       ## Role
       t.integer :role, null: false, default: 0
+
+      t.string :type # This column is used for STI
+      #t.references :userable, polymorphic: true
+
+      # Hs user been verified a a Homeowner or Contractor
+      t.boolean :active, default: false
+      t.boolean :public, default: true
+      t.boolean :verified, default: false
 
       ## Trackable
       # t.integer  :sign_in_count, default: 0, null: false
@@ -40,10 +46,11 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
 
       t.timestamps null: false
     end
-
     add_index :users, :email,                unique: true
     add_index :users, :reset_password_token, unique: true
+    add_index :users, :role
     # add_index :users, :confirmation_token,   unique: true
     # add_index :users, :unlock_token,         unique: true
+    add_index :users, :type
   end
 end

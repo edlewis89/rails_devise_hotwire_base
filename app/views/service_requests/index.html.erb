@@ -1,0 +1,24 @@
+<!-- app/views/service_requests/index.html.erb -->
+
+<div class="container">
+  <h1>Service Requests</h1>
+
+  <div id="service_requests">
+    <%= will_paginate @service_requests, renderer: BootstrapPagination::Rails %>
+
+    <% if @service_requests.any? %>
+      <%= render @service_requests %>
+    <% else %>
+      <div class="alert alert-info" role="alert">
+        No contractors found.
+      </div>
+    <% end %>
+
+    <%= will_paginate @service_requests, renderer: BootstrapPagination::Rails %>
+  </div>
+  <div class="text-right">
+    <% if current_user.admin? %>
+      <%= link_to "New service request", new_service_request_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>

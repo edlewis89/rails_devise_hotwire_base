@@ -1,8 +1,10 @@
 class ContractorsController < ApplicationController
-  before_action :set_contractor, only: %i[ show edit update destroy ]
+
   before_action :authenticate_user!, except: %i[index show]
   before_action :authorize_user, except: %i[index show]
-  before_action :ensure_index_exists, only: %i[ create update destroy ]
+  before_action :set_contractor, only: %i[ show edit update destroy ]
+
+  #before_action :ensure_index_exists, only: %i[ create update destroy ]
 
   # GET /contractors or /contractors.json
   def index
@@ -66,11 +68,9 @@ class ContractorsController < ApplicationController
           render turbo_stream: [
             turbo_stream.update('new_contractor', partial: "contractors/form", locals: { contractor: Contractor.new }),
             turbo_stream.prepend('contractors', partial: "contractors/contractor", locals: { contractor: @contractor }),
-            turbo_stream.update("flash", partial: "shared/flash", locals: { msg_type: :alert, message: "Contract #{@contractor.name} Created" })
+            turbo_stream.update("flash", partial: "shared/flash", locals: { msg_type: :alert, message: "Contract #{@contractor.email} Created" })
           ]
         end
-
-
         format.html { redirect_to contractor_url(@contractor), notice: "Contractor was successfully created." }
         format.json { render :show, status: :created, location: @contractor }
       else
@@ -90,7 +90,7 @@ class ContractorsController < ApplicationController
   # PATCH/PUT /contractors/1 or /contractors/1.json
   def update
     respond_to do |format|
-      if @contractor.update(contractor_params)
+      if @contractor.update(contractor_params) && @contractor.profile.update(profile_params)
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update(@contractor,
@@ -98,10 +98,8 @@ class ContractorsController < ApplicationController
                                 locals: { contractor: @contractor }),
             turbo_stream.update("flash", partial: "shared/flash", locals: { msg_type: :alert, message: "Contract #{@contractor.name} Updated" })
           ]
-
-
         end
-        format.html { redirect_to contractor_url(@contractor), notice: "Contractor was successfully updated." }
+        format.html { redirect_to contractor_url(@contractor), notice: "Contractor and profile was successfully updated." }
         format.json { render :show, status: :ok, location: @contractor }
       else
         format.turbo_stream do
@@ -111,7 +109,6 @@ class ContractorsController < ApplicationController
                                 locals: { contractor: @contractor }),
             turbo_stream.update("flash", partial: "shared/flash", locals: { msg_type: :error, message: full_messages(@contractor.errors.full_messages) })
           ]
-
         end
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @contractor.errors, status: :unprocessable_entity }
@@ -124,7 +121,6 @@ class ContractorsController < ApplicationController
   # DELETE /contractors/1 or /contractors/1.json
   def destroy
     begin
-
       @contractor.destroy!
       respond_to do |format|
         format.turbo_stream do
@@ -165,12 +161,15 @@ class ContractorsController < ApplicationController
     @contractor = Contractor.find(params[:id])
   end
 
-  # Only allow a list of trusted parameters through.
   def contractor_params
-    params.require(:contractor).permit(
+    params.require(:contractor).permit(:email, :role, :verified, :active, :public) # Add other attributes as needed
+  end
+
+  # Only allow a list of trusted parameters through.
+  def profile_params
+    params.require(:profile).permit(
       :name,
       :description,
-      :email,
       :phone_number,
       :city,
       :state,
@@ -187,7 +186,6 @@ class ContractorsController < ApplicationController
       :certifications,
       :languages_spoken,
       :hourly_rate,
-      :active,
       :image,
       :specializations_array,
       :languages_array,
@@ -198,9 +196,5 @@ class ContractorsController < ApplicationController
 
   def query_params
     params.permit(:query)
-  end
-
-  def ensure_index_exists
-    Contractor.create_index_with_mappings! if !Contractor.index_exists?
   end
 end

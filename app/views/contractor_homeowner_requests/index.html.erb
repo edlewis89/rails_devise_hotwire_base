@@ -1,0 +1,7 @@
+<!-- app/views/contractor_homeowner_requests/index.html.erb -->
+<h1>Homeowner Requests</h1>
+<% @homeowner_requests.each do |request| %>
+  <p><%= request.description %></p>
+  <%= link_to 'Accept', accept_contractor_homeowner_request_path(request), method: :patch %>
+  <%= link_to 'Decline', decline_contractor_homeowner_request_path(request), method: :patch %>
+<% end %>

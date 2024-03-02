@@ -1,0 +1,9 @@
+<!-- app/views/conversations/show.html.erb -->
+<%= form_with url: messages_path, remote: true, data: { conversation_id: @conversation.id } do |form| %>
+  <%= form.text_field :content %>
+  <%= form.submit 'Send' %>
+<% end %>
+
+<div id="messages">
+  <%= render @conversation.messages %>
+</div>

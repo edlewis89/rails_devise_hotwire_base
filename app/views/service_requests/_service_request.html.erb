@@ -1,0 +1,46 @@
+<div id="<%= dom_id service_request %>" class="card mb-3">
+    <div class="card-body">
+      <div class="container">
+        <% attributes = [
+          { label: "Photo:", value: service_request.image },
+          { label: "Description:", value: service_request.description },
+          { label: "Location:", value: service_request.location },
+          { label: "Budget:", value: service_request.budget },
+          { label: "Timeline:", value: service_request.timeline },
+          { label: "Type of Work:", value: TypeOfWork.find(service_request.type_of_work_id).name },
+        ] %>
+        <div class="row">
+        <% attributes.each_slice(5) do |slice| %>
+          <% slice.each do |attr| %>
+            <div class="col-md-3">
+              <div class="row">
+                <div class="col text-right">
+                  <strong><%= attr[:label] %></strong>
+                </div>
+                <div class="col">
+                  <%= attr[:value] %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="d-flex justify-content-end">
+            <%= link_to "Show", service_request, class: "btn btn-primary mr-1" %>
+            <% if current_user.contractor? %>
+              <%= link_to 'Respond', respond_service_request_path(service_request), class: 'btn btn-primary btn-sm' %>
+            <% end %>
+
+            <% if current_user.homeowner? %>
+              <%= link_to "Edit", edit_service_request_path(service_request), method: :post, class: "btn btn-secondary mr-1" %>
+              <%= button_to "Destroy", service_request_path(service_request), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->service_requests#destroy" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

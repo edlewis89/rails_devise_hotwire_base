@@ -1,5 +1,5 @@
 <div class="container">
-  <h1>Contractors</h1>
+  <h1>Contractor Profiles</h1>
 
   <div id="contractors">
     <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
@@ -14,9 +14,9 @@
 
     <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
   </div>
-
-
   <div class="text-right">
-    <%= link_to "New contractor", new_contractor_path, class: "btn btn-primary" %>
+    <% if current_user.admin? %>
+      <%= link_to "New contractor", new_contractor_path, class: "btn btn-primary" %>
+    <% end %>
   </div>
 </div>

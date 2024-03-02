@@ -1,14 +1,22 @@
-<p style="color: green"><%= notice %></p>
+<div class="container">
+  <h1>Homeowner Profiles</h1>
 
-<h1>Homeowners</h1>
+  <div id="homeowners">
+    <%= will_paginate @homeowners, renderer: BootstrapPagination::Rails %>
 
-<div id="homeowners">
-  <% @homeowners.each do |homeowner| %>
-    <%= render homeowner %>
-    <p>
-      <%= link_to "Show this homeowner", homeowner %>
-    </p>
-  <% end %>
+    <% if @homeowners.any? %>
+      <%= render @homeowners %>
+    <% else %>
+      <div class="alert alert-info" role="alert">
+        No homeowners found.
+      </div>
+    <% end %>
+
+    <%= will_paginate @homeowners, renderer: BootstrapPagination::Rails %>
+  </div>
+  <div class="text-right">
+    <% if current_user.admin? %>
+      <%= link_to "New homeowners", new_homeowners_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
 </div>
-
-<%= link_to "New homeowner", new_homeowner_path %>

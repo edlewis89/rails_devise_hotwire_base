@@ -1,0 +1,45 @@
+<!-- app/views/service_requests/respond.html.erb -->
+
+<div class="container">
+  <h1 class="mt-5 mb-4">Respond to Service Request</h1>
+
+  <!-- Display information about the service request -->
+  <div class="mb-3">
+    <strong>Type of Work:</strong> <%= @service_request.description %>
+  </div>
+
+  <div class="mb-3">
+    <strong>Type of Work:</strong> <%= TypeOfWork.find(@service_request.type_of_work.id).name %>
+  </div>
+  <div class="mb-3">
+    <strong>Location:</strong> <%= @service_request.location %>
+  </div>
+  <div class="mb-3">
+    <strong>Budget:</strong> <%= number_to_currency(@service_request.budget) %>
+  </div>
+  <div class="mb-3">
+    <strong>Timeline:</strong> <%= @service_request.timeline %>
+  </div>
+
+  <!-- Form for contractor to respond -->
+  <%= form_with(model: @response, url: respond_service_request_path(@service_request), method: :post, class: "needs-validation") do |f| %>
+    <div class="mb-3">
+      <%= f.label :message, class: "form-label" %>
+      <%= f.text_area :message, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :proposed_cost, class: "form-label" %>
+      <%= f.number_field :proposed_cost, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :estimated_completion_date, class: "form-label" %>
+      <%= f.date_field :estimated_completion_date, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.submit "Send Response", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

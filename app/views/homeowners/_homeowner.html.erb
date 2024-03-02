@@ -1,12 +1,59 @@
-<div id="<%= dom_id homeowner %>">
-  <p>
-    <strong>Name:</strong>
-    <%= homeowner.name %>
-  </p>
+<div id="<%= dom_id homeowner %>" class="card mb-3">
+  <div class="card-body">
+    <div class="container">
+      <% attributes = [
+        { label: "Name:", value: homeowner.profile.name },
+        { label: "Description:", value: homeowner.profile.description },
+        { label: "Email:", value: homeowner.email },
+        { label: "Availability:", value: homeowner.profile.availability },
+        { label: "Phone #:", value: homeowner.profile.phone_number },
+        { label: "City:", value: homeowner.profile.city },
+        { label: "State:", value: homeowner.profile.state },
+        { label: "Zipcode:", value: homeowner.profile.zipcode },
+        { label: "License #:", value: homeowner.profile.license_number },
+        { label: "Insurance Provider:", value: homeowner.profile.insurance_provider },
+        { label: "Insurance Policy #:", value: homeowner.profile.insurance_policy_number },
+        { label: "License:", value: homeowner.profile.have_license },
+        { label: "Insurance:", value: homeowner.profile.have_insurance },
+        { label: "Service Area:", value: homeowner.profile.service_area },
+        { label: "Experience (yrs):", value: homeowner.profile.years_of_experience },
+        { label: "Specializations:", value: homeowner.profile.specializations.join(', ') },
+        { label: "Certifications:", value: homeowner.profile.certifications.join(', ') },
+        { label: "Languages Spoken:", value: homeowner.profile.languages_spoken.join(', ') },
+        { label: "Hourly Rate:", value: homeowner.profile.hourly_rate },
+        { label: "Photo:", value: homeowner.profile.image },
+        { label: "Active:", value: homeowner.active },
+        { label: "Public:", value: homeowner.public }
+      ] %>
 
-  <p>
-    <strong>Description:</strong>
-    <%= homeowner.description %>
-  </p>
+      <div class="row">
+        <% attributes.each_slice(5) do |slice| %>
+          <% slice.each do |attr| %>
+            <div class="col-md-3">
+              <div class="row">
+                <div class="col text-right">
+                  <strong><%= attr[:label] %></strong>
+                </div>
+                <div class="col">
+                  <%= attr[:value] %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
 
+      <div class="row">
+        <div class="col">
+          <div class="d-flex justify-content-end">
+            <%= link_to "Show", homeowner, class: "btn btn-primary mr-1" %>
+            <% if current_user.admin? %>
+              <%= link_to "Edit", edit_homeowner_path(homeowner), method: :post, class: "btn btn-secondary mr-1" %>
+              <%= button_to "Destroy", homeowner_path(homeowner), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->contractors#destroy" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

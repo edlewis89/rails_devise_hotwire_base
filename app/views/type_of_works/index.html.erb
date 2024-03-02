@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h1 class="mt-5 mb-3">Type of Works</h1>
+
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @type_of_works.each do |type_of_work| %>
+          <tr>
+            <td><%= type_of_work.name %></td>
+            <td>
+              <%= link_to 'Edit', edit_type_of_work_path(type_of_work), class: "btn btn-primary btn-sm" %>
+              <%= link_to 'Delete', type_of_work, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+      <%= link_to 'New Type of Work', new_type_of_work_path, class: "btn btn-success btn-lg mb-4" %>
+    </div>
+  </div>
+</div>

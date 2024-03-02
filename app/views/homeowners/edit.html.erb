@@ -1,10 +1,6 @@
-<h1>Editing homeowner</h1>
-
-<%= render "form", homeowner: @homeowner %>
-
-<br>
-
-<div>
-  <%= link_to "Show this homeowner", @homeowner %> |
-  <%= link_to "Back to homeowners", homeowners_path %>
+<div class="container">
+  <%= render "form", homeowner: @homeowner %>
+  <div class="text-left">
+    <%= link_to "Back to homeowners", homeowners_path, class: "btn  btn-primary" %>
+  </div>
 </div>

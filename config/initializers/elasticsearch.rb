@@ -106,7 +106,6 @@ module ElasticsearchHelper
   # Method to search Elasticsearch only if index exists
   def search_if_index_exists(index_name, query)
     if index_exists?(index_name)
-      binding.pry
       client.search(index: index_name, body: { query: { match: { _all: query } } })
     else
       puts "Index '#{index_name}' does not exist."
@@ -133,6 +132,4 @@ module ElasticsearchHelper
     puts "Mappings for index '#{index_name}':"
     puts mappings.to_json
   end
-
-
 end

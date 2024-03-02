@@ -2,26 +2,28 @@
   <div class="card-body">
     <div class="container">
       <% attributes = [
-        { label: "Name:", value: contractor.name },
-        { label: "Description:", value: contractor.description },
+        { label: "Name:", value: contractor.profile.name },
+        { label: "Description:", value: contractor.profile.description },
         { label: "Email:", value: contractor.email },
-        { label: "Phone #:", value: contractor.phone_number },
-        { label: "City:", value: contractor.city },
-        { label: "State:", value: contractor.state },
-        { label: "Zipcode:", value: contractor.zipcode },
-        { label: "License #:", value: contractor.license_number },
-        { label: "Insurance Provider:", value: contractor.insurance_provider },
-        { label: "Insurance Policy #:", value: contractor.insurance_policy_number },
-        { label: "License:", value: contractor.have_license },
-        { label: "Insurance:", value: contractor.have_insurance },
-        { label: "Service Area:", value: contractor.service_area },
-        { label: "Experience (yrs):", value: contractor.years_of_experience },
-        { label: "Specializations:", value: contractor.specializations.join(', ') },
-        { label: "Certifications:", value: contractor.certifications.join(', ') },
-        { label: "Languages Spoken:", value: contractor.languages_spoken.join(', ') },
-        { label: "Hourly Rate:", value: contractor.hourly_rate },
-        { label: "Photo:", value: contractor.image },
-        { label: "Active:", value: contractor.active }
+        { label: "Availability:", value: contractor.profile.availability },
+        { label: "Phone #:", value: contractor.profile.phone_number },
+        { label: "City:", value: contractor.profile.city },
+        { label: "State:", value: contractor.profile.state },
+        { label: "Zipcode:", value: contractor.profile.zipcode },
+        { label: "License #:", value: contractor.profile.license_number },
+        { label: "Insurance Provider:", value: contractor.profile.insurance_provider },
+        { label: "Insurance Policy #:", value: contractor.profile.insurance_policy_number },
+        { label: "License:", value: contractor.profile.have_license },
+        { label: "Insurance:", value: contractor.profile.have_insurance },
+        { label: "Service Area:", value: contractor.profile.service_area },
+        { label: "Experience (yrs):", value: contractor.profile.years_of_experience },
+        { label: "Specializations:", value: contractor.profile.specializations.join(', ') },
+        { label: "Certifications:", value: contractor.profile.certifications.join(', ') },
+        { label: "Languages Spoken:", value: contractor.profile.languages_spoken.join(', ') },
+        { label: "Hourly Rate:", value: contractor.profile.hourly_rate },
+        { label: "Photo:", value: contractor.profile.image },
+        { label: "Active:", value: contractor.active },
+        { label: "Public:", value: contractor.public }
       ] %>
 
       <div class="row">
@@ -45,8 +47,10 @@
         <div class="col">
           <div class="d-flex justify-content-end">
             <%= link_to "Show", contractor, class: "btn btn-primary mr-1" %>
-            <%= link_to "Edit", edit_contractor_path(contractor), method: :post, class: "btn btn-secondary mr-1" %>
-            <%= button_to "Destroy", contractor_path(contractor), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->contractors#destroy" } %>
+            <% if current_user.admin? %>
+              <%= link_to "Edit", edit_contractor_path(contractor), method: :post, class: "btn btn-secondary mr-1" %>
+              <%= button_to "Destroy", contractor_path(contractor), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->contractors#destroy" } %>
+            <% end %>
           </div>
         </div>
       </div>

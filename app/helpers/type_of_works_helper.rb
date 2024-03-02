@@ -1,0 +1,2 @@
+module TypeOfWorksHelper
+end

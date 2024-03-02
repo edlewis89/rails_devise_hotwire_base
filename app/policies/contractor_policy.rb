@@ -27,6 +27,13 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def update?
-    user.admin? || !contractor.active?
+    return true if user.admin?
+    # Are they homeowner
+    return true if user.contractor?
+    # Are they active.  If they are active they can be searched.
+    # So we want to update any info that needs to be.
+    return true if user.active?
+
+    false
   end
 end
