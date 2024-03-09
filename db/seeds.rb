@@ -67,49 +67,73 @@
 # contractor_homeowner_request = FactoryBot.create(:contractor_homeowner_request, contractor: contractor, homeowner_request: homeowner_request)
 # contractor_homeowner_request.save
 
-
 admin = User.create!(
-  email: 'admin@admin.com',
+  email: 'lewiedw89@gmail.com',
   password: 'password',
+  role: :admin,
   verified: true,
-  role: :admin, # or :contractor, depending on the type
   active: true,
   public: true
 )
-
 
 user = User.create!(
   email: 'general@example.com',
   password: 'password',
+  role: :general,
   verified: true,
-  role: :general, # or :contractor, depending on the type
   active: true,
   public: true
 )
 
-
 homeowner = Homeowner.create!(
-  email: 'homeowner@example.com',
+  email: 'basic@example.com',
   password: 'password',
+  role: :property_owner,
   verified: true,
-  role: :homeowner,
   active: true,
-  public: true
+  public: true,
+  subscription_level: :basic
 )
 
 contractor = Contractor.create!(
-  email: 'contractor@example.com',
+  email: 'starter@example.com',
   password: 'password',
+  role: :service_provider,
   verified: true,
-  role: :contractor,
   active: true,
-  public: true
-
+  public: true,
+  subscription_level: :basic
 )
 
-homeowner_profile = Profile.create!(
+homeowner = Homeowner.create!(
+  email: 'premium@example.com',
+  password: 'password',
+  role: :property_owner,
+  verified: true,
+  active: true,
+  public: true,
+  subscription_level: :premium
+)
+
+contractor = Contractor.create!(
+  email: 'pro@example.com',
+  password: 'password',
+  role: :service_provider,
+  verified: true,
+  active: true,
+  public: true,
+  subscription_level: :pro
+)
+
+#homeowner_profile = FactoryBot.create(:profile, profileable_type: homeowner)
+#contractor_profile = FactoryBot.create(:profile, profileable_type: contractor)
+
+#puts 'Seed data generated successfully.'
+
+hprofile = Profile.new(
   user: homeowner,
-  profileable: homeowner,
+  profileable_type: 'Homeowner',
+  profileable_id: homeowner.id,
   hourly_rate: Faker::Number.decimal(l_digits: 2),
   years_of_experience: Faker::Number.between(from: 0, to: 50),
   availability: true,
@@ -132,9 +156,16 @@ homeowner_profile = Profile.create!(
   description: Faker::Lorem.paragraph
 )
 
-contractor_profile = Profile.create!(
+if hprofile.save
+  puts "Homeowner created and indexed"
+else
+  puts "Error creating homeowner: #{hprofile.errors.full_messages.join(', ')}"
+end
+
+cprofile = Profile.create!(
   user: contractor,
-  profileable: contractor,
+  profileable_type: 'Contractor',
+  profileable_id: contractor.id,
   hourly_rate: Faker::Number.decimal(l_digits: 2),
   years_of_experience: Faker::Number.between(from: 0, to: 50),
   availability: true,
@@ -156,17 +187,26 @@ contractor_profile = Profile.create!(
   languages_spoken: Faker::Lorem.words(number: 3),
   description: Faker::Lorem.paragraph
 )
-
 
 puts 'Seed data generated successfully.'
 
 
 # Seed data for TypeOfWork
-TypeOfWork.create([
-                    { name: 'Plumbing' },
-                    { name: 'Electrical' },
-                    { name: 'Carpentry' },
-                  # Add more types of work as needed
-                  ])
+Service.create(name: 'Plumbing', description: 'Installation, repair, and maintenance of plumbing systems, including pipes, fixtures, and fittings.')
+Service.create(name: 'Electrical', description: 'Installation, repair, and maintenance of electrical systems, including wiring, circuits, and fixtures.')
+Service.create(name: 'Carpentry', description: 'Construction, repair, and installation of wooden structures, furniture, and fixtures.')
+Service.create(name: 'Painting', description: 'Application of paint or other protective coatings to surfaces, such as walls, ceilings, and furniture.')
+Service.create(name: 'Landscaping', description: 'Design, installation, and maintenance of outdoor landscapes, including gardens, lawns, and hardscapes.')
+Service.create(name: 'HVAC (Heating, Ventilation, and Air Conditioning)', description: 'Installation, repair, and maintenance of heating, ventilation, and air conditioning systems.')
+Service.create(name: 'Roofing', description: 'Installation, repair, and replacement of roofs and roofing materials, such as shingles, tiles, and metal.')
+Service.create(name: 'Flooring', description: 'Installation and repair of various types of flooring, including hardwood, laminate, tile, and carpet.')
+Service.create(name: 'Drywall', description: 'Installation and repair of drywall, also known as gypsum board or plasterboard, for interior walls and ceilings.')
+Service.create(name: 'Window Installation', description: 'Installation and replacement of windows, including frame construction and sealing.')
+Service.create(name: 'Door Installation', description: 'Installation and replacement of doors, including interior and exterior doors, frames, and hardware.')
+Service.create(name: 'Pest Control', description: 'Management and removal of pests, including insects, rodents, and other unwanted creatures.')
+Service.create(name: 'Appliance Repair', description: 'Repair and maintenance of household appliances, such as refrigerators, washers, dryers, and ovens.')
+Service.create(name: 'Home Security', description: 'Installation and maintenance of security systems, including alarms, cameras, and monitoring services.')
+Service.create(name: 'Home Cleaning', description: 'Professional cleaning services for residential properties, including general cleaning, deep cleaning, and specialized services.')
+# Add more services as needed
 
-puts 'Seed data for TypeOfWork created successfully'
+puts 'Seed data for Services created successfully'

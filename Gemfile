@@ -63,6 +63,10 @@ gem 'elasticsearch-ruby'
 
 gem 'aasm'
 
+gem 'sidekiq'
+gem "sidekiq-scheduler"
+gem "sidekiq-cron"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 

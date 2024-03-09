@@ -6,8 +6,8 @@ FactoryBot.define do
     password_confirmation { 'password' }
     verified { true }
     active { true }
-    role { :contractor }
-    type { 'Contractor' }
+    role { :service_provider }
+    subscription_level { :starter }
 
     trait :with_unavailable_inactive_profile do
       after(:create) do |homeowner|

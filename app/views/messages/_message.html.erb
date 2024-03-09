@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "message_#{message.id}" do %>
+  <div id="message_<%= message.id %>" class="list-group-item list-group-item-action">
+    <p>Sender: <%= message.sender.email %></p>
+    <p>Subject: <%= message.subject %></p>
+    <p>Body: <%= message.body %></p>
+  </div>
+<% end %>

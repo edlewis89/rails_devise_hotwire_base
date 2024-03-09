@@ -7,7 +7,8 @@
           { label: "Location:", value: service_request.location },
           { label: "Budget:", value: service_request.budget },
           { label: "Timeline:", value: service_request.timeline },
-          { label: "Type of Work:", value: TypeOfWork.find(service_request.type_of_work_id).name },
+          { label: "Service:", value: Service.find(service_request.service_id).name },
+          { label: "Status:", value: service_request.status.humanize },
         ] %>
         <div class="row">
         <% attributes.each_slice(5) do |slice| %>
@@ -29,12 +30,14 @@
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
-            <%= link_to "Show", service_request, class: "btn btn-primary mr-1" %>
-            <% if current_user.contractor? %>
+            <% if current_user.service_provider? && !current_user.responses_for_request(service_request).present?%>
               <%= link_to 'Respond', respond_service_request_path(service_request), class: 'btn btn-primary btn-sm' %>
             <% end %>
 
-            <% if current_user.homeowner? %>
+            <% if current_user.property_owner? %>
+              <% if service_request.status == 'in_progress' %>
+                <%= link_to 'View Responses', service_request_service_responses_path(service_request), class: "btn btn-secondary mr-1" %>
+              <% end %>
               <%= link_to "Edit", edit_service_request_path(service_request), method: :post, class: "btn btn-secondary mr-1" %>
               <%= button_to "Destroy", service_request_path(service_request), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->service_requests#destroy" } %>
             <% end %>

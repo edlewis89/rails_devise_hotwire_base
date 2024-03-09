@@ -1,0 +1,25 @@
+<!-- app/views/messages/reply.html.erb -->
+
+<div class="container mt-4">
+  <h1 class="mb-3">Reply to Message</h1>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Original Message:</h5>
+      <p class="card-text"><%= @original_message.subject %></p>
+    </div>
+  </div>
+
+  <%= form_with(model: @reply_message, url: reply_contractor_message_path(id: @original_message.id, contractor_id: current_user.id), method: :post) do |form| %>
+    <div class="mb-3">
+      <%= form.label :subject, "Your Reply", class: "form-label" %>
+      <%= form.text_area :subject, rows: 4, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :body, "Your Reply", class: "form-label" %>
+      <%= form.text_area :body, rows: 4, class: "form-control" %>
+    </div>
+
+    <%= form.submit "Send Reply", class: "btn btn-primary" %>
+  <% end %>
+</div>

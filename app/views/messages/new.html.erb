@@ -1,0 +1,41 @@
+<!-- app/views/messages/new.html.erb -->
+<%= form_with(model: @message, url: create_message_homeowner_messages_path(current_user), method: :post, local: false) do |form| %>
+  <div class="mb-3">
+    <%= form.label :recipient_id, class: "form-label" %>
+    <%= form.collection_select :recipient_id, User.by_type(@recipient_type.capitalize), :id, :email, { prompt: "Select recipient" }, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :subject, class: "form-label" %>
+    <%= form.text_field :subject, class: "form-control", placeholder: "Subject" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :body, class: "form-label" %>
+    <%= form.text_area :body, class: "form-control", placeholder: "Message Body", rows: 5 %>
+  </div>
+
+  <%= form.submit "Send Message", class: "btn btn-primary" %>
+<% end %>
+<!--<h1 class="mt-5 mb-3">New Message</h1>-->
+
+<%#= form_with(model: @message, url: create_message_homeowner_messages_path(current_user), method: :post, local: false) do |form| %>
+<!--  <div class="mb-3">-->
+    <%#= form.label :recipient_id, class: "form-label" %>
+    <%#= form.collection_select :recipient_id, @recipient_options, :id, :email, { prompt: "Select recipient" }, class: "form-control" %>
+<!--  </div>-->
+
+<!--  <div class="mb-3">-->
+    <%#= form.label :subject, class: "form-label" %>
+    <%#= form.text_field :subject, class: "form-control" %>
+<!--  </div>-->
+
+<!--  <div class="mb-3">-->
+    <%#= form.label :body, class: "form-label" %>
+    <%#= form.text_area :body, class: "form-control", rows: 5 %>
+<!--  </div>-->
+
+<!--  <div class="mb-3">-->
+    <%#= form.submit "Create Message", class: "btn btn-primary" %>
+<!--  </div>-->
+<%# end %>

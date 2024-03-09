@@ -1,9 +1,11 @@
 class DeviseCreateUsers < ActiveRecord::Migration[7.1]
   def change
     create_table :users do |t|
-      #t.references :user, null: true, foreign_key: true, index: true
-
       ## Database authenticatable
+      # t.database_authenticatable
+      # t.confirmable
+
+      #t.references :profile, foreign_key: true
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: ""
 
@@ -14,11 +16,15 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
       ## Rememberable
       t.datetime :remember_created_at
 
-      ## Role
+      ## Role enum
       t.integer :role, null: false, default: 0
 
+      ## Tier enum
+      t.integer :subscription_level, null: false, default: 0
+
+      # t.references :profileable, polymorphic: true, index: true # if using polymorphic association
+
       t.string :type # This column is used for STI
-      #t.references :userable, polymorphic: true
 
       # Hs user been verified a a Homeowner or Contractor
       t.boolean :active, default: false
@@ -33,14 +39,14 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
       # t.string   :last_sign_in_ip
 
       ## Confirmable
-      # t.string   :confirmation_token
-      # t.datetime :confirmed_at
-      # t.datetime :confirmation_sent_at
-      # t.string   :unconfirmed_email # Only if using reconfirmable
+      t.string   :confirmation_token
+      t.datetime :confirmed_at
+      t.datetime :confirmation_sent_at
+      t.string   :unconfirmed_email # Only if using reconfirmable
 
       ## Lockable
       # t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts
-      # t.string   :unlock_token # Only if unlock strategy is :email or :both
+      t.string   :unlock_token # Only if unlock strategy is :email or :both
       # t.datetime :locked_at
 
 
@@ -49,8 +55,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
     add_index :users, :email,                unique: true
     add_index :users, :reset_password_token, unique: true
     add_index :users, :role
-    # add_index :users, :confirmation_token,   unique: true
-    # add_index :users, :unlock_token,         unique: true
     add_index :users, :type
+    add_index :users, :subscription_level
+    add_index :users, :confirmation_token,   unique: true
+    add_index :users, :unlock_token,         unique: true
   end
 end

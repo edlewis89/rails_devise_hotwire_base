@@ -2,7 +2,7 @@ class CreateProfiles < ActiveRecord::Migration[7.1]
   def change
     create_table :profiles do |t|
       t.references :user, foreign_key: true
-      t.references :profileable, polymorphic: true, null: false
+      t.references :profileable, polymorphic: true, null: false, index: true
       t.decimal :hourly_rate, precision: 8, scale: 2, default: 0.00
       t.integer :years_of_experience, default: 0
       t.boolean :availability, default: false

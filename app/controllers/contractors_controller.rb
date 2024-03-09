@@ -9,37 +9,31 @@ class ContractorsController < ApplicationController
   # GET /contractors or /contractors.json
   def index
     if query_params.key?(:query) && query_params[:query].present?
-      es_response = Contractor.active.search(query_params[:query])
+      contractor_ids = []
 
-      if es_response.present?
-        contractors = es_response.map do |result|
-
-          attributes = result["_source"]
-
-          next nil unless attributes # Bail out if _source is not present
-
-          contractor_params = attributes.slice(*Contractor.attribute_names.map(&:to_sym)).to_h
-          Contractor.new(contractor_params)
-        end.compact
-
-        # Paginate the contractors
-        @contractors = WillPaginate::Collection.create(params[:page] || 1, 5, contractors.length) do |pager|
-          pager.replace(contractors)
-        end
-      else
-        # Handle the case where the Elasticsearch search returned nil
-        # For example, display a message or set @contractors to an empty array
-        @contractors = WillPaginate::Collection.create(params[:page] || 1, 5, 0) do |pager|
-          pager.replace([])
+      # Search Elasticsearch for profiles matching the query
+      es_response = Profile.search_in_elastic(query_params[:query]).response
+  
+      # Extract contractor IDs from Elasticsearch response
+      if es_response.present? && es_response['hits'].present? && es_response['hits']['hits'].present?
+        es_response['hits']['hits'].each do |hit|
+          profile_id = hit['_id']
+          profile = Profile.find(profile_id)
+          contractor_ids << profile.user_id if profile.present?
         end
       end
+      
+      # Fetch contractors based on the IDs retrieved from Elasticsearch
+      contractors = Contractor.where(id: contractor_ids)
+      
+      # Paginate the contractors
+      @contractors = contractors.paginate(page: params[:page] || 1, per_page: 5)
     else
-      # Query from the database if no search query is provided
-      @contractors = Contractor.order(created_at: :desc).paginate(page: params[:page], per_page: 5)
+      # Handle the case where the Elasticsearch search returned nil
+      @contractors = Contractor.order(created_at: :desc).paginate(page: params[:page] || 1, per_page: 5)
     end
   end
-
-
+  
   # GET /contractors/1 or /contractors/1.json
   def show
   end

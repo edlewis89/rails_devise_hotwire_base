@@ -1,0 +1,4 @@
+<h1>Welcome, <%= @homeowner.email %></h1>
+
+<!-- Link to view received messages -->
+<%= link_to "View Messages", homeowner_messages_path(@homeowner) %>

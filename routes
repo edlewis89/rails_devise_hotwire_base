@@ -1,3 +1,4 @@
+ >>>>>>>>>>>>>>>>profiles {:query=>{:multi_match=>{:query=>"homeowner@example.com", :fields=>["email"]}}}
                                          Prefix Verb   URI Pattern                                                                                       Controller#Action
                                new_user_session GET    /users/sign_in(.:format)                                                                          devise/sessions#new
                                    user_session POST   /users/sign_in(.:format)                                                                          devise/sessions#create
@@ -15,10 +16,15 @@
                                                 DELETE /users(.:format)                                                                                  devise/registrations#destroy
                                                 POST   /users(.:format)                                                                                  devise/registrations#create
                                       send_data POST   /send_data(.:format)                                                                              home#send_data
+                                  reply_message POST   /messages/:id/reply(.:format)                                                                     messages#reply
+                                       messages GET    /messages(.:format)                                                                               messages#index
+                                                POST   /messages(.:format)                                                                               messages#create
                                  edit_homeowner POST   /homeowners/:id/edit(.:format)                                                                    homeowners#edit
-                         edit_homeowner_profile GET    /homeowners/:homeowner_id/profile/edit(.:format)                                                  profiles#edit
-                              homeowner_profile PATCH  /homeowners/:homeowner_id/profile(.:format)                                                       profiles#update
-                                                PUT    /homeowners/:homeowner_id/profile(.:format)                                                       profiles#update
+              create_message_homeowner_messages POST   /homeowners/:homeowner_id/messages/create_message(.:format)                                       messages#create_message
+                        reply_homeowner_message POST   /homeowners/:homeowner_id/messages/:id/reply(.:format)                                            messages#reply
+                             homeowner_messages GET    /homeowners/:homeowner_id/messages(.:format)                                                      messages#index
+                                                POST   /homeowners/:homeowner_id/messages(.:format)                                                      messages#create
+                          new_homeowner_message GET    /homeowners/:homeowner_id/messages/new(.:format)                                                  messages#new
                                      homeowners GET    /homeowners(.:format)                                                                             homeowners#index
                                                 POST   /homeowners(.:format)                                                                             homeowners#create
                                   new_homeowner GET    /homeowners/new(.:format)                                                                         homeowners#new
@@ -32,9 +38,11 @@
  accept_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_id/contractor_homeowner_requests/:id/accept(.:format)                    contractor_homeowner_requests#accept
 decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_id/contractor_homeowner_requests/:id/decline(.:format)                   contractor_homeowner_requests#decline
        contractor_contractor_homeowner_requests GET    /contractors/:contractor_id/contractor_homeowner_requests(.:format)                               contractor_homeowner_requests#index
-                        edit_contractor_profile GET    /contractors/:contractor_id/profile/edit(.:format)                                                profiles#edit
-                             contractor_profile PATCH  /contractors/:contractor_id/profile(.:format)                                                     profiles#update
-                                                PUT    /contractors/:contractor_id/profile(.:format)                                                     profiles#update
+             create_message_contractor_messages POST   /contractors/:contractor_id/messages/create_message(.:format)                                     messages#create_message
+                       reply_contractor_message POST   /contractors/:contractor_id/messages/:id/reply(.:format)                                          messages#reply
+                            contractor_messages GET    /contractors/:contractor_id/messages(.:format)                                                    messages#index
+                                                POST   /contractors/:contractor_id/messages(.:format)                                                    messages#create
+                         new_contractor_message GET    /contractors/:contractor_id/messages/new(.:format)                                                messages#new
                                     contractors GET    /contractors(.:format)                                                                            contractors#index
                                                 POST   /contractors(.:format)                                                                            contractors#create
                                  new_contractor GET    /contractors/new(.:format)                                                                        contractors#new
@@ -44,6 +52,9 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                                 PUT    /contractors/:id(.:format)                                                                        contractors#update
                                                 DELETE /contractors/:id(.:format)                                                                        contractors#destroy
                         respond_service_request GET    /service_requests/:id/respond(.:format)                                                           service_requests#respond
+              service_request_service_responses GET    /service_requests/:service_request_id/service_responses(.:format)                                 service_responses#index
+                                                POST   /service_requests/:service_request_id/service_responses(.:format)                                 service_responses#create
+           new_service_request_service_response GET    /service_requests/:service_request_id/service_responses/new(.:format)                             service_responses#new
                                service_requests GET    /service_requests(.:format)                                                                       service_requests#index
                                                 POST   /service_requests(.:format)                                                                       service_requests#create
                             new_service_request GET    /service_requests/new(.:format)                                                                   service_requests#new
@@ -52,13 +63,13 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                                 PATCH  /service_requests/:id(.:format)                                                                   service_requests#update
                                                 PUT    /service_requests/:id(.:format)                                                                   service_requests#update
                                                 DELETE /service_requests/:id(.:format)                                                                   service_requests#destroy
-                                  type_of_works GET    /type_of_works(.:format)                                                                          type_of_works#index
-                                                POST   /type_of_works(.:format)                                                                          type_of_works#create
-                               new_type_of_work GET    /type_of_works/new(.:format)                                                                      type_of_works#new
-                              edit_type_of_work GET    /type_of_works/:id/edit(.:format)                                                                 type_of_works#edit
-                                   type_of_work PATCH  /type_of_works/:id(.:format)                                                                      type_of_works#update
-                                                PUT    /type_of_works/:id(.:format)                                                                      type_of_works#update
-                                                DELETE /type_of_works/:id(.:format)                                                                      type_of_works#destroy
+                                       services GET    /services(.:format)                                                                               services#index
+                                                POST   /services(.:format)                                                                               services#create
+                                    new_service GET    /services/new(.:format)                                                                           services#new
+                                   edit_service GET    /services/:id/edit(.:format)                                                                      services#edit
+                                        service PATCH  /services/:id(.:format)                                                                           services#update
+                                                PUT    /services/:id(.:format)                                                                           services#update
+                                                DELETE /services/:id(.:format)                                                                           services#destroy
                                            root GET    /                                                                                                 home#index
                turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                             turbo/native/navigation#recede
                turbo_resume_historical_location GET    /resume_historical_location(.:format)                                                             turbo/native/navigation#resume

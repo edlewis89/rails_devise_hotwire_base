@@ -5,10 +5,7 @@ class Profile < ApplicationRecord
   belongs_to :user
   belongs_to :profileable, polymorphic: true
 
-  #belongs_to :homeowner, optional: true
-  #belongs_to :contractor, optional: true
-  #belongs_to :profileable, polymorphic: true
-
+  # Validations, attr_accessors, and other model code...
   validates :name, presence: true
   validates :phone_number, presence: true
   validates :availability, inclusion: { in: [true, false] }
@@ -28,91 +25,66 @@ class Profile < ApplicationRecord
 
   mount_uploader :image, ImageUploader
 
-  delegate :active, :type, :email, :public, to: :user, prefix: true, allow_nil: true
+  delegate :active, :email, :public, :type, to: :user, prefix: true, allow_nil: true
+
+  scope :active_profiles, -> { joins(:user).where(users: { active: true }) }
+  scope :active_and_public_profiles, -> { joins(:user).where(users: { active: true, public: true }) }
+  scope :contractor_profiles, -> { where(profileable_type: 'Contractor') }
+  scope :homeowner_profiles, -> { where(profileable_type: 'Homeowner') }
+
+  ## Example usage
+  # contractor_profiles = Profile.by_profileable(contractor.id, 'Contractor')
+  scope :by_profileable, ->(profileable_id, profileable_type) do
+    where(profileable_id: profileable_id, profileable_type: profileable_type)
+  end
 
   before_commit on: [:create, :update] do
     ensure_index_exists unless index_exists?
   end
 
-  after_commit on: [:create] do
+  after_commit on: [:create, :update] do
     ensure_index_exists unless index_exists?
-    if condition_met_for_update?
-      __elasticsearch__.update_document
-    else
-      __elasticsearch__.delete_document
-    end
-  end
-
-  after_commit on: [:update] do
-    ensure_index_exists unless index_exists?
-    if condition_met_for_update?
-      __elasticsearch__.update_document
-    else
-      __elasticsearch__.delete_document
-    end
+    update_or_delete_document
   end
 
   after_commit on: [:destroy] do
-    begin
-      if __elasticsearch__.record_exists?
-        __elasticsearch__.delete_document
-      end
-    rescue => e
-      Rails.logger.error("Error deleting document from Elasticsearch: #{e.message}")
+    delete_document if document_exists?
+  end
+
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: 'false' do
+      indexes :name, type: 'text'
+      indexes :email, type: 'text'
+      indexes :description, type: 'text'
+      indexes :phone_number, type: 'text'
+      indexes :city, type: 'text'
+      indexes :state, type: 'text'
+      indexes :zipcode, type: 'text'
+      indexes :license_number, type: 'text'
+      indexes :insurance_provider, type: 'text'
+      indexes :insurance_policy_number, type: 'text'
+      indexes :have_license, type: 'boolean'
+      indexes :have_insurance, type: 'boolean'
+      indexes :service_area, type: 'text'
+      indexes :years_of_experience, type: 'integer'
+      indexes :specializations, type: 'text'
+      indexes :certifications, type: 'text'
+      indexes :languages_spoken, type: 'text'
+      indexes :hourly_rate, type: 'float'
+      indexes :profileable_type, type: 'text'
+      indexes :user_type, type: 'text'
+      indexes :availability, type: 'boolean'
+      indexes :public, type: 'boolean' # Assuming photo is a URL or path
+      indexes :active, type: 'boolean'
     end
   end
 
-  # Define the Elasticsearch index settings and mappings
-  def self.create_index_with_mappings!
-    settings_hash = {
-      index: {
-        number_of_shards: 1,
-        # Add any other settings you need
-      }
-    }
-
-    mappings_hash = {
-      dynamic: 'false', # Prevent dynamic mapping
-      properties: {
-        name: { type: 'text' },
-        email: { type: 'text', fields: { keyword: { type: 'keyword' } } },
-        description: { type: 'text' },
-        phone_number: { type: 'text' },
-        city: { type: 'text' },
-        state: { type: 'text' },
-        zipcode: { type: 'text' },
-        license_number: { type: 'text' },
-        insurance_provider: { type: 'text' },
-        insurance_policy_number: { type: 'text' },
-        have_license: { type: 'boolean' },
-        have_insurance: { type: 'boolean' },
-        service_area: { type: 'text' },
-        years_of_experience: { type: 'integer' },
-        specializations: { type: 'text' },
-        certifications: { type: 'text' },
-        languages_spoken: { type: 'text' },
-        hourly_rate: { type: 'float' },
-        availability: { type: 'boolean' },
-        active: { type: 'boolean' },
-        public: { type: 'boolean' },
-        user_type: { type: 'text', fields: { keyword: { type: 'keyword' } } },
-        profileable_type: { type: 'text', fields: { keyword: { type: 'keyword' } } }
-      }
-    }
-    # Create the Elasticsearch index with the defined settings and mappings
-    __elasticsearch__.create_index!(settings: settings_hash, mappings: mappings_hash)
-  end
-
-  def self.search(query)
-    #__elasticsearch__.search(params[:q], [self, Category]).results.to_a.map(&:to_hash)
-    __elasticsearch__.search(query) if query.present?
-  end
-
-  def self.search_in_elasticsearch(query)
-    ElasticsearchHelper.search_if_index_exists(index_name, query)
+  def self.search_in_elastic(query)
+    self.__elasticsearch__.search(query) if query.present?
   end
 
   def as_indexed_json(options = {})
+    # as_indexed_json implementation...
     indexed_json = {
       profileable_type: profileable_type,
       user_type: user_type,
@@ -180,85 +152,84 @@ class Profile < ApplicationRecord
     end
   end
 
-  private
-
   def require_insurance?
     have_insurance?  # Validate insurance attributes if have_insurance is true
   end
 
   def unique_license_number?
-    existing_contractor = self.class.find_by(license_number:)
+    existing_contractor = self.class.find_by(license_number: license_number)
     return unless existing_contractor && existing_contractor != self
 
     errors.add(:license_number, 'has already been taken')
   end
 
-  def condition_met_for_destroy?
-    condition_met? && document_exists?(index_name, self.id)
+  private
+
+  def update_or_delete_document
+    if condition_met_for_update?
+      __elasticsearch__.update_document
+    else
+      delete_document
+    end
   end
 
-  def condition_met_for_index?
-    condition_met?
+  def delete_document
+    __elasticsearch__.delete_document if document_exists?
+  end
+
+  def document_exists?
+    __elasticsearch__.record_exists?
   end
 
   def condition_met_for_update?
-    condition_met?
-  end
-
-  def condition_met?
-    # Define your condition here
+    # Define your condition for updating documents
     index_exists?
 
     user.is_active? && user.is_public?
   end
 
-  def index_exists?
-    ElasticsearchHelper.index_exists?(index_name)
-  end
-
   def ensure_index_exists
-    # Call the method to create the index with mappings
-    Profile.create_index_with_mappings!
-    #ElasticsearchHelper.create_index(index_name, elasticsearch_mappings(Profile))
+    mappings = index_mappings
+
+    # Now you have the mappings stored in the mappings variable
+    puts mappings
+
+    ElasticsearchHelper.instance.create_index_with_mappings!(index_name, mappings) unless index_exists?
   end
 
-  # def index_exists?
-  #   ElasticsearchHelper.index_exists?(index_name)
-  # end
-  #
-  # def ensure_index_exists
-  #   ElasticsearchHelper.create_index(index_name, elasticsearch_mappings(self))
-  # end
+  def index_exists?
+    ElasticsearchHelper.instance.index_exists?(index_name)
+  end
+
+  def self.search_elastic(query)
+
+    # Get the mappings hash for the Profile model
+    mappings = index_mappings
+    puts mappings
+
+    # Extract the properties hash from the mappings
+    properties = mappings.dig(:properties)
+    puts "properties #{properties}"
+
+    # Get the keys (fields) from the properties hash
+    array_of_symbols = properties&.keys
+
+    fields = array_of_symbols&.map(&:to_s)
+    # Now fields contains an array of field names from the Elasticsearch mappings
+    puts ">>>>>>>> fields #{fields}"
+    fields = ["name","email","description","phone_number","city","state","zipcode","license_number","insurance_provider","insurance_policy_number","have_license","have_insurance","service_area","years_of_experience","specializations","certifications","languages_spoken","hourly_rate","availability","active","public","user_type","profileable_type"]
+    #fields = ["name","email","description","phone_number","city","state","zipcode","license_number","insurance_provider","insurance_policy_number","service_area","years_of_experience","specializations","certifications","languages_spoken","hourly_rate","profileable_type"]
+
+    return ElasticsearchHelper.instance.search_if_index_exists(index_name, query, fields) if fields
+
+    nil
+  end
+
+  def index_mappings
+    Profile.mappings.to_hash
+  end
 
   def index_name
     "profiles"
   end
-
-  # # Class method to get the Elasticsearch mappings
-  # def self.elasticsearch_mappings(_klass)
-  #   mappings_hash = _klass.mappings.to_hash
-  #   if mappings_hash.nil?
-  #     Rails.logger.error("Mappings are not defined for the #{_klass.name} model.")
-  #     return {}
-  #   else
-  #     return mappings_hash
-  #   end
-  # end
-
-  # def self.create_index_with_mappings!
-  #   ElasticsearchHelper.create_index_with_mappings!(self.index_name, elasticsearch_mappings(self))
-  # end
-
-  # def self.index_exists?
-  #   ElasticsearchHelper.index_exists?(self.index_name)
-  # end
-
-  # def document_exists?(index_name, document_id)
-  #   binding.pry
-  #   # Perform a search to check if the document exists
-  #   response = __elasticsearch__.client.search(index: index_name, body: { query: { match: { _id: document_id } } })
-  #
-  #   # If the document exists, return true
-  #   response["hits"]["total"]["value"] > 0
-  # end
 end

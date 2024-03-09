@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Mailbox</h3>
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            <% @conversations.each do |conversation| %>
+              <% if conversation.sender_id == current_user.id || conversation.recipient_id == current_user.id %>
+                <% recipient = conversation.sender_id == current_user.id ? User.find(conversation.recipient_id) : User.find(conversation.sender_id) %>
+                <li class="list-group-item">
+                  <%= link_to recipient&.profile_name, conversation_messages_path(conversation), class: "btn btn-link" %>
+                </li>
+              <% end %>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">All Users</h3>
+        </div>
+        <div class="card-body">
+          <%= form_for Conversation.new, url: conversations_path, method: :post do |f| %>
+            <ul class="list-group">
+              <% @users.each do |user| %>
+                <% if user.id != current_user.id %>
+                  <li class="list-group-item">
+                    <%= user.email %>
+                    <%= f.hidden_field :sender_id, value: current_user.id %>
+                    <%= f.hidden_field :recipient_id, value: user.id %>
+                    <%= f.submit 'Message me!', class: "btn btn-primary" %>
+                  </li>
+                <% end %>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

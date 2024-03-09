@@ -1,0 +1,20 @@
+<%= form_with(model: message, url: create_reply_message_path, remote: true) do |form| %>
+  <%= render 'message_form', form: form %>
+<% end %>
+
+<!-- app/views/messages/_reply_form.html.erb -->
+
+<%#= form_with(model: message, url: create_reply_message_path, remote: true) do |form| %>
+<!--  Your message form fields go here -->
+  <%#= form.label :subject %>
+  <%#= form.text_field :subject %>
+
+  <%#= form.label :body %>
+  <%#= form.text_area :body %>
+
+<!--  You can use the recipient_options variable to populate a select dropdown for choosing the recipient -->
+  <%#= form.label :recipient_id %>
+  <%#= form.select :recipient_id, options_for_select(recipient_options), { prompt: "Select recipient" }, class: "form-control" %>
+
+  <%#= form.submit "Send Reply" %>
+<%# end %>

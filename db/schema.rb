@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_01_050427) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_07_160600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,11 +23,32 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_01_050427) do
     t.index ["homeowner_request_id"], name: "index_contractor_homeowner_requests_on_homeowner_request_id"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "sender_id"
+    t.bigint "recipient_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipient_id"], name: "index_conversations_on_recipient_id"
+    t.index ["sender_id"], name: "index_conversations_on_sender_id"
+  end
+
   create_table "homeowner_requests", force: :cascade do |t|
     t.text "description"
     t.integer "homeowner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "conversation_id"
+    t.bigint "user_id"
+    t.string "subject"
+    t.text "body"
+    t.boolean "read", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -66,22 +87,41 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_01_050427) do
   end
 
   create_table "service_requests", force: :cascade do |t|
-    t.string "user_type"
-    t.bigint "user_id"
-    t.bigint "type_of_work_id"
+    t.string "homeowner_type", null: false
+    t.bigint "homeowner_id", null: false
+    t.bigint "service_id"
+    t.string "title"
+    t.string "image"
     t.text "description"
     t.string "location"
-    t.decimal "budget"
+    t.decimal "budget", precision: 10, scale: 2
     t.string "timeline"
-    t.string "image"
+    t.string "status", default: "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["type_of_work_id"], name: "index_service_requests_on_type_of_work_id"
-    t.index ["user_type", "user_id"], name: "index_service_requests_on_user"
+    t.index ["homeowner_type", "homeowner_id"], name: "index_service_requests_on_homeowner"
+    t.index ["service_id"], name: "index_service_requests_on_service_id"
+    t.index ["status", "service_id"], name: "index_service_requests_on_status_and_service_id"
   end
 
-  create_table "type_of_works", force: :cascade do |t|
+  create_table "service_responses", force: :cascade do |t|
+    t.string "contractor_type", null: false
+    t.bigint "contractor_id", null: false
+    t.bigint "service_request_id"
+    t.text "message"
+    t.decimal "proposed_cost", precision: 10, scale: 2
+    t.datetime "estimated_completion_date"
+    t.string "status", default: "pending"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contractor_type", "contractor_id"], name: "index_service_responses_on_contractor"
+    t.index ["service_request_id"], name: "index_service_responses_on_service_request_id"
+    t.index ["status", "service_request_id"], name: "index_service_responses_on_status_and_service_request_id"
+  end
+
+  create_table "services", force: :cascade do |t|
     t.string "name"
+    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -93,19 +133,31 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_01_050427) do
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer "role", default: 0, null: false
+    t.integer "subscription_level", default: 0, null: false
     t.string "type"
     t.boolean "active", default: false
     t.boolean "public", default: true
     t.boolean "verified", default: false
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.string "unlock_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
+    t.index ["subscription_level"], name: "index_users_on_subscription_level"
     t.index ["type"], name: "index_users_on_type"
+    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
   add_foreign_key "contractor_homeowner_requests", "homeowner_requests"
+  add_foreign_key "conversations", "users", column: "recipient_id"
+  add_foreign_key "conversations", "users", column: "sender_id"
   add_foreign_key "profiles", "users"
-  add_foreign_key "service_requests", "type_of_works"
+  add_foreign_key "service_requests", "services"
+  add_foreign_key "service_responses", "service_requests"
 end

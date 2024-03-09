@@ -11,16 +11,20 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= form.label 'Photo', class: "control-label col-sm-4" %>
-    <div class="col-sm-8">
-      <%= form.file_field :image  %>
-    </div>
+  <div class="mb-3">
+    <%= form.label 'Photo', class: "form-label" %>
+    <%= form.file_field :image, class: "form-control" %>
   </div>
 
   <div class="mb-3">
-    <%= form.label :description, class: "form-label" %>
-    <%= form.text_area :description, class: "form-control" %>
+    <%= form.label :status, class: "form-label" %>
+    <%= form.text_field :status, class: "form-control" %>
+  </div>
+
+
+  <div class="mb-3">
+    <%= form.label :title, class: "form-label" %>
+    <%= form.text_area :title, class: "form-control" %>
   </div>
 
   <div class="mb-3">
@@ -39,8 +43,8 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :type_of_work_id, class: "form-label" %>
-    <%= form.collection_select :type_of_work_id, TypeOfWork.all, :id, :name, { prompt: "Select type of work" }, class: "form-control" %>
+    <%= form.label :service_id, class: "form-label" %>
+    <%= form.collection_select :service_id, Service.all, :id, :name, { prompt: "Select service" }, class: "form-control" %>
   </div>
 
   <div class="d-grid">

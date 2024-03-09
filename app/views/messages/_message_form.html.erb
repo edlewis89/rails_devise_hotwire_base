@@ -1,0 +1,19 @@
+<%= turbo_frame_tag 'new_message' do %>
+  <%= form_with(model: @message, url: send("#{current_user.role}_messages_path", @homeowner), local: false) do |form| %>
+    <%= form.hidden_field :recipient_id %>
+    <!-- Other message fields -->
+    <div class="mb-3">
+      <%= form.label :subject, class: "form-label" %>
+      <%= form.text_field :subject, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :body, class: "form-label" %>
+      <%= form.text_area :body, class: "form-control", rows: 5 %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.submit form.object.new_record? ? "Create Message" : "Send Reply", class: "btn btn-primary" %>
+    </div>
+
+  <% end %>
+<% end %>

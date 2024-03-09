@@ -68,75 +68,124 @@
         .content {
             flex: 1; /* Take remaining vertical space */
         }
+        .message-badge {
+            position: relative;
+            display: inline-block;
+        }
+
+        .badge-number {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: red;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
     </style>
   </head>
   <body>
 
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">
+        <img src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+        Rent-A-bud
+      </a>
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+
+      <%= link_to 'Home', root_path, class: "nav-brand", data: { turbo: "false" } %>
+
+
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <%= link_to 'Home', root_path, class: "nav-link", data: { turbo: "false" } %>
-          </li>
-
-
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
           <% if signed_in? %>
-            <% if current_user.homeowner? %>
+            <!-- Add your header content here -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                <%
+                  unread_count = Conversation.unread_messages_count(current_user.id)
+                  unless unread_count.zero? %>
+                  <span class="badge bg-primary rounded-pill"><%= unread_count %></span>
+                <% end %>
+                Inbox
+              </a>
+              <ul class="dropdown-menu">
+                <li><%= link_to "View Inbox", conversations_path, class: "dropdown-item" %></li>
+              </ul>
+            </li>
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-link" > Role: <%= current_user&.role %></li>
+            </ul>
+
+            <% if current_user.property_owner? %>
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-link"><%= link_to "Create Service Request", new_service_request_path %></li>
+              </ul>
+
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Home Owner
                 </a>
                 <ul class="dropdown-menu">
-
-                    <li><%= link_to "Service Request", new_service_request_path, class: "dropdown-item" %></li>
-
-                    <li><%= link_to "All Requests", service_requests_path, class: "dropdown-item" %></li>
-                    <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
+                    <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
                     <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
-
                 </ul>
+              </li>
+
+              <li class="nav-item dropdown">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <%= current_user.email %>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li class="dropdown-item" ></li>
+                    <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
+                  </ul>
+                </div>
               </li>
             <% end %>
 
-            <% if current_user.contractor? %>
+
+            <% if current_user.service_provider? %>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Contractor
                 </a>
                 <ul class="dropdown-menu">
-
-                  <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
-                  <li><%= link_to "Profile", edit_contractor_path(current_user), class: "dropdown-item" %></li>
                   <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
                   <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
-
                 </ul>
+              </li>
+              <li class="nav-item dropdown">
+
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <%= current_user.email %>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><%= link_to "Profile", edit_contractor_path(current_user), class: "dropdown-item" %></li>
+                  </ul>
+                </div>
               </li>
             <% end %>
 
-            <li class="nav-item">
-              <a class="nav-link" href="#">Jobs</a>
-            </li>
-
-
-            <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="<%= signed_in?%>">
-                Logged in as <%= current_user.email %>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">
-                Role: <%= current_user&.role %>
-              </a>
-            </li>
 
             <li class="nav-item" style="margin-left: auto;">
               <a href="<%= destroy_user_session_path %>" class="nav-link" data-turbo-method="delete">
@@ -150,12 +199,13 @@
                   Admin
                 </a>
                 <ul class="dropdown-menu">
-                  <%= link_to 'Manage Type of Work', type_of_works_path, class: "dropdown-item" %>
+                  <%= link_to 'Manage Services', services_path, class: "dropdown-item" %>
                   <%= link_to 'Manage Contractors', contractors_path, class: "dropdown-item", data: { turbo: "false" } %>
                   <%= link_to 'Manage Homeowners', homeowners_path, class: "dropdown-item", data: { turbo: "false" } %>
                 </ul>
               </li>
             <% end %>
+
           <% else %>
             <li class="nav-item">
               <%= link_to 'Log in', user_session_path, class: "nav-link", data: { turbo: "false" } %>
@@ -163,8 +213,9 @@
           <% end %>
 
         </ul>
-        <form class="d-flex" role="search" action="<%= search_contractors_path %>" method="get">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query">
+        <!-- Search form to the right -->
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
       </div>
@@ -188,7 +239,7 @@
         </div>
         <div class="col-sm-2 sidenav">
           <div class="well">
-            <p>ADS</p>
+            <%= turbo_stream_from "messages" %>
           </div>
           <div class="well">
             <p>ADS</p>
@@ -206,3 +257,104 @@
 
   </body>
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the select element
+        const selectElement = document.getElementById("messageSelect");
+
+        // Add event listener for change event
+        selectElement.addEventListener("change", function(event) {
+            // Get the selected message ID, type, and reply endpoint
+            const messageId = event.target.value;
+            const userType = event.target.selectedOptions[0].getAttribute("data-type");
+            const replyEndpoint = event.target.selectedOptions[0].getAttribute("data-reply-endpoint");
+
+            // Make an Ajax request to the backend using Turbo Streams
+            fetch(replyEndpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content // Include CSRF token
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json(); // Assuming the backend returns JSON
+                })
+                .then(data => {
+                    // Handle successful response from the backend
+                    console.log(data);
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("There was a problem with the request:", error);
+                });
+        });
+    });
+    $(document).on("turbo:load", function() {
+        $(".message-link").on("click", function(e) {
+            e.preventDefault(); // Prevent default link behavior
+
+            // Find the current_user_id from the data attribute of the form
+            var currentUserId = $(this).closest("form").data("current-user-id");
+            console.log("currentUserId >>>>>>> " + currentUserId);
+
+            // Find all hidden input fields with the name 'message[id]' inside the clicked form
+            var messageIds = [];
+            $(this).closest("form").find("input[name='message\[id\]']").each(function() {
+                messageIds.push($(this).val()); // Collect the values into an array
+            });
+
+            // Assuming you want to use only the first message ID, you can access it like this:
+            var messageId = messageIds[0];
+
+            // Construct the URL
+            var url = "/contractors/" + currentUserId + "/messages/" + messageId + "/reply"; // Assuming this URL shows the message content
+
+            // Use Turbo Streams to visit the URL
+            Turbo.visit(url, { action: "append" });
+        });
+    });
+
+    // $(document).on("turbo:load", function() {
+    //     $(".message-link").on("click", function(e) {
+    //         e.preventDefault(); // Prevent default link behavior
+    //
+    //         // Find the current_user_id from the data attribute of the form
+    //         var currentUserId = $(this).closest("form").data("current-user-id");
+    //         console.log("currentUserId >>>>>>> " + currentUserId);
+    //
+    //         // Find all hidden input fields with the name 'message[id]' inside the clicked form
+    //         var messageIds = [];
+    //         $(this).closest("form").find("input[name='message\[id\]']").each(function() {
+    //             messageIds.push($(this).val()); // Collect the values into an array
+    //         });
+    //
+    //         // Assuming you want to use only the first message ID, you can access it like this:
+    //         var messageId = messageIds[0];
+    //
+    //         // Construct the URL
+    //         var url = "/contractors/" + currentUserId + "/messages/" + messageId + "/reply"; // Assuming this URL shows the message content
+    //
+    //         // Send a POST request to the URL
+    //         $.ajax({
+    //             type: "POST",
+    //             url: url,
+    //             dataType: "json",
+    //             success: function(response) {
+    //                 // Handle the success response
+    //                 console.log("POST request successful:", response);
+    //                 // You can update the UI or perform any other action here
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 // Handle the error response
+    //                 console.error("Error making POST request:", error);
+    //                 // You can display an error message or perform any other action here
+    //             }
+    //         });
+    //     });
+    // });
+</script>

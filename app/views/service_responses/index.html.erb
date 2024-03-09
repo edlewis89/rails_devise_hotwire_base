@@ -1,0 +1,33 @@
+<!-- app/views/service_responses/index.html.erb -->
+<div class="container">
+  <h1 class="mt-4 mb-3">Service Responses</h1>
+  <% @service_responses.each do |service_response| %>
+    <% service_request = service_response.service_request %>
+    <div class="card mb-3">
+      <!-- Contractor Information Section -->
+      <div class="card-header">
+        <h5 class="card-title"><strong>Contractor Information</strong></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Service Request: <%= service_request.title %></h6>
+      </div>
+      <div class="card-body contractor-info">
+        <p class="card-text"><strong>Contractor:</strong> <%= service_response.contractor.name %></p>
+        <p class="card-text"><strong>License No:</strong> <%= service_response.contractor.license_number %></p>
+        <p class="card-text"><strong>Insured?:</strong> <%= service_response.contractor.profile.have_insurance? ? "Yes" : "No" %> </p>
+        <p class="card-text"><strong>Certifications:</strong> <%= service_response.contractor.profile.certifications.join(', ') %></p>
+        <p class="card-text"><strong>Languages Spoken:</strong> <%= service_response.contractor.profile.languages_spoken.join(', ') %></p>
+      </div>
+
+      <!-- Response Details Section with Border -->
+      <div class="card-header">
+        <h5 class="card-title"><strong>Response Details</strong></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Service Request: <%= service_request.title %> | Status: <%= service_request.status %></h6>
+      </div>
+      <div class="card-body response-details" style="border: 1px solid #ced4da; padding: 20px;">
+        <p class="card-text"><strong>Message:</strong> <%= service_response.message %></p>
+        <p class="card-text"><strong>Price Quote:</strong> <%= number_to_currency(service_response.proposed_cost) %></p>
+        <p class="card-text"><strong>Estimated Completion Date:</strong> <%= service_response.estimated_completion_date %></p>
+        <p class="card-text"><strong>Status:</strong> <%= service_response.status %></p>
+      </div>
+    </div>
+  <% end %>
+</div>

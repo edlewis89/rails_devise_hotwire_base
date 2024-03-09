@@ -3,14 +3,14 @@
 <div class="container">
   <h1 class="mt-5 mb-4">Respond to Service Request</h1>
 
+  <div class="mb-3">
+    <strong>Service:</strong> <%= Service.find(@service_request.service.id).name %>
+  </div>
   <!-- Display information about the service request -->
   <div class="mb-3">
-    <strong>Type of Work:</strong> <%= @service_request.description %>
+    <strong>Service Description:</strong> <%= @service_request.description %>
   </div>
 
-  <div class="mb-3">
-    <strong>Type of Work:</strong> <%= TypeOfWork.find(@service_request.type_of_work.id).name %>
-  </div>
   <div class="mb-3">
     <strong>Location:</strong> <%= @service_request.location %>
   </div>
@@ -22,7 +22,7 @@
   </div>
 
   <!-- Form for contractor to respond -->
-  <%= form_with(model: @response, url: respond_service_request_path(@service_request), method: :post, class: "needs-validation") do |f| %>
+  <%= simple_form_for(@service_response, url: service_request_service_responses_path(@service_request), method: :post, class: "needs-validation") do |f| %>
     <div class="mb-3">
       <%= f.label :message, class: "form-label" %>
       <%= f.text_area :message, class: "form-control", required: true %>
@@ -39,7 +39,7 @@
     </div>
 
     <div class="mb-3">
-      <%= f.submit "Send Response", class: "btn btn-primary" %>
+      <%= f.button :submit, "Submit Response", class: "btn btn-primary" %>
     </div>
   <% end %>
 </div>

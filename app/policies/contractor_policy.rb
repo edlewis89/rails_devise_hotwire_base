@@ -7,7 +7,7 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def create?
-    user.admin?
+    user.present? && user.property_owner?
   end
 
   def new?
@@ -19,7 +19,7 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.admin?
+    user.present? && (user.admin? || record.user == user)
   end
 
   def search?
@@ -27,13 +27,6 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def update?
-    return true if user.admin?
-    # Are they homeowner
-    return true if user.contractor?
-    # Are they active.  If they are active they can be searched.
-    # So we want to update any info that needs to be.
-    return true if user.active?
-
-    false
+    user.present? && (user.admin? || user.property_owner? || user.active? || record.user == user)
   end
 end

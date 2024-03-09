@@ -23,14 +23,5 @@ FactoryBot.define do
     certifications { Faker::Lorem.words(number: 3) }
     languages_spoken { Faker::Lorem.words(number: 3) }
     description { Faker::Lorem.paragraph }
-
-    # Traits
-    trait :homeowner_profile do
-      association :user, factory: :homeowner
-    end
-
-    trait :contractor_profile do
-      association :user, factory: :contractor
-    end
   end
 end

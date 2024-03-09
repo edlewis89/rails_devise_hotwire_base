@@ -5,9 +5,10 @@ FactoryBot.define do
     password { 'password' }
     password_confirmation { 'password' }
     verified { true }
-    role { 'general' }
+    role { :general }
     active { true }
     public { true }
+    type { 'General' }
   end
 end
 

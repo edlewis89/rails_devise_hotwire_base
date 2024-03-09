@@ -7,7 +7,7 @@ class ServiceRequestPolicy < ApplicationPolicy
   end
 
   def create?
-    user.homeowner?
+    user.property_owner?
   end
 
   def new?
@@ -19,14 +19,14 @@ class ServiceRequestPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.admin?
+    user.admin? || user.property_owner?
   end
 
   def update?
-    user.homeowner? || user.admin?
+    user.property_owner? || user.admin?
   end
 
   def respond?
-    user.contractor?
+    user.service_provider?
   end
 end

@@ -1,0 +1,40 @@
+#:concurrency: 3
+#:timeout: 60
+#:verbose: true
+#:queues:
+#  - critical
+#  - default
+#  - mailers
+#  - active_storage_analysis
+#  - active_storage_purge
+
+# config/initializers/redis.rb
+#  $redis = Redis.new
+#  url = ENV["REDISCLOUD_URL"]
+#  if url
+#  Sidekiq.configure_server do |config|
+#config.redis = { url: url }
+#  end
+#  Sidekiq.configure_client do |config|
+#config.redis = { url: url }
+#  end
+#  $redis = Redis.new(:url => url)
+#  end
+
+# Procfile (if you use Heroku)
+#web: bundle exec puma -C config/puma.rb
+#worker: bundle exec sidekiq -C config/sidekiq.yml
+
+# before deploying on Heroku (terminal)
+#  heroku addons:create rediscloud
+
+#  # after deploying on Heroku (terminal)
+#  heroku ps:scale worker=1
+#  heroku ps # Check worker dyno is running
+
+
+---
+:verbose: false
+:concurrency: 5
+:queues:
+  - default

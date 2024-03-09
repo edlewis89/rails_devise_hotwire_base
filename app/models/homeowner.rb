@@ -1,13 +1,23 @@
 class Homeowner < User
   has_many :homeowner_requests, dependent: :destroy
-  has_one :profile, as: :profileable, dependent: :destroy, touch: true # Ensure the associated profile is destroyed when the homeowner is destroyed
+  has_many :service_requests
 
-  has_many :service_requests, as: :user
+  has_one :profile, class_name: 'Profile', as: :profileable
 
-  #has_many :userable, polymorphic: true
-  #belongs_to :user, :polymorphic => true
-  #after_create :create_profile
+  delegate :name, :phone_number, :city, :state, :zipcode, to: :profile
+  
+  #has_one :profile, as: :profileable, dependent: :destroy, touch: true # Ensure the associated profile is destroyed when the homeowner is destroyed
+
   Rails.logger.info "#{name}: #{all.to_sql}"
+
+  def profile
+    Profile.homeowner_profiles.find_by(profileable_id: self.id)
+  end
+
+  def is_active?
+    active # Assuming there's an 'active' attribute in the 'homeowners' table
+  end
+
   private
   #
   # def create_profile
