@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
   end
 
   def full_messages messages
-    messages.join("\n")
+    if messages.any?
+      messages.join("\n")
+    else
+      "something else went wrong!"
+    end
   end
 end

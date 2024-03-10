@@ -4,13 +4,14 @@ class Contractor < User
   
   has_many :service_responses
 
-  has_one :profile, class_name: 'Profile', as: :profileable
+  has_one :profile, class_name: 'Profile', as: :profileable, dependent: :destroy
 
   #has_one :profile, as: :profileable, dependent: :destroy, touch: true # Ensure the associated profile is destroyed when the homeowner is destroyed
 
   delegate :name, :phone_number, :availability, :city, :state, :zipcode, :service_area,
            :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
            :insurance_policy_number, :have_insured, to: :profile
+
 
   # contractor = Contractor.find(contractor_id)
   # service_request = ServiceRequest.find(service_request_id)
@@ -24,7 +25,9 @@ class Contractor < User
   end
 
   def profile
-    Profile.contractor_profiles.find_by(profileable_id: self.id)
+    profile = Profile.contractor_profiles.find_by(profileable_id: self.id)
+    profile ||= Profile.new(profileable_id: self.id, profileable_type: self.class.to_s)
+    profile
   end
 
   def is_active?

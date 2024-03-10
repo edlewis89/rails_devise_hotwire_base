@@ -141,9 +141,6 @@ hprofile = Profile.new(
   have_license: Faker::Boolean.boolean,
   name: Faker::Name.name,
   phone_number: Faker::PhoneNumber.phone_number,
-  city: Faker::Address.city,
-  state: Faker::Address.state,
-  zipcode: Faker::Address.zip_code,
   image: Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']),
   website: Faker::Internet.url,
   license_number: Faker::Lorem.word,
@@ -153,7 +150,19 @@ hprofile = Profile.new(
   specializations: Faker::Lorem.words(number: 3),
   certifications: Faker::Lorem.words(number: 3),
   languages_spoken: Faker::Lorem.words(number: 3),
-  description: Faker::Lorem.paragraph
+  description: Faker::Lorem.paragraph,
+  addresses_attributes: [
+    {
+      street: Faker::Address.street_address,
+      city: Faker::Address.city,
+      state: Faker::Address.state_abbr,
+      zipcode: Faker::Address.zip_code,
+      country: "USA",
+      latitude: Faker::Address.latitude,
+      longitude: Faker::Address.longitude,
+      additional_info: Faker::Lorem.sentence
+    }
+  ]
 )
 
 if hprofile.save
@@ -173,9 +182,6 @@ cprofile = Profile.create!(
   have_license: Faker::Boolean.boolean,
   name: Faker::Name.name,
   phone_number: Faker::PhoneNumber.phone_number,
-  city: Faker::Address.city,
-  state: Faker::Address.state,
-  zipcode: Faker::Address.zip_code,
   image: Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']),
   website: Faker::Internet.url,
   license_number: Faker::Lorem.word,
@@ -185,7 +191,19 @@ cprofile = Profile.create!(
   specializations: Faker::Lorem.words(number: 3),
   certifications: Faker::Lorem.words(number: 3),
   languages_spoken: Faker::Lorem.words(number: 3),
-  description: Faker::Lorem.paragraph
+  description: Faker::Lorem.paragraph,
+  addresses_attributes: [
+    {
+      street: Faker::Address.street_address,
+      city: Faker::Address.city,
+      state: Faker::Address.state_abbr,
+      zipcode: Faker::Address.zip_code,
+      country: "USA",
+      latitude: Faker::Address.latitude,
+      longitude: Faker::Address.longitude,
+      additional_info: Faker::Lorem.sentence
+    }
+  ]
 )
 
 puts 'Seed data generated successfully.'

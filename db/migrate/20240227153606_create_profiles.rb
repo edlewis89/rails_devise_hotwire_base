@@ -10,9 +10,6 @@ class CreateProfiles < ActiveRecord::Migration[7.1]
       t.boolean :have_license, default: false
       t.string :name,               null: false, default: ""
       t.string :phone_number,       null: false, default: ""
-      t.string :city
-      t.string :state
-      t.string :zipcode
       t.string :image
       t.string :website
       t.string :license_number
@@ -35,8 +32,5 @@ class CreateProfiles < ActiveRecord::Migration[7.1]
     #add_index :profiles, :contractor_id
     add_index :profiles, :name
     add_index :profiles, :phone_number
-    add_index :profiles, :city
-    add_index :profiles, :state
-    add_index :profiles, :zipcode
   end
 end

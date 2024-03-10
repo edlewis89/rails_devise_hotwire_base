@@ -10,9 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_07_160600) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_09_192546) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "street"
+    t.string "city"
+    t.string "state"
+    t.string "zipcode"
+    t.string "country"
+    t.float "latitude"
+    t.float "longitude"
+    t.text "additional_info"
+    t.string "addressable_type"
+    t.bigint "addressable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["addressable_id", "addressable_type"], name: "index_addresses_on_addressable_id_and_addressable_type"
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+    t.index ["city"], name: "index_addresses_on_city"
+    t.index ["latitude"], name: "index_addresses_on_latitude"
+    t.index ["longitude"], name: "index_addresses_on_longitude"
+    t.index ["state"], name: "index_addresses_on_state"
+    t.index ["zipcode"], name: "index_addresses_on_zipcode"
+  end
 
   create_table "contractor_homeowner_requests", force: :cascade do |t|
     t.bigint "homeowner_request_id", null: false
@@ -62,9 +84,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_07_160600) do
     t.boolean "have_license", default: false
     t.string "name", default: "", null: false
     t.string "phone_number", default: "", null: false
-    t.string "city"
-    t.string "state"
-    t.string "zipcode"
     t.string "image"
     t.string "website"
     t.string "license_number"
@@ -77,13 +96,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_07_160600) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["city"], name: "index_profiles_on_city"
     t.index ["name"], name: "index_profiles_on_name"
     t.index ["phone_number"], name: "index_profiles_on_phone_number"
     t.index ["profileable_type", "profileable_id"], name: "index_profiles_on_profileable"
-    t.index ["state"], name: "index_profiles_on_state"
     t.index ["user_id"], name: "index_profiles_on_user_id"
-    t.index ["zipcode"], name: "index_profiles_on_zipcode"
   end
 
   create_table "service_requests", force: :cascade do |t|
@@ -97,6 +113,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_07_160600) do
     t.decimal "budget", precision: 10, scale: 2
     t.string "timeline"
     t.string "status", default: "pending"
+    t.boolean "private", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["homeowner_type", "homeowner_id"], name: "index_service_requests_on_homeowner"

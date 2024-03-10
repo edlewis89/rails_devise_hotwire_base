@@ -4,15 +4,14 @@ class Profile < ApplicationRecord
 
   belongs_to :user
   belongs_to :profileable, polymorphic: true
+  has_many :addresses, as: :addressable
+
+  accepts_nested_attributes_for :addresses
 
   # Validations, attr_accessors, and other model code...
   validates :name, presence: true
   validates :phone_number, presence: true
   validates :availability, inclusion: { in: [true, false] }
-  validates :city, presence: true
-  validates :state, presence: true
-  validates :zipcode, presence: true
-  validates :service_area, presence: true
   validates :website, allow_blank: true, format: { with: URI.regexp }, if: -> { website.present? }
   validates :years_of_experience, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :hourly_rate, numericality: { greater_than_or_equal_to: 0 }
@@ -25,7 +24,10 @@ class Profile < ApplicationRecord
 
   mount_uploader :image, ImageUploader
 
-  delegate :active, :email, :public, :type, to: :user, prefix: true, allow_nil: true
+  delegate :role, :type, :active, :public, :email, to: :user, prefix: true, allow_nil: true
+  delegate :city, :state, :zipcode, to: :primary_address, prefix: true, allow_nil: true
+
+  after_create :validate_service_area_for_service_provider
 
   scope :active_profiles, -> { joins(:user).where(users: { active: true }) }
   scope :active_and_public_profiles, -> { joins(:user).where(users: { active: true, public: true }) }
@@ -44,11 +46,12 @@ class Profile < ApplicationRecord
 
   after_commit on: [:create, :update] do
     ensure_index_exists unless index_exists?
-    update_or_delete_document
+
+    update_or_create_document
   end
 
   after_commit on: [:destroy] do
-    delete_document if document_exists?
+    #delete_document if document_exists?
   end
 
   settings index: { number_of_shards: 1 } do
@@ -93,9 +96,9 @@ class Profile < ApplicationRecord
       name: name,
       description: description,
       phone_number: phone_number,
-      city: city,
-      state: state,
-      zipcode: zipcode,
+      city: primary_address_city,
+      state: primary_address_state,
+      zipcode: primary_address_zipcode,
       service_area: service_area,
       years_of_experience: years_of_experience,
       specializations: specializations,
@@ -165,12 +168,27 @@ class Profile < ApplicationRecord
 
   private
 
-  def update_or_delete_document
-    if condition_met_for_update?
-      __elasticsearch__.update_document
-    else
-      delete_document
+  def validate_service_area_for_service_provider
+    if user.service_provider? && service_area.blank?
+      errors.add(:service_area, "can't be blank for service providers")
+
+      raise ActiveRecord::RecordInvalid.new(self)
     end
+  end
+
+  def primary_address
+    addresses.first
+  end
+
+  def update_or_create_document
+    if condition_met_for_update_or_create?
+      document_exists? ? __elasticsearch__.update_document : create_document_in_elasticsearch
+    end
+  end
+
+  # Method to create the document in Elasticsearch
+  def create_document_in_elasticsearch
+    __elasticsearch__.index_document || __elasticsearch__.import
   end
 
   def delete_document
@@ -178,14 +196,14 @@ class Profile < ApplicationRecord
   end
 
   def document_exists?
-    __elasticsearch__.record_exists?
+    ElasticsearchHelper.instance.document_exists?(index_name, self.id)
   end
 
-  def condition_met_for_update?
+  def condition_met_for_update_or_create?
     # Define your condition for updating documents
     index_exists?
 
-    user.is_active? && user.is_public?
+    user.is_active? && (user.service_provider?)
   end
 
   def ensure_index_exists

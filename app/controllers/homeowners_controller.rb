@@ -21,6 +21,9 @@ class HomeownersController < ApplicationController
   # GET /homeowners/1/edit
   def edit
     @homeowner = Homeowner.find(params[:id])
+    @profile = @homeowner.profile
+    @address = @profile.addresses.first || Address.new
+
     respond_to do |format|
       format.html # Render HTML template for editing
       format.turbo_stream { render turbo_stream: turbo_stream.replace(@homeowner, partial: "homeowners/form", locals: { homeowner: @homeowner }) }
@@ -57,8 +60,10 @@ class HomeownersController < ApplicationController
 
   # PATCH/PUT /homeowners/1 or /homeowners/1.json
   def update
+    @homeowner = Homeowner.find(params[:id])
+
     respond_to do |format|
-      if @homeowner.update(homeowner_params) && @homeowner.profile.update(profile_params)
+      if @homeowner.update(homeowner_params) && @homeowner.profile&.update(profile_params)
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update(@homeowner,
@@ -70,6 +75,10 @@ class HomeownersController < ApplicationController
         format.html { redirect_to homeowner_url(@homeowner), notice: "Homeowner and profile was successfully updated." }
         format.json { render :show, status: :ok, location: @homeowner }
       else
+        homeowner_errors = @homeowner.errors.full_messages
+        profile_errors = @homeowner.profile&.errors&.full_messages || []
+        all_errors = homeowner_errors + profile_errors
+
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update(@homeowner,
@@ -132,6 +141,20 @@ class HomeownersController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def homeowner_params
-    params.require(:homeowner).permit(:name, :description)
+    params.require(:homeowner).permit(:active, :public, :email, profile_attributes: [
+      :id, :user_id, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :specializations_array, :languages_array, :have_license, :license_number,
+      :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
+      :insurance_policy_number, addresses_attributes: [:id, :city, :state, :zipcode, :_destroy]
+    ])
+  end
+
+  def profile_params
+    params.require(:homeowner).require(:profile_attributes).permit(
+      :id, :user_id, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :specializations_array, :languages_array, :have_license, :license_number,
+      :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
+      :insurance_policy_number, addresses_attributes: [:id, :city, :state, :zipcode, :_destroy]
+    )
   end
 end

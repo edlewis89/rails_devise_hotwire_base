@@ -7,7 +7,7 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def create?
-    user.present? && user.property_owner?
+    user.present? && user.admin?
   end
 
   def new?

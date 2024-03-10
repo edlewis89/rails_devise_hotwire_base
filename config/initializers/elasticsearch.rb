@@ -105,6 +105,13 @@ class ElasticsearchHelper
     puts mappings.to_json
   end
 
+  def document_exists?(index_name, document_id)
+    client.exists?(index: index_name, id: document_id)
+  rescue Elasticsearch::Transport::Transport::Error => e
+    puts "Error checking document existence: #{e.message}"
+    false
+  end
+
   private
 
   def build_client

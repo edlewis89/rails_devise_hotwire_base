@@ -10,6 +10,7 @@ class CreateServiceRequests < ActiveRecord::Migration[7.1]
       t.decimal :budget, precision: 10, scale: 2  # Adjust precision and scale as per your needs
       t.string :timeline
       t.string :status, default: "pending"
+      t.boolean :private, default: 0
 
       t.timestamps
     end

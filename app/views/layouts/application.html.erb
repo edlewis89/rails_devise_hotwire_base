@@ -87,6 +87,12 @@
             align-items: center;
             font-size: 12px;
         }
+        .notice-container {
+            text-align: center;
+            font-size: 20px; /* Adjust the font size as needed */
+            padding: 20px;
+            margin-bottom: 20px;
+        }
     </style>
   </head>
   <body>
@@ -231,7 +237,9 @@
           <p><a href="#">Link</a></p>
         </div>
         <div class="col-sm-8 text-left">
-          <%= render 'shared/notices' %>
+          <div class="notice-container">
+            <%= render 'shared/notices' %>
+          </div>
           <% if false %>
             <%= debug(params) if Rails.env.development? %>
           <% end %>

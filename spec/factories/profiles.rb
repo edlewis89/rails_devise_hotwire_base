@@ -10,9 +10,6 @@ FactoryBot.define do
     have_license { Faker::Boolean.boolean }
     name { Faker::Name.name }
     phone_number { Faker::PhoneNumber.phone_number }
-    city { Faker::Address.city }
-    state { Faker::Address.state }
-    zipcode { Faker::Address.zip_code }
     image { Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']) }
     website { Faker::Internet.url }
     license_number { Faker::Lorem.word }
@@ -23,5 +20,11 @@ FactoryBot.define do
     certifications { Faker::Lorem.words(number: 3) }
     languages_spoken { Faker::Lorem.words(number: 3) }
     description { Faker::Lorem.paragraph }
+
+    # Address attributes
+    after(:build) do |profile|
+      profile.addresses << FactoryBot.build(:address, addressable: profile)
+    end
   end
 end
+

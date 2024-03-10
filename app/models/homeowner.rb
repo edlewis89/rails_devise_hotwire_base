@@ -11,7 +11,9 @@ class Homeowner < User
   Rails.logger.info "#{name}: #{all.to_sql}"
 
   def profile
-    Profile.homeowner_profiles.find_by(profileable_id: self.id)
+    profile = Profile.homeowner_profiles.find_by(profileable_id: self.id)
+    profile ||= Profile.new(profileable_id: self.id, profileable_type: self.class.to_s)
+    profile
   end
 
   def is_active?
