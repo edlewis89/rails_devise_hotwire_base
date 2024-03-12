@@ -25,7 +25,7 @@ class User < ApplicationRecord
   has_many :received_conversations, foreign_key: :recipient_id, class_name: 'Conversation', dependent: :destroy
   # Messages sent by the user
   has_many :messages, dependent: :destroy
-  has_one :profile, as: :profileable
+  has_one :profile, as: :profileable, dependent: :destroy
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   

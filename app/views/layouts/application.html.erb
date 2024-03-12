@@ -21,30 +21,29 @@
         /* Remove the navbar's default margin-bottom and rounded borders */
         html, body {
             height: 100%;
-            margin: 0; /* Remove default margin */
-            padding: 0; /* Remove default padding */
+            margin: 0;
+            padding: 0;
         }
 
         .navbar {
             margin-bottom: 0;
             border-radius: 0;
         }
+
         .navbar-nav .nav-link {
-            font-size: 18px; /* Adjust the font size as needed */
+            font-size: 18px;
         }
 
         .content {
-            min-height: calc(100% - 50px); /* Adjust the height of the footer (50px in this case) */
+            min-height: calc(100% - 50px);
         }
 
-        /* Set gray background color and 100% height */
         .sidenav {
             padding-top: 20px;
             background-color: #f1f1f1;
             height: 100%;
         }
 
-        /* Set black background color, white text and some padding */
         .footer {
             position: relative;
             bottom: 0;
@@ -53,7 +52,6 @@
             padding: 20px 0;
         }
 
-        /* On small screens, set height to 'auto' for sidenav and grid */
         @media screen and (max-width: 767px) {
             .sidenav {
                 height: auto;
@@ -62,15 +60,16 @@
             .row.content {height:auto;}
         }
 
-        /* Sticky footer */
         body {
             display: flex;
             flex-direction: column;
         }
 
         .content {
-            flex: 1; /* Take remaining vertical space */
+            flex: 1;
+            padding-top: 56px; /* Adjust according to your navbar height */
         }
+
         .message-badge {
             position: relative;
             display: inline-block;
@@ -90,157 +89,177 @@
             align-items: center;
             font-size: 12px;
         }
+
         .notice-container {
             text-align: center;
-            font-size: 20px; /* Adjust the font size as needed */
+            font-size: 20px;
             padding: 20px;
             margin-bottom: 20px;
         }
+
         .carousel-item img {
-            transform: rotate(270deg); /* Adjust the rotation angle as needed */
+            transform: rotate(270deg);
+        }
+
+        .sidenav {
+            background-color: #f1f1f1;
+            height: 100%;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .footer {
+            background-color: #f1f1f1;
+            padding: 20px 0;
         }
     </style>
   </head>
   <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-
-      <!-- Logo -->
+      <!-- Navbar brand -->
       <%= link_to(root_path) do %>
         <%= image_tag("rentabud_navbar.png", class: "d-block", alt: "Logo", style: "width: 225px; height: 100px; margin: 0; padding: 0;") %>
       <% end %>
 
       <!-- Navbar toggler -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Collapsible content -->
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <!-- Offcanvas -->
+      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Dark offcanvas</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <!-- Navbar links -->
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <!-- User-specific links -->
+            <% if signed_in? %>
+              <!-- Homeowner actions -->
+              <% if current_user.property_owner? || current_user.service_provider? %>
+                <!-- Inbox dropdown -->
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Inbox
+                    <% unread_count = Conversation.unread_messages_count(current_user.id) %>
+                    <% unless unread_count.zero? %>
+                      <span class="badge bg-primary rounded-pill"><%= unread_count %></span>
+                    <% end %>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><%= link_to "View Inbox", conversations_path, class: "dropdown-item" %></li>
+                  </ul>
+                </li>
+              <% end %>
 
-          <!-- User-specific links -->
-          <% if signed_in? %>
-            <!-- Homeowner actions -->
-            <% if current_user.property_owner? || current_user.service_provider? %>
-              <!-- Inbox dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Inbox
-                  <% unread_count = Conversation.unread_messages_count(current_user.id) %>
-                  <% unless unread_count.zero? %>
-                    <span class="badge bg-primary rounded-pill"><%= unread_count %></span>
-                  <% end %>
-                </a>
-                <ul class="dropdown-menu">
-                  <li><%= link_to "View Inbox", conversations_path, class: "dropdown-item" %></li>
-                </ul>
-              </li>
-            <% end %>
+              <% if current_user.property_owner? %>
+                <li class="nav-item dropdown">
+                  <!-- Homeowner dropdown -->
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Property Owner
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><%= link_to "Create Service Request", new_service_request_path %></li>
+                    <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
+                  </ul>
+                </li>
+              <% end %>
 
-            <% if current_user.property_owner? %>
-              <li class="nav-item dropdown">
-                <!-- Homeowner dropdown -->
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Property Owner
-                </a>
-                <ul class="dropdown-menu">
-                  <li><%= link_to "Create Service Request", new_service_request_path %></li>
-                  <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
-                </ul>
-              </li>
-            <% end %>
+              <!-- Contractor actions -->
+              <% if current_user.service_provider? %>
+                <li class="nav-item dropdown">
+                  <!-- Contractor dropdown -->
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Service Provider
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
+                    <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><%= link_to "Profile", edit_contractor_path(current_user), class: "dropdown-item" %></li>
+                  </ul>
+                </li>
+              <% end %>
 
-            <!-- Contractor actions -->
-            <% if current_user.service_provider? %>
-              <li class="nav-item dropdown">
-                <!-- Contractor dropdown -->
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Service Provider
-                </a>
-                <ul class="dropdown-menu">
-                  <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
-                  <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><%= link_to "Profile", edit_contractor_path(current_user), class: "dropdown-item" %></li>
-                </ul>
-              </li>
-            <% end %>
+              <!-- Ad manager actions -->
+              <% if current_user.ad_manager? %>
+                <li class="nav-item dropdown">
+                  <!-- Ad manager dropdown -->
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Ad Manager
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><%= link_to 'Manage Ads', advertisements_path, class: "dropdown-item", data: { turbo: "false" } %></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><%= link_to 'Edit Profile', ad_managers_path, class: "dropdown-item" %></li>
+                  </ul>
+                </li>
+              <% end %>
 
-            <!-- Ad manager actions -->
-            <% if current_user.ad_manager? %>
-              <li class="nav-item dropdown">
-                <!-- Ad manager dropdown -->
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Ad Manager
-                </a>
-                <ul class="dropdown-menu">
-                  <li><%= link_to 'Manage Ads', advertisements_path, class: "dropdown-item", data: { turbo: "false" } %></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><%= link_to 'Edit Profile', ad_managers_path, class: "dropdown-item" %></li>
-                </ul>
-              </li>
-            <% end %>
+              <!-- Admin actions -->
+              <% if current_user.admin? %>
+                <li class="nav-item dropdown">
+                  <!-- Admin dropdown -->
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Admin
+                  </a>
+                  <ul class="dropdown-menu">
+                    <%= link_to 'Manage Services', services_path, class: "dropdown-item" %>
+                    <%= link_to 'Manage Contractors', contractors_path, class: "dropdown-item", data: { turbo: "false" } %>
+                    <%= link_to 'Manage Homeowners', homeowners_path, class: "dropdown-item", data: { turbo: "false" } %>
+                    <%= link_to 'Manage Ads', advertisements_path, class: "dropdown-item", data: { turbo: "false" } %>
+                    <li><hr class="dropdown-divider"></li>
+                    <%= link_to 'Edit Profile', admins_path, class: "dropdown-item" %>
+                  </ul>
+                </li>
+              <% end %>
 
-            <!-- Admin actions -->
-            <% if current_user.admin? %>
-              <li class="nav-item dropdown">
-                <!-- Admin dropdown -->
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Admin
-                </a>
-                <ul class="dropdown-menu">
-                  <%= link_to 'Manage Services', services_path, class: "dropdown-item" %>
-                  <%= link_to 'Manage Contractors', contractors_path, class: "dropdown-item", data: { turbo: "false" } %>
-                  <%= link_to 'Manage Homeowners', homeowners_path, class: "dropdown-item", data: { turbo: "false" } %>
-                  <%= link_to 'Manage Ads', advertisements_path, class: "dropdown-item", data: { turbo: "false" } %>
-                  <li><hr class="dropdown-divider"></li>
-                  <%= link_to 'Edit Profile', admins_path, class: "dropdown-item" %>
-                </ul>
-              </li>
-            <% end %>
-
-
-            <!-- Role -->
-            <!-- Role and Logout -->
-            <ul class="navbar-nav mb-2 mb-lg-0">
-              <!-- Log out -->
-              <li class="nav-item" style="margin-right: auto;">
-                <a href="<%= destroy_user_session_path %>" class="nav-link" data-turbo-method="delete">
-                  Log out
-                </a>
-              </li>
               <!-- Role -->
-              <li class="nav-item">
-                <a href="#" class="nav-link">
+              <!-- Role and Logout -->
+              <ul class="navbar-nav mb-2 mb-lg-0">
+                <!-- Log out -->
+                <li class="nav-item" style="margin-right: auto;">
+                  <a href="<%= destroy_user_session_path %>" class="nav-link" data-turbo-method="delete">
+                    Log out
+                  </a>
+                </li>
+                <!-- Role -->
+                <li class="nav-item">
                   Role: <%= current_user&.role %>
-                  User: <%= current_user&.email %>
-                </a>
-              </li>
-            </ul>
-          <% else %>
-            <!-- Log in -->
-            <li class="nav-item">
-              <%= link_to 'Log in', user_session_path, class: "nav-link", data: { turbo: "false" } %>
-            </li>
-          <% end %>
-        </ul>
+                </li>
 
-        <!-- Search form -->
-        <!-- Add an ID to the search form for easier selection -->
-        <form class="d-flex ms-auto" action="<%= search_contractors_path %>" method="get" id="searchForm">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query" id="searchInput">
-          <button class="btn btn-outline-primary" type="button" id="searchButton">Search</button>
-        </form>
+                <li class="nav-item">
+                  User: <%= current_user&.email %>
+                </li>
+              </ul>
+            <% else %>
+              <!-- Log in -->
+              <li class="nav-item">
+                <%= link_to 'Log in', user_session_path, class: "nav-link", data: { turbo: "false" } %>
+              </li>
+            <% end %>
+          </ul>
+
+          <!-- Search form -->
+          <!-- Add an ID to the search form for easier selection -->
+          <form class="d-flex ms-auto" action="<%= search_contractors_path %>" method="get" id="searchForm">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query" id="searchInput">
+            <button class="btn btn-outline-primary" type="button" id="searchButton">Search</button>
+          </form>
+        </div>
       </div>
-      <!-- /Collapsible content -->
     </div>
   </nav>
 
-  <div class="container-fluid text-center">
+  <div class="container-fluid main-content">
       <div class="row content">
         <div class="col-sm-2 sidenav">
           <p><a href="#">Link</a></p>

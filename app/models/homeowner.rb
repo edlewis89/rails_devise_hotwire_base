@@ -2,7 +2,8 @@ class Homeowner < User
   has_many :homeowner_requests, dependent: :destroy
   has_many :service_requests
 
-  has_one :profile, class_name: 'Profile', as: :profileable
+  has_one :profile, as: :profileable, dependent: :destroy
+  #has_one :profile, class_name: 'Profile', as: :profileable
 
   delegate :name, :phone_number, :city, :state, :zipcode, to: :profile
   

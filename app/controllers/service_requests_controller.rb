@@ -38,8 +38,13 @@ class ServiceRequestsController < ApplicationController
   # POST /service_requests
   # POST /service_requests.json
   def create
+    binding.pry
     @service_request = current_user.service_requests.build(service_request_params)
     @service_request.homeowner_type = 'Homeowner'
+
+    # Assign selected service IDs to the ServiceRequest object
+    @service_request.service_ids = service_request_params[:service_ids]
+
     if @service_request.save
       redirect_to @service_request, notice: "Service request was successfully created."
     else
@@ -139,6 +144,6 @@ class ServiceRequestsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def service_request_params
-    params.require(:service_request).permit(:title, :image, :description, :location, :budget, :timeline, :service_id, :message, :proposed_cost, :estimated_completion_date)
+    params.require(:service_request).permit(:title, :image_data, :description, :status, :range, :location, :budget, :timeline, :message, :proposed_cost, :estimated_completion_date, service_ids: [])
   end
 end

@@ -1,7 +1,8 @@
 class ContractorsController < ApplicationController
 
   before_action :authenticate_user!, except: %i[index show]
-  before_action :authorize_user, except: %i[show]
+  before_action :authorize_user, except: %i[index
+  show]
   before_action :set_contractor, only: %i[ show edit update destroy ]
 
   # GET /contractors or /contractors.json
@@ -133,21 +134,33 @@ class ContractorsController < ApplicationController
   private
 
   def search_contractors
-    contractor_ids = []
-
     # Search Elasticsearch for profiles matching the query
     es_response = Profile.search_in_elastic(query_params[:query]).response
+    # Initialize an array to store contractor IDs
+    profile_ids = []
+
     # Extract contractor IDs from Elasticsearch response
     if es_response.present? && es_response['hits'].present? && es_response['hits']['hits'].present?
       es_response['hits']['hits'].each do |hit|
-        profile_id = hit['_id']
-        profile = Profile.find(profile_id)
-        contractor_ids << profile.user_id if profile.present?
+        # Check if the profileable type is Contractor
+        if hit['_source']['profileable_type'] == 'Contractor' && hit['_source']['user_type'] == 'Contractor'
+          profile_ids << hit['_id']
+        end
       end
     end
 
-    # Fetch contractors based on the IDs retrieved from Elasticsearch
+    # Get all profiles with profileable_type as Contractor
+    contractor_ids = Profile.where(id: profile_ids, profileable_type: "Contractor").pluck(:profileable_id)
+
+    # Extract the associated Contractor IDs from the profiles
+    # contractor_ids = profiles.pluck(:profileable_id)
+
+    # Query the Contractor model directly with the filtered contractor_ids
     contractors = Contractor.where(id: contractor_ids)
+    # Fetch contractors based on the IDs retrieved from Elasticsearch
+    # Fetch contractors based on the profile IDs retrieved from Elasticsearch
+    # contractors = Contractor.includes(:profile).where(profiles: { id: profile_ids.map(&:to_i), profileable_type: "Contractor" })
+
     # Paginate the contractors
     @contractors = contractors.paginate(page: params[:page] || 1, per_page: 5)
 
@@ -167,12 +180,14 @@ class ContractorsController < ApplicationController
   end
 
   def render_index_template
-    if current_user.admin? || current_user.property_owner?
+    if current_user && (current_user.admin? || current_user.property_owner?)
       # Render the index template for admins and property owners
       render 'index_admin_property_owner'
-    else
+    elsif current_user && current_user.service_provider?
       # Render the index template for contractors
       render 'index_contractor'
+    else
+      render 'index'
     end
   end
 

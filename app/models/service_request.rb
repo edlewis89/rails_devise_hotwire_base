@@ -1,14 +1,15 @@
 class ServiceRequest < ApplicationRecord
   belongs_to :homeowner
-  belongs_to :service
+  has_and_belongs_to_many :services
+
   has_many :service_responses, dependent: :destroy
 
-  attr_accessor :image, :remote_image_url
-  mount_uploader :image, ImageUploader
+  attr_accessor :image_data, :remote_image_url
+  mount_uploader :image_data, ImageUploader
 
   delegate :type, to: :user, prefix: true, allow_nil: false
 
-  validates :description, :service, :location, :budget, :timeline, presence: true
+  validates :title, :description, :location, :budget, :timeline, presence: true
 
   include AASM
 
@@ -36,6 +37,10 @@ class ServiceRequest < ApplicationRecord
   scope :for_service_request, ->(service_request_id) { where(service_request_id: service_request_id) }
   # Scope to return all responses for a given contractor
   scope :for_contractor, ->(contractor_id) { joins(:service_responses).where(service_responses: { contractor_id: contractor_id }) }
+
+  def match_contractors
+    Contractor.match_with_service_request(self)
+  end
 
   private
 end

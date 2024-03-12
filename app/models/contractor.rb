@@ -4,7 +4,11 @@ class Contractor < User
   
   has_many :service_responses
 
-  has_one :profile, class_name: 'Profile', as: :profileable, dependent: :destroy
+  has_many :contractor_services
+  has_many :services, through: :contractor_services
+
+  has_one :profile, as: :profileable, dependent: :destroy
+  #has_one :profile, class_name: 'Profile', as: :profileable, dependent: :destroy
 
   #has_one :profile, as: :profileable, dependent: :destroy, touch: true # Ensure the associated profile is destroyed when the homeowner is destroyed
 
@@ -12,10 +16,51 @@ class Contractor < User
            :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
            :insurance_policy_number, :have_insured, to: :profile
 
+#  Define the Criteria: Determine the criteria for matching a contractor with a service request. This includes the service request's zipcode, the range within which the contractor should be located, and the required skills for the service.
+#
+#  Retrieve Contractors: Query the database to retrieve contractors that match the specified criteria. This query should consider the zipcode, range, and skills.
+#
+#  Match Contractors with Service Requests: Iterate over the retrieved contractors and match them with service requests based on their proximity to the service request's zipcode and their skills.
+#
+#  Return Matched Contractors: Return the matched contractors to be displayed or processed further.
+   scope :within_range, ->(zipcode, range) {
+    where(zipcode: zipcode).near(zipcode, range)
+  }
 
   # contractor = Contractor.find(contractor_id)
   # service_request = ServiceRequest.find(service_request_id)
   # responses = contractor.responses_for_request(service_request)
+
+  def self.match_with_service_request(service_request, zipcode:, active: true, public_only: true)
+    # Get the IDs of services needed in the request
+    required_service_ids = service_request.service_ids
+
+    # Start with a base query for contractors who provide all the required services
+    contractors = Contractor.joins(:services)
+                            .where(services: { id: required_service_ids })
+                            .group('contractors.id')
+                            .having('COUNT(services.id) = ?', required_service_ids.count)
+
+    # Filter based on active status if specified
+    contractors = contractors.active if active
+
+    # Filter based on privacy setting if specified
+    contractors = contractors.where(public: true) if public_only
+
+    # Filter based on zipcode
+    contractors = contractors.within_range(zipcode, service_request.range)
+
+    contractors
+  end
+
+  # def self.match_with_service_request(service_request)
+  #   contractors = Contractor.within_range(service_request.zipcode, service_request.range)
+  #                           .where("specializations && ARRAY[?]", service_request.required_specializations)
+  #                           .distinct
+  #
+  #   contractors
+  # end
+
   def responses_for_request(service_request)
     service_responses.where(service_request_id: service_request.id)
   end

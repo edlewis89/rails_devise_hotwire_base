@@ -32,6 +32,7 @@ class Profile < ApplicationRecord
 
   scope :active_profiles, -> { joins(:user).where(users: { active: true }) }
   scope :active_and_public_profiles, -> { joins(:user).where(users: { active: true, public: true }) }
+  scope :public_profiles, -> { joins(:user).where(users: { public: true }) }
   scope :contractor_profiles, -> { where(profileable_type: 'Contractor') }
   scope :homeowner_profiles, -> { where(profileable_type: 'Homeowner') }
   scope :admin_profiles, -> { where(profileable_type: 'Admin') }

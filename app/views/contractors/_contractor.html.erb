@@ -47,7 +47,7 @@
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
-            <% if current_user.admin? %>
+            <% if current_user && current_user.admin? %>
               <%= link_to "Edit", edit_contractor_path(contractor), method: :post, class: "btn btn-secondary me-2" %>
               <%= button_to "Destroy", contractor_path(contractor), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->contractors#destroy" } %>
             <% end %>
