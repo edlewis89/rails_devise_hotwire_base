@@ -1,0 +1,22 @@
+<!-- app/views/ads/index.html.erb -->
+<div class="container">
+  <h1 class="mb-4">Advertisements</h1>
+
+  <ul class="list-group">
+    <% @ads&.each do |ad| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <%= ad.title %>
+        <%= image_tag ad.image_data.url, class: "img-thumbnail" %>
+        <div class="btn-group" role="group" aria-label="Advertisement Actions">
+          <%= link_to 'Edit', edit_advertisement_path(ad), class: 'btn btn-secondary btn-sm me-2' %>
+
+          <% if current_user.ad_manager? || current_user.admin? %>
+            <%= button_to "Destroy", advertisement_path(ad), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->advertisements#destroy" } %>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+
+  <%= link_to 'New Advertisement', new_advertisement_path, class: 'btn btn-success mt-4' %>
+</div>

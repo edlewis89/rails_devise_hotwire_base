@@ -1,0 +1,10 @@
+<div class="container">
+  <h1>Your Profile</h1>
+
+  <div id="contractor">
+    <%= render @contractor %>
+  </div>
+  <div class="text-right">
+    <%= link_to "Edit Profile", edit_contractor_path(@contractor), class: "btn btn-primary" %>
+  </div>
+</div>

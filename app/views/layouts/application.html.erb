@@ -29,6 +29,9 @@
             margin-bottom: 0;
             border-radius: 0;
         }
+        .navbar-nav .nav-link {
+            font-size: 18px; /* Adjust the font size as needed */
+        }
 
         .content {
             min-height: calc(100% - 50px); /* Adjust the height of the footer (50px in this case) */
@@ -93,114 +96,99 @@
             padding: 20px;
             margin-bottom: 20px;
         }
+        .carousel-item img {
+            transform: rotate(270deg); /* Adjust the rotation angle as needed */
+        }
     </style>
   </head>
   <body>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
-        Rent-A-bud
-      </a>
 
+      <!-- Logo -->
+      <%= link_to(root_path) do %>
+        <%= image_tag("rentabud_navbar.png", class: "d-block", alt: "Logo", style: "width: 225px; height: 100px; margin: 0; padding: 0;") %>
+      <% end %>
+
+      <!-- Navbar toggler -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <%= link_to 'Home', root_path, class: "nav-brand", data: { turbo: "false" } %>
-
-
+      <!-- Collapsible content -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
 
+          <!-- User-specific links -->
           <% if signed_in? %>
-            <!-- Add your header content here -->
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-
-                <%
-                  unread_count = Conversation.unread_messages_count(current_user.id)
-                  unless unread_count.zero? %>
-                  <span class="badge bg-primary rounded-pill"><%= unread_count %></span>
-                <% end %>
-                Inbox
-              </a>
-              <ul class="dropdown-menu">
-                <li><%= link_to "View Inbox", conversations_path, class: "dropdown-item" %></li>
-              </ul>
-            </li>
-
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-link" > Role: <%= current_user&.role %></li>
-            </ul>
+            <!-- Homeowner actions -->
+            <% if current_user.property_owner? || current_user.service_provider? %>
+              <!-- Inbox dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Inbox
+                  <% unread_count = Conversation.unread_messages_count(current_user.id) %>
+                  <% unless unread_count.zero? %>
+                    <span class="badge bg-primary rounded-pill"><%= unread_count %></span>
+                  <% end %>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><%= link_to "View Inbox", conversations_path, class: "dropdown-item" %></li>
+                </ul>
+              </li>
+            <% end %>
 
             <% if current_user.property_owner? %>
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-link"><%= link_to "Create Service Request", new_service_request_path %></li>
-              </ul>
-
               <li class="nav-item dropdown">
+                <!-- Homeowner dropdown -->
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Home Owner
+                  Property Owner
                 </a>
                 <ul class="dropdown-menu">
-                    <li><hr class="dropdown-divider"></li>
-                    <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
-                    <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
+                  <li><%= link_to "Create Service Request", new_service_request_path %></li>
+                  <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
                 </ul>
-              </li>
-
-              <li class="nav-item dropdown">
-                <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <%= current_user.email %>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li class="dropdown-item" ></li>
-                    <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
-                  </ul>
-                </div>
               </li>
             <% end %>
 
-
+            <!-- Contractor actions -->
             <% if current_user.service_provider? %>
               <li class="nav-item dropdown">
+                <!-- Contractor dropdown -->
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Contractor
+                  Service Provider
                 </a>
                 <ul class="dropdown-menu">
-                  <li><hr class="dropdown-divider"></li>
                   <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
                   <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Profile", edit_contractor_path(current_user), class: "dropdown-item" %></li>
                 </ul>
-              </li>
-              <li class="nav-item dropdown">
-
-                <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <%= current_user.email %>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><%= link_to "Profile", edit_contractor_path(current_user), class: "dropdown-item" %></li>
-                  </ul>
-                </div>
               </li>
             <% end %>
 
+            <!-- Ad manager actions -->
+            <% if current_user.ad_manager? %>
+              <li class="nav-item dropdown">
+                <!-- Ad manager dropdown -->
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Ad Manager
+                </a>
+                <ul class="dropdown-menu">
+                  <li><%= link_to 'Manage Ads', advertisements_path, class: "dropdown-item", data: { turbo: "false" } %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to 'Edit Profile', ad_managers_path, class: "dropdown-item" %></li>
+                </ul>
+              </li>
+            <% end %>
 
-            <li class="nav-item" style="margin-left: auto;">
-              <a href="<%= destroy_user_session_path %>" class="nav-link" data-turbo-method="delete">
-                Log out
-              </a>
-            </li>
-
+            <!-- Admin actions -->
             <% if current_user.admin? %>
               <li class="nav-item dropdown">
+                <!-- Admin dropdown -->
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Admin
                 </a>
@@ -208,26 +196,49 @@
                   <%= link_to 'Manage Services', services_path, class: "dropdown-item" %>
                   <%= link_to 'Manage Contractors', contractors_path, class: "dropdown-item", data: { turbo: "false" } %>
                   <%= link_to 'Manage Homeowners', homeowners_path, class: "dropdown-item", data: { turbo: "false" } %>
+                  <%= link_to 'Manage Ads', advertisements_path, class: "dropdown-item", data: { turbo: "false" } %>
+                  <li><hr class="dropdown-divider"></li>
+                  <%= link_to 'Edit Profile', admins_path, class: "dropdown-item" %>
                 </ul>
               </li>
             <% end %>
 
+
+            <!-- Role -->
+            <!-- Role and Logout -->
+            <ul class="navbar-nav mb-2 mb-lg-0">
+              <!-- Log out -->
+              <li class="nav-item" style="margin-right: auto;">
+                <a href="<%= destroy_user_session_path %>" class="nav-link" data-turbo-method="delete">
+                  Log out
+                </a>
+              </li>
+              <!-- Role -->
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  Role: <%= current_user&.role %>
+                  User: <%= current_user&.email %>
+                </a>
+              </li>
+            </ul>
           <% else %>
+            <!-- Log in -->
             <li class="nav-item">
               <%= link_to 'Log in', user_session_path, class: "nav-link", data: { turbo: "false" } %>
             </li>
           <% end %>
-
         </ul>
-        <!-- Search form to the right -->
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
+
+        <!-- Search form -->
+        <!-- Add an ID to the search form for easier selection -->
+        <form class="d-flex ms-auto" action="<%= search_contractors_path %>" method="get" id="searchForm">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query" id="searchInput">
+          <button class="btn btn-outline-primary" type="button" id="searchButton">Search</button>
         </form>
       </div>
+      <!-- /Collapsible content -->
     </div>
   </nav>
-
 
   <div class="container-fluid text-center">
       <div class="row content">
@@ -245,12 +256,37 @@
           <% end %>
           <%= yield %>
         </div>
+
         <div class="col-sm-2 sidenav">
-          <div class="well">
-            <%= turbo_stream_from "messages" %>
-          </div>
-          <div class="well">
-            <p>ADS</p>
+          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <% if @ads.present? %>
+                <% @ads.each_with_index do |ad, index| %>
+                  <div class="carousel-item <%= 'active' if index.zero? %>">
+                    <%= link_to ad.url do %>
+                      <%= image_tag ad.image_data.url, class: "d-block w-100", alt: ad.title if ad.image_data.present? %>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="carousel-item active">
+                  <%= image_tag "rentabud_navbar.png", class: "d-block w-100", alt: "Placeholder Image" %>
+                  <!-- Or any placeholder message -->
+                  <div class="carousel-caption">
+                    <h5>No ads available</h5>
+                    <p>Check back later for more content</p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
           </div>
         </div>
       </div>
@@ -324,6 +360,20 @@
 
             // Use Turbo Streams to visit the URL
             Turbo.visit(url, { action: "append" });
+        });
+    });
+
+    document.addEventListener("turbo:load", function() {
+        // Add event listener to the search button
+        document.getElementById("searchButton").addEventListener("click", function() {
+            // Get the search input value
+            var searchValue = document.getElementById("searchInput").value;
+
+            // Construct the search URL with the query parameter
+            var searchURL = "<%= search_contractors_path %>?query=" + encodeURIComponent(searchValue);
+
+            // Use Turbo to visit the search URL
+            Turbo.visit(searchURL);
         });
     });
 

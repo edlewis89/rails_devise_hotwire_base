@@ -2,6 +2,7 @@
   <div class="card-body">
     <div class="container">
       <% attributes = [
+        { label: "Photo:", value: contractor.profile&.image_data },
         { label: "Name:", value: contractor.profile&.name },
         { label: "Description:", value: contractor.profile&.description },
         { label: "Email:", value: contractor.email },
@@ -21,34 +22,33 @@
         { label: "Certifications:", value: contractor.profile&.certifications&.join(', ') },
         { label: "Languages Spoken:", value: contractor.profile&.languages_spoken&.join(', ') },
         { label: "Hourly Rate:", value: contractor.profile&.hourly_rate },
-        { label: "Photo:", value: contractor.profile&.image },
         { label: "Active:", value: contractor.active },
         { label: "Public:", value: contractor.public }
       ] %>
 
       <div class="row">
-        <% attributes.each_slice(5) do |slice| %>
-          <% slice.each do |attr| %>
-            <div class="col-md-3">
-              <div class="row">
-                <div class="col text-right">
-                  <strong><%= attr[:label] %></strong>
-                </div>
-                <div class="col">
-                  <%= attr[:value] %>
-                </div>
-              </div>
-            </div>
+        <div class="col-md-4">
+          <% if contractor.profile&.image_data.present? %>
+            <%= image_tag contractor.profile&.image_data.url, class: "img-fluid rounded-circle mb-3" %>
           <% end %>
-        <% end %>
+        </div>
+        <div class="col-md-8">
+          <% attributes.each do |attr| %>
+            <% if attr[:value].present? %>
+              <div class="row mb-2">
+                <div class="col-md-4 text-end"><strong><%= attr[:label] %></strong></div>
+                <div class="col-md-8"><%= attr[:value] %></div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       </div>
 
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
-            <%= link_to "Show", contractor, class: "btn btn-primary mr-1" %>
             <% if current_user.admin? %>
-              <%= link_to "Edit", edit_contractor_path(contractor), method: :post, class: "btn btn-secondary mr-1" %>
+              <%= link_to "Edit", edit_contractor_path(contractor), method: :post, class: "btn btn-secondary me-2" %>
               <%= button_to "Destroy", contractor_path(contractor), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->contractors#destroy" } %>
             <% end %>
           </div>

@@ -20,9 +20,10 @@ class Profile < ApplicationRecord
 
   validates_presence_of :insurance_provider, :insurance_policy_number, if: :require_insurance?
 
-  attr_accessor :image, :remote_image_url
+  # If you want to allow remote image URLs for uploading
+  attr_accessor :remote_image_url
 
-  mount_uploader :image, ImageUploader
+  mount_uploader :image_data, ImageUploader
 
   delegate :role, :type, :active, :public, :email, to: :user, prefix: true, allow_nil: true
   delegate :city, :state, :zipcode, to: :primary_address, prefix: true, allow_nil: true
@@ -33,6 +34,8 @@ class Profile < ApplicationRecord
   scope :active_and_public_profiles, -> { joins(:user).where(users: { active: true, public: true }) }
   scope :contractor_profiles, -> { where(profileable_type: 'Contractor') }
   scope :homeowner_profiles, -> { where(profileable_type: 'Homeowner') }
+  scope :admin_profiles, -> { where(profileable_type: 'Admin') }
+  scope :ad_manager_profiles, -> { where(profileable_type: 'AdManager') }
 
   ## Example usage
   # contractor_profiles = Profile.by_profileable(contractor.id, 'Contractor')
@@ -203,7 +206,7 @@ class Profile < ApplicationRecord
     # Define your condition for updating documents
     index_exists?
 
-    user.is_active? && (user.service_provider?)
+    user.is_active? #&& (user.service_provider?)
   end
 
   def ensure_index_exists

@@ -1,7 +1,6 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-
   devise_for :users, controllers: {
     registrations: 'users/registrations'
   }
@@ -11,8 +10,6 @@ Rails.application.routes.draw do
       get :confirm_email
     end
   end
-
-  post '/send_data', to: 'home#send_data'
 
   resources :conversations, only: [:index, :create] do
     resources :messages, only: [:index, :create]
@@ -58,6 +55,18 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :admins do
+    member do
+      post :edit
+    end
+  end
+
+  resources :ad_managers do
+    member do
+      post :edit
+    end
+  end
+
   resources :service_requests, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
     get 'respond', on: :member
     resources :service_responses, only: [:index, :new, :create]
@@ -65,6 +74,7 @@ Rails.application.routes.draw do
 
   resources :services, only: [:index, :new, :create, :edit, :update, :destroy]
 
+  resources :advertisements, only: [:index, :new, :create, :edit, :update, :destroy]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -77,5 +87,7 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  post '/send_data', to: 'home#send_data'
+  #get '/profile/edit', to: 'users/registrations#edit', as: 'edit_user_profile'
   root 'home#index'
 end

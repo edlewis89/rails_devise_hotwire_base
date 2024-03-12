@@ -1,0 +1,17 @@
+<div class="container">
+  <h1>Contractor Profiles</h1>
+
+  <div id="contractors">
+    <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
+
+    <% if @contractors.any? %>
+      <%= render @contractors %>
+    <% else %>
+      <div class="alert alert-info" role="alert">
+        No contractors found.
+      </div>
+    <% end %>
+
+    <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
+  </div>
+</div>

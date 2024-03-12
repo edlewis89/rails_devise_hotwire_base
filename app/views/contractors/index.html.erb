@@ -1,22 +1,28 @@
 <div class="container">
-  <h1>Contractor Profiles</h1>
+  <% if current_user.admin? || current_user.property_owner? %>
+    <h1>Contractor Profiles</h1>
 
-  <div id="contractors">
-    <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
+    <div id="contractors">
+      <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
 
-    <% if @contractors.any? %>
-      <%= render @contractors %>
-    <% else %>
-      <div class="alert alert-info" role="alert">
-        No contractors found.
-      </div>
-    <% end %>
+      <% if @contractors.any? %>
+        <%= render @contractors %>
+      <% else %>
+        <div class="alert alert-info" role="alert">
+          No contractors found.
+        </div>
+      <% end %>
 
-    <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
-  </div>
-  <div class="text-right">
-    <% if current_user.admin? %>
-      <%= link_to "New contractor", new_contractor_path, class: "btn btn-primary" %>
-    <% end %>
-  </div>
+      <%= will_paginate @contractors, renderer: BootstrapPagination::Rails %>
+    </div>
+  <% else %>
+    <h1>Your Profile</h1>
+
+    <div id="contractor">
+      <%= render @contractor %>
+    </div>
+    <div class="text-right">
+      <%= link_to "Edit Profile", edit_contractor_path(@contractor), class: "btn btn-primary" %>
+    </div>
+  <% end %>
 </div>

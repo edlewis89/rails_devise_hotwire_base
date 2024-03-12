@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+  before_action :set_ads
+
   protected
 
   private
@@ -18,5 +20,16 @@ class ApplicationController < ActionController::Base
     else
       "something else went wrong!"
     end
+  end
+
+  def set_ads
+    @user_location = current_user&.primary_address_city || request.location.city
+    @services = Service.pluck(:name) # Retrieve all service names
+
+    # Find advertisements matching the user's location (zipcode or city) for all services
+    @ads = Advertisement.joins(:addresses)
+                        .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                        .includes(:service)
+                        .order(created_at: :desc) || []
   end
 end

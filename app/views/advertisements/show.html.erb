@@ -1,0 +1,23 @@
+<!-- app/views/ads/show.html.erb -->
+<p>
+  <strong>Title:</strong>
+  <%= @ad.title %>
+</p>
+
+<p>
+  <strong>Image:</strong>
+  <%= @ad.image %>
+</p>
+
+<p>
+  <strong>URL:</strong>
+  <%= @ad.url %>
+</p>
+
+<p>
+  <strong>Service:</strong>
+  <%= @ad.service.name %>
+</p>
+
+<%= link_to 'Edit', edit_advertisement_path(@ad) %> |
+<%= link_to 'Back', advertisements_path %>

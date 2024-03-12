@@ -1,31 +1,15 @@
 class ContractorsController < ApplicationController
 
   before_action :authenticate_user!, except: %i[index show]
-  before_action :authorize_user, except: %i[index show]
+  before_action :authorize_user, except: %i[show]
   before_action :set_contractor, only: %i[ show edit update destroy ]
 
   # GET /contractors or /contractors.json
   def index
     if query_params.key?(:query) && query_params[:query].present?
-      contractor_ids = []
-
-      # Search Elasticsearch for profiles matching the query
-      es_response = Profile.search_in_elastic(query_params[:query]).response
-      # Extract contractor IDs from Elasticsearch response
-      if es_response.present? && es_response['hits'].present? && es_response['hits']['hits'].present?
-        es_response['hits']['hits'].each do |hit|
-          profile_id = hit['_id']
-          profile = Profile.find(profile_id)
-          contractor_ids << profile.user_id if profile.present?
-        end
-      end
-      # Fetch contractors based on the IDs retrieved from Elasticsearch
-      contractors = Contractor.where(id: contractor_ids)
-      # Paginate the contractors
-      @contractors = contractors.paginate(page: params[:page] || 1, per_page: 5)
+      search_contractors
     else
-      # Handle the case where the Elasticsearch search returned nil
-      @contractors = Contractor.order(created_at: :desc).paginate(page: params[:page] || 1, per_page: 5)
+      load_contractors
     end
   end
   
@@ -148,6 +132,50 @@ class ContractorsController < ApplicationController
 
   private
 
+  def search_contractors
+    contractor_ids = []
+
+    # Search Elasticsearch for profiles matching the query
+    es_response = Profile.search_in_elastic(query_params[:query]).response
+    # Extract contractor IDs from Elasticsearch response
+    if es_response.present? && es_response['hits'].present? && es_response['hits']['hits'].present?
+      es_response['hits']['hits'].each do |hit|
+        profile_id = hit['_id']
+        profile = Profile.find(profile_id)
+        contractor_ids << profile.user_id if profile.present?
+      end
+    end
+
+    # Fetch contractors based on the IDs retrieved from Elasticsearch
+    contractors = Contractor.where(id: contractor_ids)
+    # Paginate the contractors
+    @contractors = contractors.paginate(page: params[:page] || 1, per_page: 5)
+
+    render_index_template
+  end
+
+  def load_contractors
+    if current_user.admin? || current_user.property_owner?
+      # For admins and property owners, show all contractors
+      @contractors = Contractor.paginate(page: params[:page] || 1, per_page: 5)
+    else
+      # For contractors, show their own profile
+      @contractor = current_user
+    end
+
+    render_index_template
+  end
+
+  def render_index_template
+    if current_user.admin? || current_user.property_owner?
+      # Render the index template for admins and property owners
+      render 'index_admin_property_owner'
+    else
+      # Render the index template for contractors
+      render 'index_contractor'
+    end
+  end
+
   # Use callbacks to share common setup or constraints between actions.
   def authorize_user
     contractor = @contractor || Contractor
@@ -160,20 +188,20 @@ class ContractorsController < ApplicationController
   # Permit contractor parameters
   def contractor_params
     params.require(:contractor).permit(:active, :public, :email, profile_attributes: [
-      :id, :user_id, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
     ])
   end
 
   # Permit profile parameters
   def profile_params
     params.require(:contractor).require(:profile_attributes).permit(
-      :id, :user_id, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
     )
   end
 

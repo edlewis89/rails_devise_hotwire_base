@@ -10,7 +10,7 @@ FactoryBot.define do
     have_license { Faker::Boolean.boolean }
     name { Faker::Name.name }
     phone_number { Faker::PhoneNumber.phone_number }
-    image { Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']) }
+    image_data { Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']) }
     website { Faker::Internet.url }
     license_number { Faker::Lorem.word }
     insurance_provider { Faker::Lorem.word }
@@ -27,4 +27,31 @@ FactoryBot.define do
     end
   end
 end
+
+
+
+# spec/factories/profiles.rb
+#
+# FactoryBot.define do
+#   factory :profile do
+#     user
+#     first_name { "John" }
+#     last_name { "Doe" }
+#     bio { "Lorem ipsum dolor sit amet, consectetur adipiscing elit." }
+#     # Add other profile attributes as needed
+#   end
+# end
+# ruby
+# Copy code
+# # spec/factories/advertisements.rb
+#
+# FactoryBot.define do
+#   factory :advertisement do
+#     title { "Ad Title" }
+#     url { "https://example.com" }
+#     link { "https://example.com" }
+#     service
+#     # Add other advertisement attributes as needed
+#   end
+# end
 

@@ -1,0 +1,61 @@
+<div id="<%= dom_id ad_manager %>" class="card mb-3">
+  <div class="card-body">
+    <div class="container">
+      <% attributes = [
+        { label: "Photo:", value: ad_manager.profile&.image_data },
+        { label: "Name:", value: ad_manager.profile&.name },
+        { label: "Description:", value: ad_manager.profile&.description },
+        { label: "Email:", value: ad_manager.email },
+        { label: "Availability:", value: ad_manager.profile&.availability },
+        { label: "Phone #:", value: ad_manager.profile&.phone_number },
+        { label: "City:", value: ad_manager.profile&.primary_address_city },
+        { label: "State:", value: ad_manager.profile&.primary_address_state },
+        { label: "Zipcode:", value: ad_manager.profile&.primary_address_zipcode },
+        { label: "License #:", value: ad_manager.profile&.license_number },
+        { label: "Insurance Provider:", value: ad_manager.profile&.insurance_provider },
+        { label: "Insurance Policy #:", value: ad_manager.profile&.insurance_policy_number },
+        { label: "License:", value: ad_manager.profile&.have_license },
+        { label: "Insurance:", value: ad_manager.profile&.have_insurance },
+        { label: "Service Area:", value: ad_manager.profile&.service_area },
+        { label: "Experience (yrs):", value: ad_manager.profile&.years_of_experience },
+        { label: "Specializations:", value: ad_manager.profile&.specializations&.join(', ') },
+        { label: "Certifications:", value: ad_manager.profile&.certifications&.join(', ') },
+        { label: "Languages Spoken:", value: ad_manager.profile&.languages_spoken&.join(', ') },
+        { label: "Hourly Rate:", value: ad_manager.profile&.hourly_rate },
+        { label: "Active:", value: ad_manager.active },
+        { label: "Public:", value: ad_manager.public }
+      ] %>
+
+      <div class="row">
+        <div class="col-md-4">
+          <% if ad_manager.profile&.image_data.present? %>
+            <%= image_tag ad_manager.profile&.image_data.url, class: "img-fluid rounded-circle mb-3" %>
+          <% end %>
+        </div>
+        <div class="col-md-8">
+          <% attributes.each do |attr| %>
+            <% if attr[:value].present? %>
+              <div class="row mb-2">
+                <div class="col-md-4 text-end"><strong><%= attr[:label] %></strong></div>
+                <div class="col-md-8"><%= attr[:value] %></div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="d-flex justify-content-end">
+            <% if current_user.ad_manager? %>
+              <%= link_to "Edit", edit_ad_manager_path(ad_manager), method: :post, class: "btn btn-secondary mr-1" %>
+            <% end %>
+            <% if current_user.admin? %>
+              <%= button_to "Destroy", ad_manager_path(ad_manager), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->ad_managers#destroy" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

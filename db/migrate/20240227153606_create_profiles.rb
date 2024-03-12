@@ -10,7 +10,8 @@ class CreateProfiles < ActiveRecord::Migration[7.1]
       t.boolean :have_license, default: false
       t.string :name,               null: false, default: ""
       t.string :phone_number,       null: false, default: ""
-      t.string :image
+      # Add a column to hold the image metadata
+      t.string :image_data
       t.string :website
       t.string :license_number
       t.string :insurance_provider

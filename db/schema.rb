@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_09_192546) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_11_134958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,6 +34,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_09_192546) do
     t.index ["longitude"], name: "index_addresses_on_longitude"
     t.index ["state"], name: "index_addresses_on_state"
     t.index ["zipcode"], name: "index_addresses_on_zipcode"
+  end
+
+  create_table "advertisements", force: :cascade do |t|
+    t.string "title"
+    t.string "url"
+    t.string "image_data"
+    t.string "link"
+    t.bigint "service_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_id"], name: "index_advertisements_on_service_id"
   end
 
   create_table "contractor_homeowner_requests", force: :cascade do |t|
@@ -84,7 +95,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_09_192546) do
     t.boolean "have_license", default: false
     t.string "name", default: "", null: false
     t.string "phone_number", default: "", null: false
-    t.string "image"
+    t.string "image_data"
     t.string "website"
     t.string "license_number"
     t.string "insurance_provider"
@@ -171,6 +182,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_09_192546) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
+  add_foreign_key "advertisements", "services"
   add_foreign_key "contractor_homeowner_requests", "homeowner_requests"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"

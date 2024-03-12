@@ -1,22 +1,31 @@
 <div class="container">
-  <h1>Homeowner Profiles</h1>
+  <% if current_user.admin? %>
+    <h1>Homeowner Profiles</h1>
 
-  <div id="homeowners">
-    <%= will_paginate @homeowners, renderer: BootstrapPagination::Rails %>
+    <div id="homeowners">
+      <%= will_paginate @homeowners, renderer: BootstrapPagination::Rails %>
 
-    <% if @homeowners.any? %>
-      <%= render @homeowners %>
-    <% else %>
-      <div class="alert alert-info" role="alert">
-        No homeowners found.
-      </div>
-    <% end %>
+      <% if @homeowners.any? %>
+        <%= render @homeowners %>
+      <% else %>
+        <div class="alert alert-info" role="alert">
+          No homeowners found.
+        </div>
+      <% end %>
 
-    <%= will_paginate @homeowners, renderer: BootstrapPagination::Rails %>
-  </div>
-  <div class="text-right">
-    <% if current_user.admin? %>
+      <%= will_paginate @homeowners, renderer: BootstrapPagination::Rails %>
+    </div>
+    <div class="text-right">
       <%= link_to "New homeowners", new_homeowner_path, class: "btn btn-primary" %>
-    <% end %>
-  </div>
+    </div>
+  <% else %>
+    <h1>Your Profile</h1>
+
+    <div id="homeowner">
+      <%= render @homeowner %>
+    </div>
+    <div class="text-right">
+      <%= link_to "Edit Profile", edit_homeowner_path(@homeowner), class: "btn btn-primary" %>
+    </div>
+  <% end %>
 </div>

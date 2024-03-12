@@ -14,7 +14,7 @@ class User < ApplicationRecord
   # :service_provider: Service providers (contractors)
   # :admin: Administrators
   #
-  enum role: %i(general property_owner service_provider admin)
+  enum role: %i(general property_owner service_provider ad_manager admin)
   enum subscription_level: %i(basic premium pro)
 
   has_many :homeowner_requests
@@ -32,6 +32,8 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :profile
   
   delegate :name, to: :profile, prefix: true
+  delegate :primary_address_zipcode, to: :profile, prefix: false
+  delegate :primary_address_city, to: :profile, prefix: false
 
   # Define a scope for active records
   scope :active_users, -> { where(active: true) }

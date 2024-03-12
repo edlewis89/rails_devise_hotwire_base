@@ -6,7 +6,11 @@ class HomeownersController < ApplicationController
 
   # GET /homeowners or /homeowners.json
   def index
-    @homeowners = Homeowner.order(created_at: :desc).paginate(page: params[:page], per_page: 5)
+    if current_user.admin?
+      @homeowners = Homeowner.order(created_at: :desc).paginate(page: params[:page], per_page: 5)
+    else
+      @homeowner = current_user
+    end
   end
 
   # GET /homeowners/1 or /homeowners/1.json
@@ -142,19 +146,19 @@ class HomeownersController < ApplicationController
   # Only allow a list of trusted parameters through.
   def homeowner_params
     params.require(:homeowner).permit(:active, :public, :email, profile_attributes: [
-      :id, :user_id, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
     ])
   end
 
   def profile_params
     params.require(:homeowner).require(:profile_attributes).permit(
-      :id, :user_id, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
     )
   end
 end

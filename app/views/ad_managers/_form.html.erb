@@ -1,0 +1,234 @@
+<%= simple_form_for @ad_manager, html: { class: "form-horizontal" } do |c| %>
+
+  <% if @ad_manager.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@ad_manager.errors.count, "error") %> prohibited this ad manager from being saved:</h2>
+      <ul>
+        <% @ad_manager.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="container-fluid">
+    <!-- Contractor fields -->
+    <!-- Contractor form fields go here -->
+
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="d-inline-flex align-items-center">
+          <h1 class="mr-10">Ad Manager Profile</h1>
+          <% if current_user.ad_manager? || current_user.admin? %>
+            <div class="custom-control custom-switch">
+              <%= c.check_box :active, class: "custom-control-input", id: "activeSwitch" %>
+              <%= c.label :active, class: "custom-control-label", for: "activeSwitch" %>
+            </div>
+            <div class="custom-control custom-switch">
+              <%= c.check_box :public, class: "custom-control-input", id: "publicSwitch" %>
+              <%= c.label :public, class: "custom-control-label", for: "publicSwitch" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add more fields in the first column as needed -->
+    <div class="form-group">
+      <%= c.label :email, class: "control-label col-sm-4" %>
+      <div class="col-sm-8">
+        <%= c.input :email, label: false, placeholder: "Enter email", input_html: { class: "form-control" } %>
+      </div>
+    </div>
+
+    <%= c.simple_fields_for :profile, @profile, html: { class: "form-horizontal" } do |p| %>
+      <!-- Profile fields -->
+      <%= p.hidden_field :user_id, value: @ad_manager.id %>
+      <div class="row">
+        <!-- Add more fields in the first column as needed -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= p.label 'Photo', class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.file_field :image_data  %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :name, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :name, label: false, placeholder: "Enter name", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :years_of_experience, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :years_of_experience, label: false, placeholder: "Enter years of experience", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :certifications, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :certifications_array, label: false, placeholder: "Enter certifications (comma separated)", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :hourly_rate, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :hourly_rate, label: false, placeholder: "Enter hourly rate", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :specializations, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :specializations_array, label: false, placeholder: "Enter specializations (comma separated)", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :languages_spoken, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :languages_array, label: false, placeholder: "Enter languages spoken (comma separated)", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :have_license, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :have_license, as: :boolean, label: false, input_html: { class: "form-control", id: "have_license_checkbox" } %>
+            </div>
+          </div>
+
+          <div id="license_fields" style="display:none;">
+            <div class="form-group">
+              <%= p.label :license_number, class: "control-label col-sm-4" %>
+              <div class="col-sm-8">
+                <%= p.input :license_number, label: false, placeholder: "Enter license number", input_html: { class: "form-control" } %>
+              </div>
+            </div>
+          </div>
+          <!-- Add more Profile fields here -->
+        </div>
+
+
+        <div class="col-md-6">
+          <!-- Add more fields in the second column as needed -->
+          <div class="form-group">
+            <%= p.label :phone_number, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :phone_number, label: false, placeholder: "Enter phone number", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :website, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :website, label: false, placeholder: "Enter website", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= p.label :service_area, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :service_area, label: false, placeholder: "Enter service area", input_html: { class: "form-control" } %>
+            </div>
+          </div>
+
+
+          <%= p.simple_fields_for :addresses, @address, html: { class: "form-horizontal" } do |a| %>
+            <%= a.hidden_field :addressable_id, value: @address.id %>
+            <div class="form-group">
+              <%= a.label :city, class: "control-label col-sm-4" %>
+              <div class="col-sm-8">
+                <%= a.input :city, label: false, placeholder: "Enter city", input_html: { class: "form-control" } %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <%= a.label :state, class: "control-label col-sm-4" %>
+              <div class="col-sm-8">
+                <%= a.input :state, label: false, placeholder: "Enter state", input_html: { class: "form-control" } %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <%= a.label :zipcode, class: "control-label col-sm-4" %>
+              <div class="col-sm-8">
+                <%= a.input :zipcode, label: false, placeholder: "Enter zipcode", input_html: { class: "form-control" } %>
+              </div>
+            </div>
+
+          <!-- Add more address fields here -->
+
+          <% end %>
+
+
+
+          <div class="form-group">
+            <%= p.label :have_insurance, class: "control-label col-sm-4" %>
+            <div class="col-sm-8">
+              <%= p.input :have_insurance, as: :boolean, label: false, input_html: { class: "form-control", id: "have_insurance_checkbox" } %>
+            </div>
+          </div>
+
+          <div id="insurance_fields" style="display:none;">
+            <div class="form-group">
+              <%= p.label :insurance_provider, class: "control-label col-sm-4" %>
+              <div class="col-sm-8">
+                <%= p.input :insurance_provider, label: false, placeholder: "Enter insurance provider", input_html: { class: "form-control" } %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <%= p.label :insurance_policy_number, class: "control-label col-sm-4" %>
+              <div class="col-sm-8">
+                <%= p.input :insurance_policy_number, label: false, placeholder: "Enter insurance policy number", input_html: { class: "form-control" } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <div class="row">
+        <div class="col-sm-10 offset-sm-2 text-end">
+          <%= c.button :submit, "Submit Profile", class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
+  </div><!-- Contractor Fluid -->
+<% end %><!-- form -->
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const haveInsuranceCheckbox = document.getElementById('have_insurance_checkbox');
+        const haveLicenseCheckbox = document.getElementById('have_license_checkbox');
+        const licenseFields = document.getElementById('license_fields');
+        const insuranceFields = document.getElementById('insurance_fields');
+
+        haveInsuranceCheckbox.addEventListener('change', function() {
+            if (haveInsuranceCheckbox.checked) {
+                insuranceFields.style.display = 'block';
+            } else {
+                insuranceFields.style.display = 'none';
+            }
+        });
+
+        // Optionally, you can add similar logic for the license fields based on other criteria
+
+        haveLicenseCheckbox.addEventListener('change', function() {
+            if (haveLicenseCheckbox.checked) {
+                licenseFields.style.display = 'block';
+            } else {
+                licenseFields.style.display = 'none';
+            }
+        });
+
+    });
+</script>

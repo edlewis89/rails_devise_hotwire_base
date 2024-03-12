@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  before_action :authenticate_user!
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
@@ -18,9 +19,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   # GET /resource/edit
-  # def edit
-  #   super
-  # end
+  def edit
+    # # Call super to run the default edit action
+    # super do |resource|
+    #   # Assign the resource to @user for use in the view
+    #   @user = resource
+    #   # Check if devise_mapping is available
+    #   # if defined?(devise_mapping) && devise_mapping.validatable?
+    #   #   # Set minimum password length
+    #   #   @minimum_password_length = resource_class.password_length.min
+    #   # end
+    # end
+  end
 
   # PUT /resource
   # def update

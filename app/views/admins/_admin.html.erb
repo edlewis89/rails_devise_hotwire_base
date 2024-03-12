@@ -1,0 +1,59 @@
+<div id="<%= dom_id admin %>" class="card mb-3">
+  <div class="card-body">
+    <div class="container">
+      <% attributes = [
+        { label: "Name:", value: admin.profile&.name },
+        { label: "Description:", value: admin.profile&.description },
+        { label: "Email:", value: admin.email },
+        { label: "Availability:", value: admin.profile&.availability },
+        { label: "Phone #:", value: admin.profile&.phone_number },
+        { label: "City:", value: admin.profile&.primary_address_city },
+        { label: "State:", value: admin.profile&.primary_address_state },
+        { label: "Zipcode:", value: admin.profile&.primary_address_zipcode },
+        { label: "License #:", value: admin.profile&.license_number },
+        { label: "Insurance Provider:", value: admin.profile&.insurance_provider },
+        { label: "Insurance Policy #:", value: admin.profile&.insurance_policy_number },
+        { label: "License:", value: admin.profile&.have_license },
+        { label: "Insurance:", value: admin.profile&.have_insurance },
+        { label: "Service Area:", value: admin.profile&.service_area },
+        { label: "Experience (yrs):", value: admin.profile&.years_of_experience },
+        { label: "Specializations:", value: admin.profile&.specializations&.join(', ') },
+        { label: "Certifications:", value: admin.profile&.certifications&.join(', ') },
+        { label: "Languages Spoken:", value: admin.profile&.languages_spoken&.join(', ') },
+        { label: "Hourly Rate:", value: admin.profile&.hourly_rate },
+        { label: "Photo:", value: admin.profile&.image_data },
+        { label: "Active:", value: admin.active },
+        { label: "Public:", value: admin.public }
+      ] %>
+
+      <div class="row">
+        <% attributes.each_slice(5) do |slice| %>
+          <% slice.each do |attr| %>
+            <div class="col-md-3">
+              <div class="row">
+                <div class="col text-right">
+                  <strong><%= attr[:label] %></strong>
+                </div>
+                <div class="col">
+                  <%= attr[:value] %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="d-flex justify-content-end">
+            <%= link_to "Show", admin, class: "btn btn-primary mr-1" %>
+            <% if current_user.admin? %>
+              <%= link_to "Edit", edit_admin_path(admin), method: :post, class: "btn btn-secondary mr-1" %>
+              <%= button_to "Destroy", admin_path(admin), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->admins#destroy" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

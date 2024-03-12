@@ -1,0 +1,65 @@
+<!-- app/views/ads/_form.html.erb -->
+<%= form_with(model: ad, local: true, html: { class: "needs-validation", novalidate: true }) do |form| %>
+  <% if ad.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(ad.errors.count, "error") %> prohibited this advertisement from being saved:</h2>
+
+      <ul>
+        <% ad.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, class: "form-label" %>
+    <%= form.text_field :title, class: "form-control" %>
+  </div>
+
+  <% if ad.image_data.present? %>
+    <div class="mb-3">
+      <p>Current Image:</p>
+      <%= image_tag ad.image_data.url, class: "img-thumbnail" %>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :image_data, class: "form-label" %>
+    <%= form.file_field :image_data, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :url, class: "form-label" %>
+    <%= form.text_field :url, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :service_id, class: "form-label" %>
+    <%= form.collection_select(:service_id, Service.all, :id, :name, { include_blank: true }, class: "form-select") %>
+  </div>
+
+  <!-- Nested addresses fields -->
+  <div class="mb-3">
+    <%= form.fields_for :addresses do |address_fields| %>
+      <%= address_fields.hidden_field :addressable_id, value: @ad.id %>
+      <div class="nested-fields">
+        <%= address_fields.label :street %>
+        <%= address_fields.text_field :street, class: "form-control" %>
+
+        <%= address_fields.label :city %>
+        <%= address_fields.text_field :city, class: "form-control" %>
+
+        <%= address_fields.label :state %>
+        <%= address_fields.text_field :state, class: "form-control" %>
+
+        <%= address_fields.label :zipcode %>
+        <%= address_fields.text_field :zipcode, class: "form-control" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Save", class: "btn btn-primary" %>
+  </div>
+<% end %>

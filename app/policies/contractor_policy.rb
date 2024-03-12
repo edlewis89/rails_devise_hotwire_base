@@ -6,6 +6,11 @@ class ContractorPolicy < ApplicationPolicy
     @contractor = contractor
   end
 
+  def index?
+    binding.pry
+    user.admin? || user.property_owner?
+  end
+
   def create?
     user.present? && user.admin?
   end
@@ -23,7 +28,8 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def search?
-    user.general? || user.member? || user.admin?
+    binding.pry
+    user.admin? || user.property_owner? || user.general?
   end
 
   def update?

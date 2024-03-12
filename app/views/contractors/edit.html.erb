@@ -1,6 +1,8 @@
 <div class="container">
   <%= render "form", contractor: @contractor %>
   <div class="text-left">
-    <%= link_to "Back to contractors", contractors_path, class: "btn  btn-primary" %>
+    <% if current_user.admin? || current_user.property_owner? %>
+      <%= link_to "Back to contractors", contractors_path, class: "btn  btn-primary" %>
+    <% end %>
   </div>
 </div>

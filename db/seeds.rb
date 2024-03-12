@@ -67,7 +67,7 @@
 # contractor_homeowner_request = FactoryBot.create(:contractor_homeowner_request, contractor: contractor, homeowner_request: homeowner_request)
 # contractor_homeowner_request.save
 
-admin = User.create!(
+admin = Admin.create!(
   email: 'lewiedw89@gmail.com',
   password: 'password',
   role: :admin,
@@ -76,7 +76,7 @@ admin = User.create!(
   public: true
 )
 
-user = User.create!(
+gen = User.create!(
   email: 'general@example.com',
   password: 'password',
   role: :general,
@@ -125,6 +125,15 @@ contractor = Contractor.create!(
   subscription_level: :pro
 )
 
+ad_manager = AdManager.create!(
+  email: 'admanager@example.com',
+  password: 'password',
+  role: :ad_manager,
+  verified: true,
+  active: true,
+  public: true
+)
+
 #homeowner_profile = FactoryBot.create(:profile, profileable_type: homeowner)
 #contractor_profile = FactoryBot.create(:profile, profileable_type: contractor)
 
@@ -141,7 +150,7 @@ hprofile = Profile.new(
   have_license: Faker::Boolean.boolean,
   name: Faker::Name.name,
   phone_number: Faker::PhoneNumber.phone_number,
-  image: Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']),
+  image_data: Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']),
   website: Faker::Internet.url,
   license_number: Faker::Lorem.word,
   insurance_provider: Faker::Lorem.word,
@@ -182,7 +191,7 @@ cprofile = Profile.create!(
   have_license: Faker::Boolean.boolean,
   name: Faker::Name.name,
   phone_number: Faker::PhoneNumber.phone_number,
-  image: Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']),
+  image_data: Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']),
   website: Faker::Internet.url,
   license_number: Faker::Lorem.word,
   insurance_provider: Faker::Lorem.word,
@@ -206,6 +215,53 @@ cprofile = Profile.create!(
   ]
 )
 
+if cprofile.save
+  puts "Contractor profile created and indexed"
+else
+  puts "Error creating contractor: #{cprofile.errors.full_messages.join(', ')}"
+end
+
+ad_manager_profile = Profile.new(
+  user: ad_manager,
+  profileable_type: 'AdManager',
+  profileable_id: ad_manager.id,
+  hourly_rate: Faker::Number.decimal(l_digits: 2),
+  years_of_experience: Faker::Number.between(from: 0, to: 50),
+  availability: true,
+  have_insurance: Faker::Boolean.boolean,
+  have_license: Faker::Boolean.boolean,
+  name: Faker::Name.name,
+  phone_number: Faker::PhoneNumber.phone_number,
+  image_data: Faker::LoremFlickr.image(size: "50x50", search_terms: ['profile']),
+  website: Faker::Internet.url,
+  license_number: Faker::Lorem.word,
+  insurance_provider: Faker::Lorem.word,
+  insurance_policy_number: Faker::Lorem.word,
+  service_area: Faker::Address.community,
+  specializations: Faker::Lorem.words(number: 3),
+  certifications: Faker::Lorem.words(number: 3),
+  languages_spoken: Faker::Lorem.words(number: 3),
+  description: Faker::Lorem.paragraph,
+  addresses_attributes: [
+    {
+      street: Faker::Address.street_address,
+      city: Faker::Address.city,
+      state: Faker::Address.state_abbr,
+      zipcode: '20152',
+      country: "USA",
+      latitude: Faker::Address.latitude,
+      longitude: Faker::Address.longitude,
+      additional_info: Faker::Lorem.sentence
+    }
+  ]
+)
+
+if ad_manager_profile.save
+  puts "Ad Manager profile created and indexed"
+else
+  puts "Error creating ad_manager_profile: #{ad_manager_profile.errors.full_messages.join(', ')}"
+end
+
 puts 'Seed data generated successfully.'
 
 
@@ -227,4 +283,50 @@ Service.create(name: 'Home Security', description: 'Installation and maintenance
 Service.create(name: 'Home Cleaning', description: 'Professional cleaning services for residential properties, including general cleaning, deep cleaning, and specialized services.')
 # Add more services as needed
 
+
+
+# Create an Addressable entity (assuming Addressable is another model)
+# address = Address.create(street: "123 Example St", city: "Example City", state: "Example State", zipcode: "20152")
+
+# Create an Ad associated with the Service and Addressable entity
+# ad = Advertisement.new(title: "Example Ad", image: "example_image.png", url: "example.com", service: Service.first, addresses_attributes: [
+#   {
+#     street: Faker::Address.street_address,
+#     city: Faker::Address.city,
+#     state: Faker::Address.state_abbr,
+#     zipcode: '20152',
+#     country: "USA",
+#     latitude: Faker::Address.latitude,
+#     longitude: Faker::Address.longitude,
+#     additional_info: Faker::Lorem.sentence
+#   }])
+#
+# if ad.save
+#   puts "Ad created and indexed"
+# else
+#   puts "Error creating ad: #{ad.errors.full_messages.join(', ')}"
+# end
+
+puts "Seed Ad data created successfully!"
 puts 'Seed data for Services created successfully'
+
+
+  # # db/seeds.rb
+  #
+  # # Create a Profile
+  # Profile.create!(
+  #   user_id: 1,
+  #   first_name: "John",
+  #   last_name: "Doe",
+  #   bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  # # Add other profile attributes as needed
+  #   )
+  #
+  # # Create an Advertisement
+  # Advertisement.create!(
+  #   title: "Ad Title",
+  #   url: "https://example.com",
+  #   link: "https://example.com",
+  #   service_id: 1,
+  # # Add other advertisement attributes as needed
+  #   )

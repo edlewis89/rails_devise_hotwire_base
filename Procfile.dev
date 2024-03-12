@@ -1,5 +1,7 @@
-web: env RUBY_DEBUG_OPEN=true bin/rails server
+# web: bundle exec puma -C config/puma.rb
+elasticsearch: es_start
+sidekiq: bundle exec sidekiq -C config/sidekiq.yml
 js: yarn build --watch
 css: yarn watch:css
-redis: redis-server
-sidekiq: bundle exec sidekiq -c 2
+# redis: redis-server
+# mailcatcher: mailcatcher

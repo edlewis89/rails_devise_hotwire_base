@@ -8,17 +8,32 @@
                                   user_password PATCH  /users/password(.:format)                                                                         devise/passwords#update
                                                 PUT    /users/password(.:format)                                                                         devise/passwords#update
                                                 POST   /users/password(.:format)                                                                         devise/passwords#create
-                       cancel_user_registration GET    /users/cancel(.:format)                                                                           devise/registrations#cancel
-                          new_user_registration GET    /users/sign_up(.:format)                                                                          devise/registrations#new
-                         edit_user_registration GET    /users/edit(.:format)                                                                             devise/registrations#edit
-                              user_registration PATCH  /users(.:format)                                                                                  devise/registrations#update
-                                                PUT    /users(.:format)                                                                                  devise/registrations#update
-                                                DELETE /users(.:format)                                                                                  devise/registrations#destroy
-                                                POST   /users(.:format)                                                                                  devise/registrations#create
-                                      send_data POST   /send_data(.:format)                                                                              home#send_data
+                       cancel_user_registration GET    /users/cancel(.:format)                                                                           users/registrations#cancel
+                          new_user_registration GET    /users/sign_up(.:format)                                                                          users/registrations#new
+                         edit_user_registration GET    /users/edit(.:format)                                                                             users/registrations#edit
+                              user_registration PATCH  /users(.:format)                                                                                  users/registrations#update
+                                                PUT    /users(.:format)                                                                                  users/registrations#update
+                                                DELETE /users(.:format)                                                                                  users/registrations#destroy
+                                                POST   /users(.:format)                                                                                  users/registrations#create
+                          new_user_confirmation GET    /users/confirmation/new(.:format)                                                                 devise/confirmations#new
+                              user_confirmation GET    /users/confirmation(.:format)                                                                     devise/confirmations#show
+                                                POST   /users/confirmation(.:format)                                                                     devise/confirmations#create
+                             confirm_email_user GET    /users/:id/confirm_email(.:format)                                                                users#confirm_email
+                                          users GET    /users(.:format)                                                                                  users#index
+                                                POST   /users(.:format)                                                                                  users#create
+                                       new_user GET    /users/new(.:format)                                                                              users#new
+                                      edit_user GET    /users/:id/edit(.:format)                                                                         users#edit
+                                           user GET    /users/:id(.:format)                                                                              users#show
+                                                PATCH  /users/:id(.:format)                                                                              users#update
+                                                PUT    /users/:id(.:format)                                                                              users#update
+                                                DELETE /users/:id(.:format)                                                                              users#destroy
+                          conversation_messages GET    /conversations/:conversation_id/messages(.:format)                                                messages#index
+                                                POST   /conversations/:conversation_id/messages(.:format)                                                messages#create
+                                  conversations GET    /conversations(.:format)                                                                          conversations#index
+                                                POST   /conversations(.:format)                                                                          conversations#create
                                   reply_message POST   /messages/:id/reply(.:format)                                                                     messages#reply
-                                       messages GET    /messages(.:format)                                                                               messages#index
-                                                POST   /messages(.:format)                                                                               messages#create
+                                       messages POST   /messages(.:format)                                                                               messages#create
+                                    new_message GET    /messages/new(.:format)                                                                           messages#new
                                  edit_homeowner POST   /homeowners/:id/edit(.:format)                                                                    homeowners#edit
               create_message_homeowner_messages POST   /homeowners/:homeowner_id/messages/create_message(.:format)                                       messages#create_message
                         reply_homeowner_message POST   /homeowners/:homeowner_id/messages/:id/reply(.:format)                                            messages#reply
@@ -51,6 +66,24 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                                 PATCH  /contractors/:id(.:format)                                                                        contractors#update
                                                 PUT    /contractors/:id(.:format)                                                                        contractors#update
                                                 DELETE /contractors/:id(.:format)                                                                        contractors#destroy
+                                     edit_admin POST   /admins/:id/edit(.:format)                                                                        admins#edit
+                                         admins GET    /admins(.:format)                                                                                 admins#index
+                                                POST   /admins(.:format)                                                                                 admins#create
+                                      new_admin GET    /admins/new(.:format)                                                                             admins#new
+                                                GET    /admins/:id/edit(.:format)                                                                        admins#edit
+                                          admin GET    /admins/:id(.:format)                                                                             admins#show
+                                                PATCH  /admins/:id(.:format)                                                                             admins#update
+                                                PUT    /admins/:id(.:format)                                                                             admins#update
+                                                DELETE /admins/:id(.:format)                                                                             admins#destroy
+                                edit_ad_manager POST   /ad_managers/:id/edit(.:format)                                                                   ad_managers#edit
+                                    ad_managers GET    /ad_managers(.:format)                                                                            ad_managers#index
+                                                POST   /ad_managers(.:format)                                                                            ad_managers#create
+                                 new_ad_manager GET    /ad_managers/new(.:format)                                                                        ad_managers#new
+                                                GET    /ad_managers/:id/edit(.:format)                                                                   ad_managers#edit
+                                     ad_manager GET    /ad_managers/:id(.:format)                                                                        ad_managers#show
+                                                PATCH  /ad_managers/:id(.:format)                                                                        ad_managers#update
+                                                PUT    /ad_managers/:id(.:format)                                                                        ad_managers#update
+                                                DELETE /ad_managers/:id(.:format)                                                                        ad_managers#destroy
                         respond_service_request GET    /service_requests/:id/respond(.:format)                                                           service_requests#respond
               service_request_service_responses GET    /service_requests/:service_request_id/service_responses(.:format)                                 service_responses#index
                                                 POST   /service_requests/:service_request_id/service_responses(.:format)                                 service_responses#create
@@ -70,6 +103,15 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                         service PATCH  /services/:id(.:format)                                                                           services#update
                                                 PUT    /services/:id(.:format)                                                                           services#update
                                                 DELETE /services/:id(.:format)                                                                           services#destroy
+                                 advertisements GET    /advertisements(.:format)                                                                         advertisements#index
+                                                POST   /advertisements(.:format)                                                                         advertisements#create
+                              new_advertisement GET    /advertisements/new(.:format)                                                                     advertisements#new
+                             edit_advertisement GET    /advertisements/:id/edit(.:format)                                                                advertisements#edit
+                                  advertisement PATCH  /advertisements/:id(.:format)                                                                     advertisements#update
+                                                PUT    /advertisements/:id(.:format)                                                                     advertisements#update
+                                                DELETE /advertisements/:id(.:format)                                                                     advertisements#destroy
+                                    sidekiq_web        /sidekiq                                                                                          Sidekiq::Web
+                                      send_data POST   /send_data(.:format)                                                                              home#send_data
                                            root GET    /                                                                                                 home#index
                turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                             turbo/native/navigation#recede
                turbo_resume_historical_location GET    /resume_historical_location(.:format)                                                             turbo/native/navigation#resume

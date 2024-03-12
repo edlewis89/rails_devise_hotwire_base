@@ -2,6 +2,7 @@
   <div class="card-body">
     <div class="container">
       <% attributes = [
+        { label: "Photo:", value: homeowner.profile&.image_data },
         { label: "Name:", value: homeowner.profile&.name },
         { label: "Description:", value: homeowner.profile&.description },
         { label: "Email:", value: homeowner&.email },
@@ -21,34 +22,34 @@
         { label: "Certifications:", value: homeowner.profile&.certifications&.join(', ') },
         { label: "Languages Spoken:", value: homeowner.profile&.languages_spoken&.join(', ') },
         { label: "Hourly Rate:", value: homeowner.profile&.hourly_rate },
-        { label: "Photo:", value: homeowner.profile&.image },
         { label: "Active:", value: homeowner.active },
         { label: "Public:", value: homeowner.public }
       ] %>
 
       <div class="row">
-        <% attributes.each_slice(5) do |slice| %>
-          <% slice.each do |attr| %>
-            <div class="col-md-3">
-              <div class="row">
-                <div class="col text-right">
-                  <strong><%= attr[:label] %></strong>
-                </div>
-                <div class="col">
-                  <%= attr[:value] %>
-                </div>
-              </div>
-            </div>
+        <div class="col-md-4">
+          <% if homeowner.profile&.image_data.present? %>
+            <%= image_tag homeowner.profile&.image_data.url, class: "img-fluid rounded-circle mb-3" %>
           <% end %>
-        <% end %>
+        </div>
+        <div class="col-md-8">
+          <% attributes.each do |attr| %>
+            <% if attr[:value].present? %>
+              <div class="row mb-2">
+                <div class="col-md-4 text-end"><strong><%= attr[:label] %></strong></div>
+                <div class="col-md-8"><%= attr[:value] %></div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       </div>
 
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
-            <%= link_to "Show", homeowner, class: "btn btn-primary mr-1" %>
+            <%= link_to "Show", homeowner, class: "btn btn-primary me-2" %>
             <% if current_user.admin? %>
-              <%= link_to "Edit", edit_homeowner_path(homeowner), method: :post, class: "btn btn-secondary mr-1" %>
+              <%= link_to "Edit", edit_homeowner_path(homeowner), method: :post, class: "btn btn-secondary me-2" %>
               <%= button_to "Destroy", homeowner_path(homeowner), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->contractors#destroy" } %>
             <% end %>
           </div>

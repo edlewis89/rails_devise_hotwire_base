@@ -1,0 +1,18 @@
+<div class="container">
+  <h1>Ad Manager Profile</h1>
+
+  <div id="ad_managers">
+    <% if @ad_managers.present? %>
+      <%= render @ad_managers %>
+    <% else %>
+      <div class="alert alert-info" role="alert">
+        No ad managers found.
+      </div>
+    <% end %>
+  </div>
+  <div class="text-right">
+    <% if current_user.admin? %>
+      <%= link_to "New ad manager", new_ad_manager_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
