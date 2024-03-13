@@ -61,7 +61,7 @@
           <div class="form-group">
             <%= p.label 'Photo', class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <% if @profile.image_data.present? %>
+              <% if @profile&.image_data.present? %>
                 <%= image_tag @profile.image_data.url, class: "img-fluid" %>
               <% end %>
               <%= p.file_field :image_data %>

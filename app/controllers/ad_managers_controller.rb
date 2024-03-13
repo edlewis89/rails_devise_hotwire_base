@@ -142,7 +142,7 @@ class AdManagersController < ApplicationController
 
   # Permit @ad_manager parameters
   def ad_manager_params
-    params.require(:ad_manager).permit(:active, :public, :email, profile_attributes: [
+    params.require(:ad_manager).permit(:id, :role, :subscription_level, :active, :public, :email, profile_attributes: [
       :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
@@ -156,7 +156,7 @@ class AdManagersController < ApplicationController
       :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:id, :addressable_id, :city, :state, :zipcode, :_destroy]
     )
   end
 

@@ -2,6 +2,8 @@
   <div class="card-body">
     <div class="container">
       <% attributes = [
+        { label: "Role:", value: ad_manager.role.humanize },
+        { label: "Subscription Level:", value: ad_manager.subscription_level.humanize },
         { label: "Photo:", value: ad_manager.profile&.image_data },
         { label: "Name:", value: ad_manager.profile&.name },
         { label: "Description:", value: ad_manager.profile&.description },
