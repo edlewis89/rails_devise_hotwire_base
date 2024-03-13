@@ -1,4 +1,4 @@
-<%= simple_form_for @contractor, html: { class: "form-horizontal" } do |c| %>
+<%= simple_form_for @contractor, data: { turbo_frame: 'form' }, html: { class: "form-horizontal" } do |c| %>
 
   <% if @contractor.errors.any? %>
     <div class="alert alert-danger">
@@ -27,6 +27,17 @@
             <div class="custom-control custom-switch">
               <%= c.check_box :public, class: "custom-control-input", id: "publicSwitch" %>
               <%= c.label :public, class: "custom-control-label", for: "publicSwitch" %>
+            </div>
+            <!-- Role -->
+            <div class="form-group custom-control custom-switch">
+              <%= c.label :role, class: "form-label" %>
+              <%= c.select :role, Contractor.roles.keys.map { |role| [role.humanize, role] }, {}, class: 'form-select' %>
+            </div>
+
+            <!-- Tier -->
+            <div class="form-group custom-control custom-switch">
+              <%= c.label "Tier", class: "form-label" %>
+              <%= c.select :subscription_level, Contractor.subscription_levels.keys.map { |level| [level.humanize, level] }, {}, class: 'form-select' %>
             </div>
           <% end %>
         </div>

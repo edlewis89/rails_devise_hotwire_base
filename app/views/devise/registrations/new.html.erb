@@ -29,6 +29,9 @@
                       placeholder: "Confirm Password",
                       input_html: { class: "form-control", autocomplete: "new-password" } %>
         </div>
+        <div class="mb-3">
+          <%= f.select :role, User.roles.select { |role, _| ['property_owner', 'service_provider'].include?(role) }.map { |role| [role[0].humanize, role[0]] }, {}, { class: "form-select" } %>
+        </div>
 
         <div class="d-grid">
           <%= f.button :submit, "Sign up", class: "btn btn-primary btn-lg" %>

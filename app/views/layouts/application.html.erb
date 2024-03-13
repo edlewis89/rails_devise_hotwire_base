@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html>
   <head>
+<!--    <title>Rentabud</title>-->
+<!--    <meta name="viewport" content="width=device-width,initial-scale=1">-->
+    <%#= csrf_meta_tags %>
+    <%#= csp_meta_tag %>
+<!--     Minified version -->
+<!--    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">-->
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--    Bootstrap CSS -->
+<!--    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">-->
+
+<!--    Bootstrap JavaScript (optional, only if you need Bootstrap features that require JS) -->
+<!--    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+<!--        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->-->
+    <%#= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%#= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rentabud</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <!-- Minified version -->
-<!--    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap JavaScript (optional, only if you need Bootstrap features that require JS) -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
+    <!-- Your application stylesheets and JavaScript files -->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
     <style>
         /* Remove the navbar's default margin-bottom and rounded borders */
         html, body {
@@ -57,7 +74,10 @@
                 height: auto;
                 padding: 15px;
             }
-            .row.content {height:auto;}
+
+            .row.content {
+                height: auto;
+            }
         }
 
         body {
@@ -107,12 +127,30 @@
         }
 
         .content {
-            padding: 20px;
+            padding: 56px;
         }
 
         .footer {
             background-color: #f1f1f1;
             padding: 20px 0;
+        }
+
+        .main-content {
+            padding-top: 20px; /* Adjust according to your navbar height */
+        }
+
+        /* Ensure equal height for side navs */
+        .sidenav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidenav > .row {
+            flex-grow: 1;
+        }
+
+        .powered-by {
+            font-size: 0.8em;
         }
     </style>
   </head>
@@ -165,7 +203,10 @@
                     Property Owner
                   </a>
                   <ul class="dropdown-menu">
-                    <li><%= link_to "Create Service Request", new_service_request_path %></li>
+                    <% if current_user.premium? %>
+                      <li><%= link_to "Create Service Request", new_service_request_path, class: "dropdown-item" %></li>
+                      <li><%= link_to "My Requests", service_requests_path, class: "dropdown-item" %></li>
+                    <% end %>
                     <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
@@ -260,23 +301,26 @@
   </nav>
 
   <div class="container-fluid main-content">
-      <div class="row content">
-        <div class="col-sm-2 sidenav">
+    <div class="row content">
+      <div class="col-sm-2 sidenav">
+        <div class="row">
           <p><a href="#">Link</a></p>
           <p><a href="#">Link</a></p>
           <p><a href="#">Link</a></p>
         </div>
-        <div class="col-sm-8 text-left">
-          <div class="notice-container">
-            <%= render 'shared/notices' %>
-          </div>
-          <% if false %>
-            <%= debug(params) if Rails.env.development? %>
-          <% end %>
-          <%= yield %>
+      </div>
+      <div class="col-sm-8 text-left">
+        <div class="notice-container">
+          <%= render 'shared/notices' %>
         </div>
+        <% if false %>
+          <%= debug(params) if Rails.env.development? %>
+        <% end %>
+        <%= yield %>
+      </div>
 
-        <div class="col-sm-2 sidenav">
+      <div class="col-sm-2 sidenav">
+        <div class="row">
           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
               <% if @ads.present? %>
@@ -310,13 +354,14 @@
         </div>
       </div>
     </div>
+  </div>
 
 
-    <footer class="footer">
-      <div class="container-fluid text-center">
-        <p>Footer Text</p>
-      </div>
-    </footer>
+  <footer class="footer">
+    <div class="container">
+      <span class="text-muted powered-by">Six Hat Technologies LLC @ 2024</span>
+    </div>
+  </footer>
 
   </body>
 </html>

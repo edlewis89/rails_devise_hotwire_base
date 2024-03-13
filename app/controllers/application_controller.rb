@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   #after_action :verify_authorized, except: :index, unless: :devise_controller?
 
@@ -33,5 +34,9 @@ class ApplicationController < ActionController::Base
                         .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
                         .includes(:service)
                         .order(created_at: :desc) || []
+  end
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:role])
   end
 end

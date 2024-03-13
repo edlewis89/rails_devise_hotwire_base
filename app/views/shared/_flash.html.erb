@@ -1,7 +1,8 @@
-<div class="alert <%= bootstrap_class_for(msg_type) %> alert-dismissible flash show
-" role="alert">
-  <div class="container-fluid text-center">
-    <%= message %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<% flash.each do |msg_type, message| %>
+  <div class="alert <%= bootstrap_class_for(msg_type) %> alert-dismissible fade show" role="alert">
+    <div class="container-fluid text-center">
+      <%= message %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   </div>
-</div>
+<% end %>

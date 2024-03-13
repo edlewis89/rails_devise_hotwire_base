@@ -202,21 +202,21 @@ class ContractorsController < ApplicationController
 
   # Permit contractor parameters
   def contractor_params
-    params.require(:contractor).permit(:active, :public, :email, profile_attributes: [
+    params.require(:contractor).permit(:id, :role, :subscription_level, :active, :public, :email, profile_attributes: [
       :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:id, :addressable_id, :city, :state, :zipcode, :_destroy]
     ])
   end
 
   # Permit profile parameters
   def profile_params
     params.require(:contractor).require(:profile_attributes).permit(
-      :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :id, :user_id, :role, :subscription_level, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:id, :addressable_id, :city, :state, :zipcode, :_destroy]
     )
   end
 

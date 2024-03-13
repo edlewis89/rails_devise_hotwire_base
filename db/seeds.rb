@@ -106,9 +106,19 @@ contractor = Contractor.create!(
 )
 
 homeowner = Homeowner.create!(
-  email: 'premium@example.com',
+  email: 'prem_homeowner@example.com',
   password: 'password',
   role: :property_owner,
+  verified: true,
+  active: true,
+  public: true,
+  subscription_level: :premium
+)
+
+contractor = Contractor.create!(
+  email: 'prem_contractor@example.com',
+  password: 'password',
+  role: :service_provider,
   verified: true,
   active: true,
   public: true,

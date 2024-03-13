@@ -1,7 +1,10 @@
+<% if defined?(contractor) && current_user && current_user.admin? %>
 <div id="<%= dom_id contractor %>" class="card mb-3">
   <div class="card-body">
     <div class="container">
       <% attributes = [
+        { label: "Role:", value: contractor.role.humanize },
+        { label: "Subscription Level:", value: contractor.subscription_level.humanize },
         { label: "Photo:", value: contractor.profile&.image_data },
         { label: "Name:", value: contractor.profile&.name },
         { label: "Description:", value: contractor.profile&.description },
@@ -24,7 +27,7 @@
         { label: "Hourly Rate:", value: contractor.profile&.hourly_rate },
         { label: "Active:", value: contractor.active },
         { label: "Public:", value: contractor.public }
-      ] %>
+       ] %>
 
       <div class="row">
         <div class="col-md-4">
@@ -57,3 +60,4 @@
     </div>
   </div>
 </div>
+<% end %>

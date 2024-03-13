@@ -4,7 +4,7 @@
   <h1 class="mt-5 mb-4">Respond to Service Request</h1>
 
   <div class="mb-3">
-    <strong>Service:</strong> <%= Service.find(@service_request.service.id).name %>
+    <strong>Service:</strong> <%= @service_request.services.pluck(:name) %>
   </div>
   <!-- Display information about the service request -->
   <div class="mb-3">

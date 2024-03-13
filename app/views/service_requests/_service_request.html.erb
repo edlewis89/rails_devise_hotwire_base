@@ -1,29 +1,30 @@
 <div id="<%= dom_id service_request %>" class="card mb-3">
-    <div class="card-body">
-      <div class="container">
-        <% attributes = [
-          { label: "Photo:", value: service_request.image },
-          { label: "Title:", value: service_request.title },
-          { label: "Description:", value: service_request.description },
-          { label: "Location:", value: service_request.location },
-          { label: "Budget:", value: service_request.budget },
-          { label: "Timeline:", value: service_request.timeline },
-          { label: "Service:", value: Service.find(service_request.service_id).name },
-          { label: "Range:", value: service_request.range },
-          { label: "Status:", value: service_request.status.humanize },
-        ] %>
-        <div class="row">
-          <div class="col-md-4">
-            <% if service_request.profile&.image_data.present? %>
-              <%= image_tag service_request.profile&.image_data.url, class: "img-fluid rounded-circle mb-3" %>
-            <% end %>
-          </div>
-          <div class="col-md-8">
-            <% attributes.each_slice(5) do |slice| %>
+  <div class="card-body">
+    <div class="container">
+      <% attributes = [
+        { label: "Title:", value: service_request.title },
+        { label: "Description:", value: service_request.description },
+        { label: "Location:", value: service_request.location },
+        { label: "Budget:", value: service_request.budget },
+        { label: "Timeline:", value: service_request.timeline },
+        { label: "Service:", value: service_request.services.pluck(:name).join(', ') },
+        { label: "Range:", value: service_request.range },
+        { label: "Status:", value: service_request.status.humanize },
+      ] %>
+
+      <div class="row">
+        <div class="col-md-4">
+          <% if service_request.image_data.present? %>
+            <%= image_tag service_request.image_data.url, class: "img-fluid rounded-circle mb-3" %>
+          <% end %>
+        </div>
+        <div class="col-md-8">
+          <% attributes.each_slice(2) do |slice| %>
+            <div class="row">
               <% slice.each do |attr| %>
-                <div class="col-md-3">
+                <div class="col-md-6">
                   <div class="row">
-                    <div class="col text-right">
+                    <div class="col">
                       <strong><%= attr[:label] %></strong>
                     </div>
                     <div class="col">
@@ -32,14 +33,15 @@
                   </div>
                 </div>
               <% end %>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
+        </div>
       </div>
 
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
-            <% if current_user.service_provider? && !current_user.responses_for_request(service_request).present?%>
+            <% if current_user.service_provider? && current_user.pro? && !current_user.responses_for_request(service_request).present? %>
               <%= link_to 'Respond', respond_service_request_path(service_request), class: 'btn btn-primary btn-sm' %>
             <% end %>
 

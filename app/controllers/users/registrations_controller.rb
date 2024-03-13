@@ -12,10 +12,17 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    super do |resource|
-      UserRegistrationService.call(resource)
-    end
+    resource = create_resource(resource)
 
+    if resource.save
+      resource.send_confirmation_instructions  # Send confirmation email
+      UserRegistrationService.call(resource) # Send Greeting Email
+
+      redirect_to after_sign_up_path_for(resource), notice: 'Confirmation email sent. Please check your email to confirm your account.'
+    else
+      flash[:alert] = resource.errors.full_messages.join(', ')
+      render :new
+    end
   end
 
   # GET /resource/edit
@@ -72,4 +79,35 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
+
+  def create_resource(hash = nil)
+    hash ||= sign_up_params
+    role = hash[:role]
+
+    case role
+    when 'property_owner'
+      resource = Homeowner.new(hash.merge(subscription_level: 'basic'))
+    when 'service_provider'
+      resource = Contractor.new(hash.merge(subscription_level: 'premium'))
+    else
+      resource = User.new(hash)
+    end
+
+    self.resource = resource
+  end
+
+  def after_sign_up_path_for(resource)
+    if resource.confirmed?
+      # Redirect to a specific page after successful sign-up
+      root_path
+    else
+      # If the user is not confirmed yet, redirect to the confirmation page
+      new_user_registration_path
+    end
+  end
+
+  def sign_up_params
+    params.require(:user).permit(:email, :password, :password_confirmation, :role)
+  end
 end
+

@@ -3,7 +3,7 @@ class CreateServiceRequests < ActiveRecord::Migration[7.1]
     create_table :service_requests do |t|
       t.references :homeowner, polymorphic: true, null: false, index: true
       t.string :title
-      t.string :image
+      t.string :image_data
       t.text :description
       t.string :location
       t.integer :range, default: 15

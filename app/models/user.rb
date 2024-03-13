@@ -30,10 +30,10 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   
   accepts_nested_attributes_for :profile
-  
-  delegate :name, to: :profile, prefix: true
-  delegate :primary_address_zipcode, to: :profile, prefix: false
-  delegate :primary_address_city, to: :profile, prefix: false
+
+  delegate :name, to: :profile, prefix: true, allow_nil: true
+  delegate :primary_address_zipcode, to: :profile, prefix: false, allow_nil: true
+  delegate :primary_address_city, to: :profile, prefix: false, allow_nil: true
 
   # Define a scope for active records
   scope :active_users, -> { where(active: true) }

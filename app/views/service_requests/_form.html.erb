@@ -1,5 +1,5 @@
 <%= simple_form_for(@service_request, html: { class: "form-horizontal" }) do |form| %>
-
+<h1>New Service Request</h1>
   <% if @service_request.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(@service_request.errors.count, "error") %> prohibited this service request from being saved:</h2>

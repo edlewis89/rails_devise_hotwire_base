@@ -126,7 +126,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_12_141355) do
     t.string "homeowner_type", null: false
     t.bigint "homeowner_id", null: false
     t.string "title"
-    t.string "image"
+    t.string "image_data"
     t.text "description"
     t.string "location"
     t.integer "range", default: 15
