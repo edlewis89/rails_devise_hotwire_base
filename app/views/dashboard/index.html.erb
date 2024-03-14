@@ -1,0 +1,22 @@
+<!-- app/views/dashboard/index.html.erb -->
+<div class="container">
+  <h1>Dashboard</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Analytics</h2>
+      <ul>
+        <li>Logged In Users: <%= @login_count %></li>
+        <li>Service Requests: <%= @service_request_count %></li>
+        <li>Service Responses: <%= @service_response_count %></li>
+        <li>Property Owner Accounts: <%= @homeowner_count %></li>
+        <li>Contractor Accounts: <%= @contractor_count %></li>
+        <li>Licensed Contractors: <%= @licensed_contractor_count %></li>
+        <li>Non-Licensed Contractors: <%= @unlicensed_contractor_count %></li>
+        <!-- Add more analytics metrics as needed -->
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <!-- Add additional dashboard elements here -->
+    </div>
+  </div>
+</div>

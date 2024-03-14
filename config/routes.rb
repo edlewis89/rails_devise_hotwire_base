@@ -1,6 +1,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  get 'dashboard/index'
   devise_for :users, controllers: {
     registrations: 'users/registrations'
   }
@@ -75,6 +76,8 @@ Rails.application.routes.draw do
   resources :services, only: [:index, :new, :create, :edit, :update, :destroy]
 
   resources :advertisements, only: [:index, :new, :create, :edit, :update, :destroy]
+
+  get 'dashboard', to: 'dashboard#index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

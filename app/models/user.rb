@@ -34,6 +34,7 @@ class User < ApplicationRecord
   delegate :name, to: :profile, prefix: true, allow_nil: true
   delegate :primary_address_zipcode, to: :profile, prefix: false, allow_nil: true
   delegate :primary_address_city, to: :profile, prefix: false, allow_nil: true
+  delegate :have_license, to: :profile, allow_nil: true, prefix: false
 
   # Define a scope for active records
   scope :active_users, -> { where(active: true) }
@@ -41,6 +42,12 @@ class User < ApplicationRecord
   scope :public_users, -> { where(public: true) }
   scope :by_type, ->(user_type) { where(type: user_type) }
   scope :by_role, ->(user_role) { where(type: user_role) }
+
+  # Assuming you have a 'role' attribute in your User model to differentiate between users and contractors
+  scope :contractors, -> { where(role: 'service_provider') }
+  scope :licensed_contractors, -> { contractors.joins(:profile).where(profiles: { have_license: true }) }
+  # Scope to fetch unlicensed contractors
+  scope :unlicensed_contractors, -> { contractors.where.not(id: licensed_contractors) }
 
   # Scope to fetch profile by user id and profileable_type
   # # Example usage
@@ -59,8 +66,16 @@ class User < ApplicationRecord
     public
   end
 
-  private
+  def has_license?
+    # Check if the user has a profile and if the profile has the have_license attribute set to true
+    if profile&.have_license == true
+      profile.license_number
+    else
+      false
+    end
+  end
 
+  private
 
   def create_user_profile
     # Create a profile for the user if it doesn't exist

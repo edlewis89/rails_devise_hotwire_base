@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_analytics
 
   #after_action :verify_authorized, except: :index, unless: :devise_controller?
 
@@ -38,5 +39,24 @@ class ApplicationController < ActionController::Base
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:role])
+  end
+
+  def set_analytics
+    # Update Redis counters
+
+    # Fetch updated counters
+    RedisService.update_analytics
+    @login_count = RedisService.get_active_users_count
+    @service_request_count = RedisService.get_service_request_count
+    @service_response_count = RedisService.get_service_response_count
+    @contractor_count = RedisService.get_contractor_count
+    @homeowner_count = RedisService.get_homeowner_count
+    @licensed_contractor_count = RedisService.get_licensed_contractor_count
+
+    # Fetch have_license attribute from user profiles using the delegate
+    #licensed_contractors = User.licensed_contractors
+    @licensed_contractor_count_with_license = @licensed_contractor_count
+
+    @licensed_contractor_count_without_license = (@licensed_contractor_count - @contractor_count).abs
   end
 end

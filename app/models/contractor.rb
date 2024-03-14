@@ -14,7 +14,7 @@ class Contractor < User
 
   delegate :name, :phone_number, :availability, :city, :state, :zipcode, :service_area,
            :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
-           :insurance_policy_number, :have_insured, to: :profile
+           :insurance_policy_number, :have_insured, :have_license, to: :profile, allow_nil: true
 
 #  Define the Criteria: Determine the criteria for matching a contractor with a service request. This includes the service request's zipcode, the range within which the contractor should be located, and the required skills for the service.
 #

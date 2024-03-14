@@ -192,6 +192,9 @@
         <div class="offcanvas-body">
           <!-- Navbar links -->
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+              <%= link_to("Dashboard", dashboard_path, class: "nav-link") %>
+            </li>
             <!-- User-specific links -->
             <% if signed_in? %>
               <!-- Homeowner actions -->
