@@ -67,7 +67,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :service_requests, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+  resources :service_requests, only: [:index, :new, :edit, :update] do
     get 'respond', on: :member
     resources :service_responses, only: [:index, :new, :create]
   end

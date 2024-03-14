@@ -4,8 +4,10 @@ class ServiceRequest < ApplicationRecord
 
   has_many :service_responses, dependent: :destroy
 
-  attr_accessor :image_data, :remote_image_url
-  mount_uploader :image_data, ImageUploader
+  #attr_accessor :image_data, :remote_image_url
+  #mount_uploader :image_data, ImageUploader
+
+  has_many_attached :images
 
   delegate :type, to: :user, prefix: true, allow_nil: false
 
@@ -40,6 +42,14 @@ class ServiceRequest < ApplicationRecord
 
   def match_contractors
     Contractor.match_with_service_request(self)
+  end
+
+  def editable_by?(current_user)
+    current_user.service_provider? && (current_user.pro? || current_user.premium?)
+  end
+
+  def destroyable_by?(current_user)
+    current_user.property_owner?
   end
 
   private

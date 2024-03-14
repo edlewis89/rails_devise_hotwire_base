@@ -27,6 +27,6 @@ class ServiceRequestPolicy < ApplicationPolicy
   end
 
   def respond?
-    user.service_provider?
+    user.service_provider? && (user.pro? || user.premium?) && !user.responses_for_request(record).present?
   end
 end

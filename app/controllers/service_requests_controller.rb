@@ -3,6 +3,9 @@ class ServiceRequestsController < ApplicationController
   before_action :authorize_user, except: %i[index show]
   before_action :set_service_request, only: [:show, :edit, :update, :destroy]
 
+  before_action :set_active_storage_url_options, only: [:edit, :update]
+
+
   # GET /service_requests
   # GET /service_requests.json
   def index
@@ -29,6 +32,7 @@ class ServiceRequestsController < ApplicationController
   # GET /service_requests/1/edit
   def edit
     @service_request = ServiceRequest.find(params[:id])
+    @existing_images = @service_request.images
     respond_to do |format|
       format.html # Render HTML template for editing
       format.turbo_stream { render turbo_stream: turbo_stream.replace(@service_request, partial: "service_requests/form", locals: { service_request: @service_request }) }
@@ -89,7 +93,25 @@ class ServiceRequestsController < ApplicationController
   # PATCH/PUT /service_requests/1
   # PATCH/PUT /service_requests/1.json
   def update
-    if @service_request.update(service_request_params)
+    @service_request = ServiceRequest.find(params[:id])
+
+    # Handle image removal
+    if params[:remove_images]
+      params[:remove_images].each do |image_id|
+        image = @service_request.images.find_by(id: image_id)
+        image.purge_later if image.present?
+      end
+    end
+
+    # Update service_request_params based on image removal
+    updated_service_request_params = if params[:remove_images]
+                                       # Remove the images array from the service_request params
+                                       service_request_params.except(:images)
+                                     else
+                                       service_request_params
+                                     end
+
+    if @service_request.update(updated_service_request_params)
       redirect_to @service_request, notice: 'Service request was successfully updated.'
     else
       render :edit
@@ -122,7 +144,7 @@ class ServiceRequestsController < ApplicationController
   def respond
     @service_request = ServiceRequest.find(params[:id])
     @service_response = ServiceResponse.new # Initialize a new ServiceResponse object
-
+    authorize @service_request, :respond?
     # Logic to respond to the service request
     respond_to do |format|
       format.html # Render HTML template (if available)
@@ -142,8 +164,12 @@ class ServiceRequestsController < ApplicationController
     @service_request = ServiceRequest.find(params[:id])
   end
 
+  def set_active_storage_url_options
+    ActiveStorage::Current.url_options = Rails.application.config.action_mailer.default_url_options
+  end
+
   # Only allow a list of trusted parameters through.
   def service_request_params
-    params.require(:service_request).permit(:title, :image_data, :description, :status, :range, :location, :budget, :timeline, :message, :proposed_cost, :estimated_completion_date, service_ids: [])
+    params.require(:service_request).permit(:title, :description, :status, :range, :location, :budget, :timeline, :message, :proposed_cost, :estimated_completion_date, service_ids: [], images: [], remove_images: [])
   end
 end

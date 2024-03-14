@@ -14,9 +14,13 @@
 
       <div class="row">
         <div class="col-md-4">
-          <% if service_request.image_data.present? %>
-            <%= image_tag service_request.image_data.url, class: "img-fluid rounded-circle mb-3" %>
-          <% end %>
+          <div class="image-gallery">
+            <% service_request.images.each do |image| %>
+              <div class="image-item">
+                <%= image_tag url_for(image), class: "gallery-image" %>
+              </div>
+            <% end %>
+          </div>
         </div>
         <div class="col-md-8">
           <% attributes.each_slice(2) do |slice| %>
@@ -41,9 +45,8 @@
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
-            <% if current_user.service_provider? && current_user.pro? && !current_user.responses_for_request(service_request).present? %>
-              <%= link_to 'Respond', respond_service_request_path(service_request), class: 'btn btn-primary btn-sm' %>
-            <% end %>
+            <%= link_to 'Respond', respond_service_request_path(service_request), class: 'btn btn-primary btn-sm' %>
+
 
             <% if current_user.property_owner? %>
               <% if service_request.status == 'in_progress' %>

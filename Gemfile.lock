@@ -472,6 +472,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  activestorage
   bootsnap
   byebug
   capybara (~> 3.39)

@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-12">
       <h2 class="mt-5 mb-3">Edit Service Request</h2>
 
       <%= render 'form', service_request: @service_request %>
@@ -9,3 +9,23 @@
     </div>
   </div>
 </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const removeImageCheckboxes = document.querySelectorAll(".remove-image-checkbox");
+
+        removeImageCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener("change", function() {
+                const imageId = this.value;
+                const existingImage = document.querySelector(`.existing-image-preview[data-image-id="${imageId}"]`);
+
+                if (this.checked) {
+                    existingImage.classList.add("hidden");
+                } else {
+                    existingImage.classList.remove("hidden");
+                }
+            });
+        });
+    });
+</script>

@@ -7,7 +7,6 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def index?
-    binding.pry
     user.admin? || user.property_owner?
   end
 
@@ -24,15 +23,14 @@ class ContractorPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.present? && (user.admin? || record.user == user)
+    user.present? && (user.admin? || record&.user == user)
   end
 
   def search?
-    binding.pry
     user.admin? || user.property_owner? || user.general?
   end
 
   def update?
-    user.present? && (user.admin? || user.property_owner? || user.active? || record.user == user)
+    user.present? && (user.admin? || user.property_owner? || user.service_provider? || user.pro? || user.premium? || user == record)
   end
 end

@@ -1,9 +1,8 @@
 class ContractorsController < ApplicationController
 
   before_action :authenticate_user!, except: %i[index show]
-  before_action :authorize_user, except: %i[index
-  show]
-  before_action :set_contractor, only: %i[ show edit update destroy ]
+  before_action :authorize_user, except: %i[index show]
+  before_action :set_contractor, only: %i[ show edit update destroy]
 
   # GET /contractors or /contractors.json
   def index
@@ -25,6 +24,7 @@ class ContractorsController < ApplicationController
 
   # GET /contractors/1/edit
   def edit
+    binding.pry
     @contractor = Contractor.find(params[:id])
     @profile = @contractor.profile
     # Only allowing to update 1 address for now.
