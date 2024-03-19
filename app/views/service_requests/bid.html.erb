@@ -1,7 +1,18 @@
 <!-- app/views/service_requests/respond.html.erb -->
-
 <div class="container">
   <h1 class="mt-5 mb-4">Respond to Service Request</h1>
+
+  <!-- Display bid errors -->
+  <% if @bid.errors.any? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading">Errors:</h4>
+      <ul>
+        <% @bid.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
   <div class="mb-3">
     <strong>Service:</strong> <%= @service_request.services.pluck(:name) %>
@@ -22,24 +33,29 @@
   </div>
 
   <!-- Form for contractor to respond -->
-  <%= simple_form_for(@service_response, url: service_request_service_responses_path(@service_request), method: :post, class: "needs-validation") do |f| %>
+  <%= simple_form_for(@bid, url: service_request_bids_path(@service_request), method: :post, class: "needs-validation") do |f| %>
     <div class="mb-3">
       <%= f.label :message, class: "form-label" %>
       <%= f.text_area :message, class: "form-control", required: true %>
     </div>
 
     <div class="mb-3">
-      <%= f.label :proposed_cost, class: "form-label" %>
-      <%= f.number_field :proposed_cost, class: "form-control", required: true %>
+      <%= f.label :proposed_price, class: "form-label" %>
+      <%= f.number_field :proposed_price, class: "form-control", required: true %>
     </div>
 
     <div class="mb-3">
-      <%= f.label :estimated_completion_date, class: "form-label" %>
-      <%= f.date_field :estimated_completion_date, class: "form-control", required: true %>
+      <%= f.label :estimated_timeline_in_days, class: "form-label" %>
+      <%= f.number_field :estimated_timeline_in_days, class: "form-control", required: true %>
     </div>
 
     <div class="mb-3">
-      <%= f.button :submit, "Submit Response", class: "btn btn-primary" %>
+      <%= f.label :communication_preferences, class: "form-label" %>
+      <%= f.text_field :communication_preferences, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.button :submit, "Submit Bid", class: "btn btn-primary" %>
     </div>
   <% end %>
 </div>

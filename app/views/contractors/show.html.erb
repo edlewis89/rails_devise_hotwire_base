@@ -1,6 +1,13 @@
 <div class="container">
   <h1>Contractor Profile</h1>
-  <%= render @contractor %>
+
+  <% if @contractor.present? %>
+    <%= render @contractor %>
+  <% else %>
+    <div class="alert alert-info" role="alert">
+      No contractor found.
+    </div>
+  <% end %>
 
   <div class="text-right">
     <%= link_to "Back to contractors", contractors_path, class: "btn  btn-primary" %>

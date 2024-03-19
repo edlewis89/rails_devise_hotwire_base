@@ -1,12 +1,12 @@
 class CreateServiceResponses < ActiveRecord::Migration[7.1]
   def change
     create_table :service_responses do |t|
-      t.references :contractor, polymorphic: true, null: false, index: true
-      t.references :service_request, foreign_key: true
+      t.references :contractor, foreign_key: { to_table: :users }, null: false # Assuming `user_id` is the foreign key for `User`
+      t.references :service_request, null: false, foreign_key: true
       t.text :message
       t.decimal :proposed_cost, precision: 10, scale: 2  # Adjust precision and scale as per your needs
       t.datetime :estimated_completion_date
-      t.string :status, default: "pending"
+      t.integer :status, null: false, default: 0
 
       t.timestamps
     end

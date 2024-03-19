@@ -1,14 +1,16 @@
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-12">
-      <h2 class="mt-5 mb-3">Edit Service Request</h2>
+<%= form_with(model: @service_request, url: service_request_path(@service_request), method: :patch, multipart: true, html: { class: "form-horizontal" }) do |form| %>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <h2 class="mt-5 mb-3">Edit Service Request</h2>
 
-      <%= render 'form', service_request: @service_request %>
+        <%= render 'form', service_request: @service_request %>
 
-      <%= link_to 'Back', service_requests_path, class: 'btn btn-secondary mt-3' %>
+        <%= link_to 'Back', service_requests_path, class: 'btn btn-secondary mt-3' %>
+      </div>
     </div>
   </div>
-</div>
+<% end %>
 
 
 <script>

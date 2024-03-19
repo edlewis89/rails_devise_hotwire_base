@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "form-container" do %>
+  <%= render partial: "contractors/form", locals: { contractor: @contractor } %>
+<% end %>

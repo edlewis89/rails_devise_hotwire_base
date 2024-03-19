@@ -151,8 +151,8 @@ ad_manager = AdManager.create!(
 
 hprofile = Profile.new(
   user: homeowner,
-  profileable_type: 'Homeowner',
-  profileable_id: homeowner.id,
+  #profileable_type: 'Homeowner',
+  #profileable_id: homeowner.id,
   hourly_rate: Faker::Number.decimal(l_digits: 2),
   years_of_experience: Faker::Number.between(from: 0, to: 50),
   availability: true,
@@ -192,8 +192,8 @@ end
 
 cprofile = Profile.create!(
   user: contractor,
-  profileable_type: 'Contractor',
-  profileable_id: contractor.id,
+  #profileable_type: 'Contractor',
+  #profileable_id: contractor.id,
   hourly_rate: Faker::Number.decimal(l_digits: 2),
   years_of_experience: Faker::Number.between(from: 0, to: 50),
   availability: true,
@@ -233,8 +233,8 @@ end
 
 ad_manager_profile = Profile.new(
   user: ad_manager,
-  profileable_type: 'AdManager',
-  profileable_id: ad_manager.id,
+  #profileable_type: 'AdManager',
+  #profileable_id: ad_manager.id,
   hourly_rate: Faker::Number.decimal(l_digits: 2),
   years_of_experience: Faker::Number.between(from: 0, to: 50),
   availability: true,

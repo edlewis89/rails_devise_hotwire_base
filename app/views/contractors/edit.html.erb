@@ -1,8 +1,19 @@
-<div class="container">
-  <%= render "form", contractor: @contractor %>
-  <div class="text-left">
-    <% if current_user.admin? || current_user.property_owner? %>
-      <%= link_to "Back to contractors", contractors_path, class: "btn  btn-primary" %>
-    <% end %>
-  </div>
-</div>
+
+<%#= turbo_frame_tag :contractor_form do %>
+  <%#= render partial: 'contractors/form', locals: { contractor: @contractor } %>
+<%# end %>
+
+<!--<div id="form-container">-->
+  <%#= render 'contractors/form',locals: { contractor: @contractor } %>
+<!--</div>-->
+
+<!--<div class="text-left">-->
+  <%# if current_user.admin? || current_user.property_owner? %>
+    <%#= link_to "Back to contractors", contractors_path, class: "btn  btn-primary" %>
+  <%# end %>
+<!--</div>-->
+
+<!-- edit.html.erb -->
+<%= turbo_frame_tag :edit_contractor_form do %>
+  <%= render partial: 'contractors/form', locals: { contractor: @contractor } %>
+<% end %>

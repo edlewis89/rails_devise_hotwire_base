@@ -1,6 +1,14 @@
 class ServiceResponse < ApplicationRecord
-  belongs_to :contractor
+  belongs_to :contractor, class_name: "Contractor"
   belongs_to :service_request
+
+  has_one :bid
+
+
+  # Scope to return all contractor responses
+  scope :contractor_responses, -> { joins(:contractor) }
+  # Scope to return all responses for a given service request
+  scope :for_service_request, ->(service_request_id) { where(service_request_id: service_request_id) }
 
   include AASM
 
@@ -20,9 +28,6 @@ class ServiceResponse < ApplicationRecord
     end
   end
 
-  # Scope to return all contractor responses
-  scope :contractor_responses, -> { joins(:contractor) }
-  # Scope to return all responses for a given service request
-  scope :for_service_request, ->(service_request_id) { where(service_request_id: service_request_id) }
+
 
 end

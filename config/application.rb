@@ -26,7 +26,6 @@ module Rentabud
     # config.eager_load_paths << Rails.root.join("extras")
     config.active_job.queue_adapter = :sidekiq
 
-
     # nil will use the "default" queue
     # some of these options will not work with your Rails version
     # add/remove as necessary

@@ -1,0 +1,58 @@
+<h1 class="mt-5 mb-4">Bid for Service Request</h1>
+<!-- Display bid errors -->
+<% if @bid.errors.any? %>
+  <div class="alert alert-danger">
+    <h4 class="alert-heading">Errors:</h4>
+    <ul>
+      <% @bid.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="mb-3">
+  <strong>Service:</strong> <%= @service_request.services.pluck(:name) %>
+</div>
+<!-- Display information about the service request -->
+<div class="mb-3">
+  <strong>Service Description:</strong> <%= @service_request.description %>
+</div>
+
+<div class="mb-3">
+  <strong>Location:</strong> <%= @service_request.location %>
+</div>
+<div class="mb-3">
+  <strong>Budget:</strong> <%= number_to_currency(@service_request.budget) %>
+</div>
+<div class="mb-3">
+  <strong>Timeline:</strong> <%= @service_request.timeline %>
+</div>
+
+
+<%= simple_form_for(@bid, url: service_request_bids_path(@service_request), method: :post, class: "needs-validation") do |form| %>
+  <%= form.hidden_field :service_request_id, value: @service_request.id %>
+  <div class="mb-3">
+    <%= form.label :message, class: "form-label" %>
+    <%= form.text_area :message, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :proposed_price, class: "form-label" %>
+    <%= form.number_field :proposed_price, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :estimated_timeline_in_days, class: "form-label" %>
+    <%= form.number_field :estimated_timeline_in_days, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :communication_preferences, class: "form-label" %>
+    <%= form.text_field :communication_preferences, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.button :submit, "Submit Bid", class: "btn btn-primary" %>
+  </div>
+<% end %>

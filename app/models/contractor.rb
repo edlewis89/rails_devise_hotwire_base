@@ -1,21 +1,20 @@
 class Contractor < User
   has_many :contractor_homeowner_requests
   has_many :homeowner_requests, through: :contractor_homeowner_requests
-  
-  has_many :service_responses
+
+  has_many :service_responses, foreign_key: :contractor_id, dependent: :destroy
+  has_many :bids, foreign_key: :contractor_id, dependent: :destroy
 
   has_many :contractor_services
   has_many :services, through: :contractor_services
 
-  has_one :profile, as: :profileable, dependent: :destroy
-  #has_one :profile, class_name: 'Profile', as: :profileable, dependent: :destroy
-
-  #has_one :profile, as: :profileable, dependent: :destroy, touch: true # Ensure the associated profile is destroyed when the homeowner is destroyed
-
-  delegate :name, :phone_number, :availability, :city, :state, :zipcode, :service_area,
+  delegate :name, :phone_number, :availability, :service_area,
            :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
            :insurance_policy_number, :have_insured, :have_license, to: :profile, allow_nil: true
 
+  delegate :type, to: :user, prefix: true, allow_nil: true
+
+  
 #  Define the Criteria: Determine the criteria for matching a contractor with a service request. This includes the service request's zipcode, the range within which the contractor should be located, and the required skills for the service.
 #
 #  Retrieve Contractors: Query the database to retrieve contractors that match the specified criteria. This query should consider the zipcode, range, and skills.
@@ -61,19 +60,11 @@ class Contractor < User
   #   contractors
   # end
 
-  def responses_for_request(service_request)
-    service_responses.where(service_request_id: service_request.id)
-  end
-
   def all_responses
     ServiceResponse.joins(:service_request).where(service_requests: { contractor_id: id })
   end
 
-  def profile
-    profile = Profile.contractor_profiles.find_by(profileable_id: self.id)
-    profile ||= Profile.new(profileable_id: self.id, profileable_type: self.class.to_s)
-    profile
-  end
+
 
   def is_active?
     active # Assuming there's an 'active' attribute in the 'homeowners' table
@@ -96,6 +87,17 @@ class Contractor < User
 
     # puts ">>>> results #{contractor_results.inspect}"
     contractor_results
+  end
+
+# Define a method to check if the contractor has already submitted a bid for a service request
+  def submitted_bid_for?(service_request)
+    bids.exists?(service_request_id: service_request.id)
+  end
+
+  # to disassociate all bids against a specific request,
+  def disassociate_bids_from_request(request_id)
+    bids_to_disassociate = bids.where(service_request_id: request_id)
+    bids_to_disassociate.update_all(service_request_id: nil)
   end
 
 

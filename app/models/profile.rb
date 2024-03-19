@@ -3,8 +3,7 @@ class Profile < ApplicationRecord
   include Elasticsearch::Model::Callbacks
 
   belongs_to :user
-  belongs_to :profileable, polymorphic: true
-  has_many :addresses, as: :addressable
+  has_many :addresses, as: :addressable, dependent: :destroy
 
   accepts_nested_attributes_for :addresses
 
@@ -22,10 +21,10 @@ class Profile < ApplicationRecord
 
   # If you want to allow remote image URLs for uploading
   attr_accessor :remote_image_url
-
   mount_uploader :image_data, ImageUploader
 
-  delegate :role, :type, :active, :public, :email, to: :user, prefix: true, allow_nil: true
+  delegate :role, :active, :public, :email, to: :user, prefix: true, allow_nil: true
+  delegate :type, to: :user, prefix: true, allow_nil: true
   delegate :city, :state, :zipcode, to: :primary_address, prefix: true, allow_nil: true
 
   after_create :validate_service_area_for_service_provider
@@ -33,16 +32,11 @@ class Profile < ApplicationRecord
   scope :active_profiles, -> { joins(:user).where(users: { active: true }) }
   scope :active_and_public_profiles, -> { joins(:user).where(users: { active: true, public: true }) }
   scope :public_profiles, -> { joins(:user).where(users: { public: true }) }
-  scope :contractor_profiles, -> { where(profileable_type: 'Contractor') }
-  scope :homeowner_profiles, -> { where(profileable_type: 'Homeowner') }
-  scope :admin_profiles, -> { where(profileable_type: 'Admin') }
-  scope :ad_manager_profiles, -> { where(profileable_type: 'AdManager') }
+  scope :contractor_profiles, -> { joins(:user).where(users: { type: 'Contractor' }) }
+  scope :homeowner_profiles, -> { joins(:user).where(users: { type: 'Homeowner' }) }
+  scope :admin_profiles, -> { joins(:user).where(users: { type: 'Admin' }) }
+  scope :ad_manager_profiles, -> { joins(:user).where(users: { type: 'AdManager' }) }
 
-  ## Example usage
-  # contractor_profiles = Profile.by_profileable(contractor.id, 'Contractor')
-  scope :by_profileable, ->(profileable_id, profileable_type) do
-    where(profileable_id: profileable_id, profileable_type: profileable_type)
-  end
 
   before_commit on: [:create, :update] do
     ensure_index_exists unless index_exists?
@@ -93,7 +87,7 @@ class Profile < ApplicationRecord
   def as_indexed_json(options = {})
     # as_indexed_json implementation...
     indexed_json = {
-      profileable_type: profileable_type,
+      #profileable_type: profileable_type,
       user_type: user_type,
       id: id,
       email: user_email,
@@ -114,7 +108,7 @@ class Profile < ApplicationRecord
       public: user_public
     }
 
-    if profileable_type == "Contractor"
+    if user.type == "Contractor"
       indexed_json[:license_number] = license_number
       indexed_json[:insurance_provider] = insurance_provider
       indexed_json[:insurance_policy_number] = insurance_policy_number

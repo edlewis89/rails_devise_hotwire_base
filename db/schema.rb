@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_13_122507) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_18_132434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,6 +75,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_13_122507) do
     t.index ["service_id"], name: "index_advertisements_on_service_id"
   end
 
+  create_table "bids", force: :cascade do |t|
+    t.bigint "contractor_id", null: false
+    t.bigint "service_request_id", null: false
+    t.decimal "proposed_price", precision: 10, scale: 2, null: false
+    t.integer "estimated_timeline_in_days"
+    t.text "additional_fees"
+    t.text "terms_and_conditions"
+    t.text "description"
+    t.text "message", null: false
+    t.string "communication_preferences", null: false
+    t.text "validity_period"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contractor_id"], name: "index_bids_on_contractor_id"
+    t.index ["service_request_id"], name: "index_bids_on_service_request_id"
+    t.index ["status"], name: "index_bids_on_status"
+  end
+
   create_table "contractor_homeowner_requests", force: :cascade do |t|
     t.bigint "homeowner_request_id", null: false
     t.integer "status", default: 0, null: false
@@ -123,8 +142,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_13_122507) do
 
   create_table "profiles", force: :cascade do |t|
     t.bigint "user_id"
-    t.string "profileable_type", null: false
-    t.bigint "profileable_id", null: false
     t.decimal "hourly_rate", precision: 8, scale: 2, default: "0.0"
     t.integer "years_of_experience", default: 0
     t.boolean "availability", default: false
@@ -146,26 +163,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_13_122507) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_profiles_on_name"
     t.index ["phone_number"], name: "index_profiles_on_phone_number"
-    t.index ["profileable_type", "profileable_id"], name: "index_profiles_on_profileable"
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
   create_table "service_requests", force: :cascade do |t|
-    t.string "homeowner_type", null: false
     t.bigint "homeowner_id", null: false
     t.string "title"
     t.string "image_data"
     t.text "description"
     t.string "location"
     t.integer "range", default: 15
-    t.string "timeline"
-    t.string "status", default: "pending"
+    t.integer "status", default: 0, null: false
     t.decimal "budget", precision: 10, scale: 2
+    t.datetime "due_date"
+    t.string "timeline"
     t.boolean "active", default: false
     t.boolean "private", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["homeowner_type", "homeowner_id"], name: "index_service_requests_on_homeowner"
+    t.index ["homeowner_id"], name: "index_service_requests_on_homeowner_id"
     t.index ["status"], name: "index_service_requests_on_status"
   end
 
@@ -175,16 +191,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_13_122507) do
   end
 
   create_table "service_responses", force: :cascade do |t|
-    t.string "contractor_type", null: false
     t.bigint "contractor_id", null: false
-    t.bigint "service_request_id"
+    t.bigint "service_request_id", null: false
     t.text "message"
     t.decimal "proposed_cost", precision: 10, scale: 2
     t.datetime "estimated_completion_date"
-    t.string "status", default: "pending"
+    t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["contractor_type", "contractor_id"], name: "index_service_responses_on_contractor"
+    t.index ["contractor_id"], name: "index_service_responses_on_contractor_id"
     t.index ["service_request_id"], name: "index_service_responses_on_service_request_id"
     t.index ["status", "service_request_id"], name: "index_service_responses_on_status_and_service_request_id"
   end
@@ -227,11 +242,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_13_122507) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "advertisements", "services"
+  add_foreign_key "bids", "service_requests"
+  add_foreign_key "bids", "users", column: "contractor_id"
   add_foreign_key "contractor_homeowner_requests", "homeowner_requests"
   add_foreign_key "contractor_services", "services"
   add_foreign_key "contractor_services", "users"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
   add_foreign_key "profiles", "users"
+  add_foreign_key "service_requests", "users", column: "homeowner_id"
   add_foreign_key "service_responses", "service_requests"
+  add_foreign_key "service_responses", "users", column: "contractor_id"
 end

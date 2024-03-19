@@ -18,14 +18,11 @@ class ServiceResponsesController < ApplicationController
   def create
     @service_request = ServiceRequest.find(params[:service_request_id])
     @service_response = @service_request.service_responses.build(service_response_params)
-    @service_response.contractor_type = 'Contractor'
     @service_response.contractor_id = current_user.id # Adjust based on your logic
-    @service_request.start # start the in_progress for this response
+    #@service_request.start # start the in_progress for this response
 
     if @service_response.save
       # TODO: Send notification
-
-      #@service_request.start  # start the in_progress for this response
       redirect_to service_request_service_responses_path(@service_request), notice: 'Service response was successfully created.'
     else
       # Render the respond view again with errors

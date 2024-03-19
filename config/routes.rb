@@ -68,13 +68,21 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :service_requests, only: [:index, :new, :edit, :update] do
-    get 'respond', on: :member
+  resources :service_requests do
+    post 'bids', to: 'bids#create', as: 'bids'
     resources :service_responses, only: [:index, :new, :create]
+    resources :bids do
+      member do
+        post 'accept'
+        post 'reject'
+        post 'confirm_acceptance'
+      end
+    end
   end
 
-  resources :services, only: [:index, :new, :create, :edit, :update, :destroy]
+  get '/bid_confirmation', to: 'bids#confirmation', as: 'bid_confirmation'
 
+  resources :services, only: [:index, :new, :create, :edit, :update, :destroy]
   resources :advertisements, only: [:index, :new, :create, :edit, :update, :destroy]
 
   get 'dashboard', to: 'dashboard#index'

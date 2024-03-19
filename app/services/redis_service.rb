@@ -1,7 +1,7 @@
 class RedisService
   def self.update_analytics
     set_service_request_count(ServiceRequest.count)
-    set_service_response_count(ServiceResponse.count)
+    set_service_response_count(Bid.count)
     set_contractor_count(Contractor.count)
     set_homeowner_count(Homeowner.count)
     set_licensed_contractor_count(User.licensed_contractors.count)

@@ -1,5 +1,5 @@
-<%= form_with(model: @service_request, url: service_request_path(@service_request),  multipart: true, html: { class: "form-horizontal" }) do |form| %>
-
+<%= form_with(model: @service_request, url: service_requests_path, method: :post, multipart: true, html: { class: "form-horizontal" }) do |form| %>
+  <%#= debug @service_request %>
   <% if @service_request.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(@service_request.errors.count, "error") %> prohibited this service request from being saved:</h2>
@@ -17,7 +17,7 @@
     <div class="col-sm-5">
       <div class="form-group">
         <label class="control-label">Existing Images</label>
-        <% @existing_images.each do |image| %>
+        <% @existing_images&.each do |image| %>
           <div class="existing-image">
             <%= image_tag image.url, class: "existing-image-preview" %>
             <%= check_box_tag "remove_images[]", image.id, false, class: "remove-image-checkbox" %>
@@ -31,7 +31,7 @@
     <div class="col-sm-6">
       <!-- Retain existing images -->
       <!-- Hidden fields for existing images -->
-      <% @existing_images.each do |image| %>
+      <% @existing_images&.each do |image| %>
         <%= form.hidden_field :images, multiple: true, value: image.signed_id %>
       <% end %>
 
@@ -40,11 +40,14 @@
         <%= form.file_field :images, multiple: true, class: "form-control" %>
       </div>
 
-      <!-- Status -->
+      <!-- Display Status -->
       <div class="form-group">
-        <%= form.label :status, class: "form-label" %>
-        <%= form.text_field :status, class: "form-control", disabled: true %>
+        <%= form.label :display_status, class: "form-label" %>
+        <%= form.text_field :display_status, value: @service_request.human_readable_status, class: "form-control", readonly: true %>
       </div>
+
+      <!-- Hidden Field for Status -->
+      <%= form.hidden_field :status %>
 
       <!-- Title -->
       <div class="form-group">
@@ -74,6 +77,12 @@
       <div class="form-group">
         <%= form.label :timeline, class: "form-label" %>
         <%= form.text_field :timeline, class: "form-control" %>
+      </div>
+
+      <!-- Budget -->
+      <div class="form-group">
+        <%= form.label :due_date, class: "form-label" %>
+        <%= form.date_field :due_date, class: "form-control" %>
       </div>
 
       <!-- Range -->

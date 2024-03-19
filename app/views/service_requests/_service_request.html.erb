@@ -5,8 +5,9 @@
         { label: "Title:", value: service_request.title },
         { label: "Description:", value: service_request.description },
         { label: "Location:", value: service_request.location },
-        { label: "Budget:", value: service_request.budget },
+        { label: "Budget:", value: number_to_currency(service_request.budget) },
         { label: "Timeline:", value: service_request.timeline },
+        { label: "Due Date:", value: service_request.due_date },
         { label: "Service:", value: service_request.services.pluck(:name).join(', ') },
         { label: "Range:", value: service_request.range },
         { label: "Status:", value: service_request.status.humanize },
@@ -45,19 +46,61 @@
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
-            <%= link_to 'Respond', respond_service_request_path(service_request), class: 'btn btn-primary btn-sm' %>
-
+            <% if current_user.service_provider? %>
+              <% if service_request.open? && !current_user.submitted_bid_for?(service_request) %>
+                <%= link_to 'Bid', new_service_request_bid_path(service_request), class: 'btn btn-primary btn-sm' %>
+              <% else %>
+                <% if current_user.submitted_bid_for?(service_request) %>
+                  <% if service_request.contractor_bid_accepted?(current_user) %>
+                    <%= link_to 'Bid Accepted', '#', class: 'btn btn-primary btn-sm disabled', disabled: true %>
+                  <% else %>
+                    <%= link_to 'Bid Submitted', '#', class: 'btn btn-primary btn-sm disabled', disabled: true %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
 
             <% if current_user.property_owner? %>
               <% if service_request.status == 'in_progress' %>
-                <%= link_to 'View Responses', service_request_service_responses_path(service_request), class: "btn btn-secondary mr-1" %>
+                <!-- Uncomment the line below if needed -->
+                <!-- <%= link_to 'View Responses', service_request_service_responses_path(service_request), class: "btn btn-secondary mr-1" %> -->
               <% end %>
-              <%= link_to "Edit", edit_service_request_path(service_request), method: :post, class: "btn btn-secondary mr-1" %>
+              <%= link_to 'show', service_request_path(service_request), class: "btn btn-secondary mr-1" %>
+              <% if !service_request.bids.any? %>
+                <%= link_to "Edit", edit_service_request_path(service_request), class: "btn btn-secondary mr-1" %>
+              <% end %>
               <%= button_to "Destroy", service_request_path(service_request), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->service_requests#destroy" } %>
             <% end %>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Display accepted bids -->
+  <div class="card-body">
+    <h5 class="card-title">Accepted Bids</h5>
+    <ul class="list-group">
+      <% service_request.bids.each do |bid| %>
+        <% if bid.accepted? || bid.confirmed?%>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>Contractor Email:</strong> <%= bid.contractor.email %><br>
+              <strong>Proposed Price:</strong> <%= bid.proposed_price %><br>
+              <strong>Estimated timeline (days):</strong> <%= bid.estimated_timeline_in_days %><br>
+            </div>
+            <% if bid.accepted? %>
+              <span class="badge bg-success">Accepted</span>
+            <% elsif bid.confirmed? %>
+              <span class="badge bg-success">Confirmed</span>
+            <% end %>
+          </li>
+          <!-- Inside the loop where bids are displayed -->
+          <% if current_user == bid.contractor && bid.accepted? && bid.service_request.open? && bid.status != 'confirmed' %>
+            <%= button_to 'Confirm Acceptance', confirm_acceptance_service_request_bid_path(bid.service_request, bid), method: :post, class: 'btn btn-success btn-sm' %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </ul>
   </div>
 </div>

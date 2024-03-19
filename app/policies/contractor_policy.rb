@@ -6,6 +6,11 @@ class ContractorPolicy < ApplicationPolicy
     @contractor = contractor
   end
 
+  def show?
+    binding.pry
+    user.present? && (user.admin? || user.service_provider? || record&.user == user)
+  end
+
   def index?
     user.admin? || user.property_owner?
   end

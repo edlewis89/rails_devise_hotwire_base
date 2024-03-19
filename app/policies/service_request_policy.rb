@@ -6,6 +6,14 @@ class ServiceRequestPolicy < ApplicationPolicy
     @service_request = service_request
   end
 
+  def index
+    show?
+  end
+  
+  def show
+    current_user.admin? || current_user == service_request.homeowner
+  end
+
   def create?
     user.property_owner?
   end
@@ -26,7 +34,7 @@ class ServiceRequestPolicy < ApplicationPolicy
     user.property_owner? || user.admin?
   end
 
-  def respond?
-    user.service_provider? && (user.pro? || user.premium?) && !user.responses_for_request(record).present?
+  def bid?
+    user.service_provider? && (user.pro? || user.premium?)
   end
 end

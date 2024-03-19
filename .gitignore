@@ -42,3 +42,5 @@
 app/config/database.yml
 app/config/master.key
 
+public/uploads/*.*
+

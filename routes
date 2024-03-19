@@ -1,5 +1,6 @@
  >>>>>>>>>>>>>>>>profiles {:query=>{:multi_match=>{:query=>"homeowner@example.com", :fields=>["email"]}}}
                                          Prefix Verb   URI Pattern                                                                                       Controller#Action
+                                dashboard_index GET    /dashboard/index(.:format)                                                                        dashboard#index
                                new_user_session GET    /users/sign_in(.:format)                                                                          devise/sessions#new
                                    user_session POST   /users/sign_in(.:format)                                                                          devise/sessions#create
                            destroy_user_session DELETE /users/sign_out(.:format)                                                                         devise/sessions#destroy
@@ -84,10 +85,14 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                                 PATCH  /ad_managers/:id(.:format)                                                                        ad_managers#update
                                                 PUT    /ad_managers/:id(.:format)                                                                        ad_managers#update
                                                 DELETE /ad_managers/:id(.:format)                                                                        ad_managers#destroy
-                        respond_service_request GET    /service_requests/:id/respond(.:format)                                                           service_requests#respond
+                           service_request_bids POST   /service_requests/:service_request_id/bids(.:format)                                              bids#create
               service_request_service_responses GET    /service_requests/:service_request_id/service_responses(.:format)                                 service_responses#index
                                                 POST   /service_requests/:service_request_id/service_responses(.:format)                                 service_responses#create
            new_service_request_service_response GET    /service_requests/:service_request_id/service_responses/new(.:format)                             service_responses#new
+                     accept_service_request_bid POST   /service_requests/:service_request_id/bids/:id/accept(.:format)                                   bids#accept
+                     reject_service_request_bid POST   /service_requests/:service_request_id/bids/:id/reject(.:format)                                   bids#reject
+                                                POST   /service_requests/:service_request_id/bids(.:format)                                              bids#create
+                        new_service_request_bid GET    /service_requests/:service_request_id/bids/new(.:format)                                          bids#new
                                service_requests GET    /service_requests(.:format)                                                                       service_requests#index
                                                 POST   /service_requests(.:format)                                                                       service_requests#create
                             new_service_request GET    /service_requests/new(.:format)                                                                   service_requests#new
@@ -96,6 +101,7 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                                 PATCH  /service_requests/:id(.:format)                                                                   service_requests#update
                                                 PUT    /service_requests/:id(.:format)                                                                   service_requests#update
                                                 DELETE /service_requests/:id(.:format)                                                                   service_requests#destroy
+                               bid_confirmation GET    /bid_confirmation(.:format)                                                                       bids#confirmation
                                        services GET    /services(.:format)                                                                               services#index
                                                 POST   /services(.:format)                                                                               services#create
                                     new_service GET    /services/new(.:format)                                                                           services#new
@@ -110,6 +116,7 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                   advertisement PATCH  /advertisements/:id(.:format)                                                                     advertisements#update
                                                 PUT    /advertisements/:id(.:format)                                                                     advertisements#update
                                                 DELETE /advertisements/:id(.:format)                                                                     advertisements#destroy
+                                      dashboard GET    /dashboard(.:format)                                                                              dashboard#index
                                     sidekiq_web        /sidekiq                                                                                          Sidekiq::Web
                                       send_data POST   /send_data(.:format)                                                                              home#send_data
                                            root GET    /                                                                                                 home#index
