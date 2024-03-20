@@ -10,7 +10,7 @@
   <% if @bids.any? %>
     <ul class="list-group">
       <% @bids.each do |bid| %>
-        <% if bid.pending? ||  bid.confirmed? %>
+        <% if bid.pending? || bid.accepted? || bid.confirmed? %>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <div>
               <strong>Contractor Name:</strong> <%= bid.contractor.name %> (<%= bid.contractor.email %>)<br>

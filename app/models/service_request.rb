@@ -80,5 +80,24 @@ class ServiceRequest < ApplicationRecord
     service_request.bids.find_by(contractor: user, status: :approved)
   end
 
+  def has_accepted_bids_for_user?(user)
+    accepted_bids.exists?(contractor: user)
+  end
+
+  # Method to check if there are any confirmed bids for a given user
+  def has_confirmed_bids_for_user?(user)
+    confirmed_bids.exists?(contractor: user)
+  end
+
   private
+
+  # Helper method to fetch accepted bids
+  def accepted_bids
+    bids.accepted
+  end
+
+  # Helper method to fetch confirmed bids
+  def confirmed_bids
+    bids.confirmed
+  end
 end
