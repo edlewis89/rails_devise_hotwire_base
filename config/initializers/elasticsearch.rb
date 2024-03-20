@@ -29,6 +29,7 @@
 #
 require 'elasticsearch'
 require 'singleton'
+require 'logger'
 
 class ElasticsearchHelper
   include Singleton
@@ -126,6 +127,9 @@ class ElasticsearchHelper
       headers: { 'Content-Type' => 'application/json' },
       log: true
     )
+  rescue Elasticsearch::Transport::Transport::Error => e
+    @logger.error("Error building Elasticsearch client: #{e.message}")
+    raise e
   end
 
   def elasticsearch_url

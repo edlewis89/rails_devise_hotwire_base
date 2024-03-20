@@ -15,6 +15,7 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
 
       ## Rememberable
       t.datetime :remember_created_at
+      t.datetime :last_seen_at
 
       ## Role enum
       t.integer :role, null: false, default: 0
