@@ -24,6 +24,7 @@ class HomeownersController < ApplicationController
 
   # GET /homeowners/1/edit
   def edit
+    binding.pry
     @homeowner = Homeowner.find(params[:id])
     @profile = @homeowner.profile
     @address = @profile.addresses.first || Address.new

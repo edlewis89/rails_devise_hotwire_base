@@ -1,0 +1,18 @@
+<p>
+  <strong>Rating:</strong>
+  <%= @review.rating %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= @review.comment %>
+</p>
+
+<p>
+  Submitted by: <%= @review.homeowner.name %>
+</p>
+
+<% if current_user == @review.homeowner || current_user == @review.contractor %>
+  <%= link_to 'Edit', edit_review_path(@review) %>
+  <%= link_to 'Delete', @review, method: :delete, data: { confirm: 'Are you sure?' } %>
+<% end %>

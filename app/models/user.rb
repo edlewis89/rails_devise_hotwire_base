@@ -1,15 +1,9 @@
 class User < ApplicationRecord
-
   self.inheritance_column = :type
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :confirmable
-
-  # has_many :sent_messages, as: :sender, class_name: 'Message'
-  # has_many :received_messages, as: :recipient, class_name: 'Message'
-  #has_many :sent_messages, class_name: "Message", foreign_key: "sender_id"
-  #has_many :received_messages, class_name: "Message", foreign_key: "recipient_id"
 
   # :general: General users
   # :property_owner: Property owners
@@ -19,16 +13,16 @@ class User < ApplicationRecord
   enum role: %i(general property_owner service_provider ad_manager admin)
   enum subscription_level: %i(basic premium pro)
 
-  #has_many :homeowner_requests
-  #has_many :contractor_homeowner_requests, through: :homeowner_requests
   # Conversations initiated by the user as the sender
   has_many :sent_conversations, foreign_key: :sender_id, class_name: 'Conversation', dependent: :destroy
   # Conversations initiated by the user as the recipient
   has_many :received_conversations, foreign_key: :recipient_id, class_name: 'Conversation', dependent: :destroy
   # Messages sent by the user
   has_many :messages, dependent: :destroy
-  has_one :profile, dependent: :destroy#, as: :profileable, dependent: :destroy
 
+  has_many :notifications, foreign_key: :recipient_id
+
+  has_one :profile, foreign_key: 'user_id', dependent: :destroy
 
 
   # Define a scope for active records
@@ -55,9 +49,9 @@ class User < ApplicationRecord
   scope :contractors, -> { where(type: 'Contractor') }
 
   delegate :name, to: :profile, prefix: true, allow_nil: true
-  #delegate :primary_address_zipcode, to: :profile, prefix: false, allow_nil: true
-  #delegate :primary_address_city, to: :profile, prefix: false, allow_nil: true
   delegate :have_license, to: :profile, allow_nil: true, prefix: false
+  delegate :zipcode, to: :primary_address, prefix: true, allow_nil: true
+  delegate :city, to: :primary_address, prefix: true, allow_nil: true
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
@@ -82,7 +76,7 @@ class User < ApplicationRecord
   end
 
   def profile
-    profile ||= Profile.find_or_initialize_by(user: self)
+    profile ||= Profile.find_or_initialize_by(user_id: id)
   end
 
   private
@@ -90,5 +84,9 @@ class User < ApplicationRecord
   def create_user_profile
     # Create a profile for the user if it doesn't exist
     self.create_profile unless self.profile
+  end
+
+  def primary_address
+    profile&.addresses&.first
   end
 end

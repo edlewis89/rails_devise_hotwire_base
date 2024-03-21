@@ -6,7 +6,7 @@
   <p><strong>Due Date:</strong> <%= @service_request.due_date %></p>
   <p><strong>Budget:</strong> <%= number_to_currency(@service_request.budget) %></p>
 
-  <h2 class="mt-5 mb-3">Bids</h2>
+  <h2 class="mt-5 mb-3">Current Bids</h2>
   <% if @bids.any? %>
     <ul class="list-group">
       <% @bids.each do |bid| %>

@@ -69,45 +69,58 @@
               <%= link_to 'Show', service_request_path(service_request), class: "btn btn-secondary mr-1" %>
               <% if !service_request.bids.any? %>
                 <%= link_to "Edit", edit_service_request_path(service_request), class: "btn btn-secondary mr-1" %>
+                <%= button_to "Destroy", service_request_path(service_request), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->service_requests#destroy" } %>
               <% end %>
-              <%= button_to "Destroy", service_request_path(service_request), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", data: { action: "click->service_requests#destroy" } %>
             <% end %>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Accepted Bids -->
-    <div class="card-body">
-      <h5 class="card-title">Accepted Bids</h5>
-      <ul class="list-group">
+    <% if current_user.property_owner? %>
+      <!-- Accepted Bids -->
+      <div class="card-body">
         <% if service_request.bids.any? %>
           <% service_request.bids.each do |bid| %>
             <% if bid.accepted? || bid.confirmed? %>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  <strong>Contractor Email:</strong> <%= bid.contractor.email %><br>
-                  <strong>Proposed Price:</strong> <%= bid.proposed_price %><br>
-                  <strong>Estimated timeline (days):</strong> <%= bid.estimated_timeline_in_days %><br>
-                </div>
-                <% if bid.accepted? %>
-                  <span class="badge bg-success">Accepted</span>
-                <% elsif bid.confirmed? %>
-                  <span class="badge bg-success">Confirmed</span>
-                <% end %>
-              </li>
+              <h5 class="card-title">Accepted Bids</h5>
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Contractor Email:</strong> <%= bid.contractor.email %><br>
+                    <strong>Proposed Price:</strong> <%= bid.proposed_price %><br>
+                    <strong>Estimated timeline (days):</strong> <%= bid.estimated_timeline_in_days %><br>
+                  </div>
+                  <% if bid.accepted? %>
+                    <span class="badge bg-success">Accepted</span>
+                  <% elsif bid.confirmed? %>
+                    <span class="badge bg-success">Confirmed</span>
+                  <% end %>
+                </li>
+              </ul>
               <!-- Confirm acceptance button -->
               <div class="d-flex justify-content-end">
                 <% if current_user == bid.contractor && bid.accepted? && bid.service_request.open? && bid.status != 'confirmed' %>
                   <%= button_to 'Confirm Acceptance', confirm_acceptance_service_request_bid_path(bid.service_request, bid), method: :post, class: 'btn btn-success btn-sm' %>
                 <% end %>
               </div>
+            <% elsif bid.pending? %>
+              <h5 class="card-title">Pending Bids</h5>
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Contractor Email:</strong> <%= bid.contractor.email %><br>
+                    <strong>Proposed Price:</strong> <%= bid.proposed_price %><br>
+                    <strong>Estimated timeline (days):</strong> <%= bid.estimated_timeline_in_days %><br>
+                  </div>
+                </li>
+              </ul>
             <% end %>
           <% end %>
         <% else %>
           <p>No bids have been submitted for this service request.</p>
         <% end %>
-      </ul>
-    </div>
+      </div>
+    <% end %>
   </div>
 </div>

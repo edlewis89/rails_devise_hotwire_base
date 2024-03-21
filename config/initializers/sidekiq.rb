@@ -25,6 +25,9 @@ redis_cfg = {
 Sidekiq.configure_server do |config|
   config.redis = redis_cfg
   config.average_scheduled_poll_interval = 5
+  config.on(:startup) do
+    Sidekiq.strict_args!
+  end
 end
 
 Sidekiq.configure_client do |config|

@@ -23,8 +23,7 @@ class Profile < ApplicationRecord
   attr_accessor :remote_image_url
   mount_uploader :image_data, ImageUploader
 
-  delegate :role, :active, :public, :email, to: :user, prefix: true, allow_nil: true
-  delegate :type, to: :user, prefix: true, allow_nil: true
+  delegate :role, :active, :public, :email, :type, to: :user, prefix: true, allow_nil: true
   delegate :city, :state, :zipcode, to: :primary_address, prefix: true, allow_nil: true
 
   after_create :validate_service_area_for_service_provider

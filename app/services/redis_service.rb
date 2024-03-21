@@ -78,8 +78,9 @@ class RedisService
 
   def self.update_service_requests_with_all_bids
     ServiceRequest.includes(:bids).find_each do |service_request|
-      bids = service_request.bids.pluck(:id)
-      set_bids_for_service_request(service_request.id, bids)
+      bids = service_request&.bids.pluck(:id) || [] # Assign an empty array if bids is nil
+      bids_str = bids.join(',')
+      set_bids_for_service_request(service_request.id, bids_str)
     end
   end
 

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Your Bid has been Accepted</title>
+</head>
+<body>
+<h1>Your Bid has been Accepted</h1>
+<p>
+  Congratulations! Your bid for <%= @service_request.title %> has been accepted.
+  You can view the details of the service request by clicking the following link:
+  <a href="<%= Rails.application.routes.url_helpers.service_request_url(@service_request) %>">
+    <%= @service_request.title %>
+  </a>
+</p>
+<p>Thank you for using our platform.</p>
+</body>
+</html>

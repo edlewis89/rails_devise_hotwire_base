@@ -1,6 +1,9 @@
 class Homeowner < User
+  has_one :profile, foreign_key: 'user_id', dependent: :destroy
+
   has_many :homeowner_requests, dependent: :destroy
   has_many :service_requests, foreign_key: :homeowner_id, dependent: :destroy
+  has_many :reviews
 
   delegate :name, :phone_number, to: :profile
 
@@ -12,6 +15,10 @@ class Homeowner < User
 
   def is_active?
     active # Assuming there's an 'active' attribute in the 'homeowners' table
+  end
+
+  def profile
+    profile ||= Profile.find_or_initialize_by(user_id: id)
   end
 
   def self.with_service_requests

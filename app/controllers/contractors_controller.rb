@@ -50,6 +50,16 @@ class ContractorsController < ApplicationController
     render_success_message(flash_message)
   end
 
+
+  def autocomplete
+    binding.pry
+    term = params[:term]
+    @contractors = Profile.search_in_elastic(term)
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace('contractors', partial: 'contractors/autocomplete', locals: { contractors: @contractors }) }
+    end
+  end
+
   private
 
   def search_contractors

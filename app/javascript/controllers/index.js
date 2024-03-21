@@ -5,4 +5,8 @@
 import { application } from "./application"
 
 import HelloController from "./hello_controller"
+import AutocompletionController from "./autocompletion"
+
+
 application.register("hello", HelloController)
+application.register("autocompletion", AutocompletionController);

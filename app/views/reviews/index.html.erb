@@ -1,0 +1,22 @@
+<div class="container">
+  <h1>Reviews</h1>
+
+  <% if @reviews.any? %>
+    <% @reviews.each do |review| %>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Rating: <%= review.rating %></h5>
+          <p class="card-text">Comment: <%= review.comment %></p>
+          <p class="card-text">Submitted by: <%= review.homeowner.name %></p>
+          <%= link_to 'View', review, class: "btn btn-primary mr-2" %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="alert alert-info" role="alert">
+      There are no reviews available.
+    </div>
+  <% end %>
+
+  <%= link_to 'Add New Review', new_review_path, class: "btn btn-success mt-3" %>
+</div>

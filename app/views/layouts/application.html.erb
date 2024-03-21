@@ -236,7 +236,7 @@
                       <li><%= link_to "Create Service Request", new_service_request_path, class: "dropdown-item" %></li>
                       <li><%= link_to "My Requests", service_requests_path, class: "dropdown-item" %></li>
                     <% end %>
-                    <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
+                    <li><%= link_to "Write a Review", reviews_path, class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
                   </ul>
@@ -252,7 +252,6 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li><%= link_to "Service Requests", service_requests_path, class: "dropdown-item" %></li>
-                    <li><%= link_to "Reviews", "reviews_path", class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><%= link_to "Profile", edit_contractor_path(current_user), class: "dropdown-item" %></li>
                   </ul>

@@ -1,6 +1,11 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  get 'reviews/new'
+  get 'reviews/create'
+  get 'reviews/edit'
+  get 'reviews/update'
+  get 'reviews/destroy'
   get 'dashboard/index'
   devise_for :users, controllers: {
     registrations: 'users/registrations'
@@ -38,6 +43,7 @@ Rails.application.routes.draw do
   resources :contractors do
     collection do
       get 'index', as: :search
+      get 'autocomplete', as: :contractors_autocomplete
     end
     member do
       post :edit
@@ -84,6 +90,7 @@ Rails.application.routes.draw do
 
   resources :services, only: [:index, :new, :create, :edit, :update, :destroy]
   resources :advertisements, only: [:index, :new, :create, :edit, :update, :destroy]
+  resources :reviews, only: [:index, :new, :create, :edit, :update, :destroy]
 
   get 'dashboard', to: 'dashboard#index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

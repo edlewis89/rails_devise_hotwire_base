@@ -1,4 +1,6 @@
 class Contractor < User
+  has_one :profile, foreign_key: 'user_id', dependent: :destroy
+
   has_many :contractor_homeowner_requests
   has_many :homeowner_requests, through: :contractor_homeowner_requests
 
@@ -8,12 +10,17 @@ class Contractor < User
   has_many :contractor_services
   has_many :services, through: :contractor_services
 
+  has_many :reviews
+
   delegate :name, :phone_number, :availability, :service_area,
            :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
            :insurance_policy_number, :have_insured, :have_license, to: :profile, allow_nil: true
 
-  delegate :type, to: :user, prefix: true, allow_nil: true
+  delegate :type, to: :self, prefix: true, allow_nil: true
 
+  def profile
+    profile ||= Profile.find_or_initialize_by(user_id: id)
+  end
   
 #  Define the Criteria: Determine the criteria for matching a contractor with a service request. This includes the service request's zipcode, the range within which the contractor should be located, and the required skills for the service.
 #
@@ -64,8 +71,6 @@ class Contractor < User
     ServiceResponse.joins(:service_request).where(service_requests: { contractor_id: id })
   end
 
-
-
   def is_active?
     active # Assuming there's an 'active' attribute in the 'homeowners' table
   end
@@ -100,6 +105,9 @@ class Contractor < User
     bids_to_disassociate.update_all(service_request_id: nil)
   end
 
+  def average_rating
+    reviews.average(:rating)
+  end
 
   private
 

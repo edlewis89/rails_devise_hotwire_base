@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_18_132434) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -140,6 +140,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_18_132434) do
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "recipient_id", null: false
+    t.bigint "sender_id"
+    t.text "message"
+    t.integer "notification_type"
+    t.boolean "read_status", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
+    t.index ["sender_id"], name: "index_notifications_on_sender_id"
+  end
+
   create_table "profiles", force: :cascade do |t|
     t.bigint "user_id"
     t.decimal "hourly_rate", precision: 8, scale: 2, default: "0.0"
@@ -164,6 +176,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_18_132434) do
     t.index ["name"], name: "index_profiles_on_name"
     t.index ["phone_number"], name: "index_profiles_on_phone_number"
     t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.text "content"
+    t.integer "rating"
+    t.bigint "homeowner_id", null: false
+    t.bigint "contractor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contractor_id"], name: "index_reviews_on_contractor_id"
+    t.index ["homeowner_id"], name: "index_reviews_on_homeowner_id"
   end
 
   create_table "service_requests", force: :cascade do |t|
@@ -251,6 +274,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_18_132434) do
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
   add_foreign_key "profiles", "users"
+  add_foreign_key "reviews", "users", column: "contractor_id"
+  add_foreign_key "reviews", "users", column: "homeowner_id"
   add_foreign_key "service_requests", "users", column: "homeowner_id"
   add_foreign_key "service_responses", "service_requests"
   add_foreign_key "service_responses", "users", column: "contractor_id"
