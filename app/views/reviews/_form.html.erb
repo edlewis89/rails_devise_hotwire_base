@@ -10,15 +10,21 @@
     </div>
   <% end %>
 
+
+  <div class="mb-3 max-w-xs mx auto bg-white">
+
+    <div data-controller="autocomplete" data-autocomplete-url-value="/contractors//autocomplete">
+      <input type="text" class="w-full" data-autocomplete-target="input" placeholder="Type to search..."/>
+      <ul data-autocomplete-target="results"></ul>
+    </div>
+  </div>
+
+  <%= form.hidden_field :user_id, value: current_user.id %>
+  <%= form.hidden_field :contractor_id, value: @contractor.id %>
+
   <div class="mb-3">
-    <%= form.label :contractor_name %>
-    <%= form.text_field :contractor_name, id: "contractor_name_field", placeholder: "Start typing contractor's name",  class: "form-control", data: { action: 'input->autocompletion#search' } %>
-    <datalist id='contractors'>
-      <% @contractors&.each do |contractor|%>
-        <option value=<%=contractor.email%>></option>
-      <%end%>
-    </datalist>
-    <%= form.hidden_field :contractor_id, id: "contractor_id_field" %>
+    <%= form.label :title, class: "form-label" %>
+    <%= form.text_field :title, class: "form-control" %>
   </div>
 
   <div class="mb-3">
@@ -27,8 +33,8 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :comment, class: "form-label" %>
-    <%= form.text_area :comment, class: "form-control" %>
+    <%= form.label "Review", class: "form-label" %>
+    <%= form.text_area :content, class: "form-control" %>
   </div>
 
   <%= form.submit "Submit", class: "btn btn-primary" %>

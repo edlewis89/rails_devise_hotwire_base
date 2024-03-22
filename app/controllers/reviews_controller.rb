@@ -1,4 +1,6 @@
 class ReviewsController < ApplicationController
+  include ContractorsHelper
+
   before_action :find_review, only: [:edit, :update, :destroy]
 
   def index
@@ -7,6 +9,7 @@ class ReviewsController < ApplicationController
 
   def new
     @review = Review.new
+    @contractor_options = search_contractors_for_options_select(params[:q])
   end
 
   def create
@@ -41,7 +44,7 @@ class ReviewsController < ApplicationController
   end
 
   def review_params
-    params.require(:review).permit(:title, :body, :rating, :contractor_id, :homeowner_id)
+    params.require(:review).permit(:title, :rating, :content, :contractor_id, :homeowner_id)
   end
 end
 

@@ -1,0 +1,7 @@
+<% if @contractor_options.present? %>
+  <% @contractor_options.each do |contractor| %>
+    <li role="option"><%= contractor[1] %> | <%=contractor[2] %></li>
+  <% end %>
+<% else %>
+  <li role="option">No contractors found</li>
+<% end %>

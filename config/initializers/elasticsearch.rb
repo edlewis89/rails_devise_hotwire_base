@@ -137,7 +137,7 @@ class ElasticsearchHelper
   end
 
   def build_generic_query(query, fields)
-    {
+    query_hash = {
       query: {
         multi_match: {
           query: query,
@@ -145,6 +145,12 @@ class ElasticsearchHelper
         }
       }
     }
+
+    # Print out the constructed query for inspection
+    puts "Constructed query: #{query_hash.inspect}"
+
+    # Return the constructed query
+    query_hash
   end
 end
 

@@ -1,6 +1,8 @@
 class ContractorsController < ApplicationController
+  include ContractorsHelper
+
   before_action :authenticate_user!, except: %i[index show]
-  before_action :authorize_user, except: %i[index show]
+  before_action :authorize_user, except: %i[index show autocomplete]
   before_action :set_contractor, only: %i[show edit update destroy]
 
   def index
@@ -50,30 +52,18 @@ class ContractorsController < ApplicationController
     render_success_message(flash_message)
   end
 
-
   def autocomplete
-    binding.pry
-    term = params[:term]
-    @contractors = Profile.search_in_elastic(term)
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.replace('contractors', partial: 'contractors/autocomplete', locals: { contractors: @contractors }) }
-    end
+    term = params[:q]
+    results = search_contractors_for_options_select(term)
+    @contractor_options = results[:contractor_options].compact
+    puts ">>>>> #{@contractor_options}"
+    render layout: false
+    # respond_to do |format|
+    #   format.turbo_stream { render turbo_stream: turbo_stream.replace('results', partial: 'contractors/autocomplete', locals: { contractor_options: @contractor_options[:contractor_options] }) }
+    # end
   end
 
   private
-
-  def search_contractors
-    es_response = Profile.search_in_elastic(query_params[:query]).response
-    profile_ids = []
-    if es_response.present? && es_response['hits'].present? && es_response['hits']['hits'].present?
-      es_response['hits']['hits'].each do |hit|
-        profile_ids << hit['_id'] if hit['_source']['user_type'] == 'Contractor'
-      end
-    end
-    contractors = Contractor.joins(:profile).where(profiles: { id: profile_ids.map(&:to_i) })
-    @contractors = contractors.paginate(page: params[:page] || 1, per_page: 5)
-    render_index_template
-  end
 
   def load_contractors
     @contractors = Contractor.paginate(page: params[:page] || 1, per_page: 5)

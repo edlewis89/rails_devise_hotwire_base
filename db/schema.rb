@@ -179,8 +179,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
   end
 
   create_table "reviews", force: :cascade do |t|
+    t.string "title"
     t.text "content"
     t.integer "rating"
+    t.date "date"
+    t.string "reviewer_name"
+    t.string "reviewer_email"
+    t.boolean "visibility", default: true
+    t.integer "likes", default: 0
+    t.integer "dislikes", default: 0
+    t.string "tags", default: [], array: true
     t.bigint "homeowner_id", null: false
     t.bigint "contractor_id", null: false
     t.datetime "created_at", null: false

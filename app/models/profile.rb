@@ -51,30 +51,45 @@ class Profile < ApplicationRecord
     #delete_document if document_exists?
   end
 
-  settings index: { number_of_shards: 1 } do
+  settings index: { number_of_shards: 1, analysis: {
+    filter: {
+      edge_ngram_filter: {
+        type: 'edge_ngram',
+        min_gram: 2,  # Adjust min_gram and max_gram as needed
+        max_gram: 15
+      }
+    },
+    analyzer: {
+      edge_ngram_analyzer: {
+        type: 'custom',
+        tokenizer: 'standard',
+        filter: ['lowercase', 'edge_ngram_filter']
+      }
+    }
+  } } do
     mappings dynamic: 'false' do
-      indexes :name, type: 'text'
+      indexes :name, type: 'text', analyzer: 'edge_ngram_analyzer'
       indexes :email, type: 'text'
-      indexes :description, type: 'text'
+      indexes :description, type: 'text', analyzer: 'edge_ngram_analyzer'
       indexes :phone_number, type: 'text'
-      indexes :city, type: 'text'
-      indexes :state, type: 'text'
+      indexes :city, type: 'text', analyzer: 'edge_ngram_analyzer'
+      indexes :state, type: 'text', analyzer: 'edge_ngram_analyzer'
       indexes :zipcode, type: 'text'
-      indexes :license_number, type: 'text'
+      indexes :license_number, type: 'text', analyzer: 'edge_ngram_analyzer'
       indexes :insurance_provider, type: 'text'
-      indexes :insurance_policy_number, type: 'text'
+      indexes :insurance_policy_number, type: 'text', analyzer: 'edge_ngram_analyzer'
       indexes :have_license, type: 'boolean'
       indexes :have_insurance, type: 'boolean'
-      indexes :service_area, type: 'text'
+      indexes :service_area, type: 'text', analyzer: 'edge_ngram_analyzer'
       indexes :years_of_experience, type: 'integer'
-      indexes :specializations, type: 'text'
-      indexes :certifications, type: 'text'
-      indexes :languages_spoken, type: 'text'
+      indexes :specializations, type: 'text', analyzer: 'edge_ngram_analyzer'
+      indexes :certifications, type: 'text', analyzer: 'edge_ngram_analyzer'
+      indexes :languages_spoken, type: 'text', analyzer: 'edge_ngram_analyzer'
       indexes :hourly_rate, type: 'float'
       indexes :profileable_type, type: 'text'
       indexes :user_type, type: 'text'
       indexes :availability, type: 'boolean'
-      indexes :public, type: 'boolean' # Assuming photo is a URL or path
+      indexes :public, type: 'boolean'
       indexes :active, type: 'boolean'
     end
   end
@@ -232,8 +247,10 @@ class Profile < ApplicationRecord
     fields = array_of_symbols&.map(&:to_s)
     # Now fields contains an array of field names from the Elasticsearch mappings
     puts ">>>>>>>> fields #{fields}"
-    fields = ["name","email","description","phone_number","city","state","zipcode","license_number","insurance_provider","insurance_policy_number","have_license","have_insurance","service_area","years_of_experience","specializations","certifications","languages_spoken","hourly_rate","availability","active","public","user_type","profileable_type"]
+    #fields = ["name","email","description","phone_number","city","state","zipcode","license_number","insurance_provider","insurance_policy_number","have_license","have_insurance","service_area","years_of_experience","specializations","certifications","languages_spoken","hourly_rate","availability","active","public","user_type","profileable_type"]
     #fields = ["name","email","description","phone_number","city","state","zipcode","license_number","insurance_provider","insurance_policy_number","service_area","years_of_experience","specializations","certifications","languages_spoken","hourly_rate","profileable_type"]
+    fields = ["name","email","description","phone_number","city","state","zipcode","license_number"]
+
 
     return ElasticsearchHelper.instance.search_if_index_exists(index_name, query, fields) if fields
 
@@ -241,6 +258,10 @@ class Profile < ApplicationRecord
   end
 
   def index_mappings
+    Profile.mappings.to_hash
+  end
+
+  def self.index_mappings
     Profile.mappings.to_hash
   end
 
