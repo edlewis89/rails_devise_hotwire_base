@@ -23,13 +23,9 @@ module ContractorsHelper
     end
 
     contractors = Contractor.joins(:profile).where(profiles: { id: profile_ids.map(&:to_i) })
-    #
-    # # Assign the list of contractors to the instance variable
-    # @contractors = contractors
+    contractor_options = contractors.pluck(:name, :id) # Pluck name and ID for dropdown options
 
-    contractor_options = contractors.pluck(:id, :name, :email) # Assuming name is the field you want to display in the dropdown
-
-    # Return both the contractors and the options for the dropdown
-    { contractors: contractors, contractor_options: contractor_options }
+    # Return contractor options as an array of arrays
+    contractor_options.map { |contractor| [contractor[0], contractor[1]] }
   end
 end

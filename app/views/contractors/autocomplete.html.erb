@@ -1,7 +1,5 @@
 <% if @contractor_options.present? %>
-  <% @contractor_options.each do |contractor| %>
-    <li role="option"><%= contractor[1] %> | <%=contractor[2] %></li>
-  <% end %>
+  <%= select_tag 'review[contractor_id]', options_for_select(@contractor_options), prompt: 'Select Contractor', class: 'form-select', role: 'listbox' %>
 <% else %>
-  <li role="option">No contractors found</li>
+  <p>No contractors found</p>
 <% end %>

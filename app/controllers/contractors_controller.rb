@@ -2,7 +2,7 @@ class ContractorsController < ApplicationController
   include ContractorsHelper
 
   before_action :authenticate_user!, except: %i[index show]
-  before_action :authorize_user, except: %i[index show autocomplete]
+  before_action :authorize_user, except: %i[index show]
   before_action :set_contractor, only: %i[show edit update destroy]
 
   def index
@@ -54,8 +54,8 @@ class ContractorsController < ApplicationController
 
   def autocomplete
     term = params[:q]
-    results = search_contractors_for_options_select(term)
-    @contractor_options = results[:contractor_options].compact
+    @contractor_options = search_contractors_for_options_select(term)
+    #@contractor_options = results[:contractor_options].compact
     puts ">>>>> #{@contractor_options}"
     render layout: false
     # respond_to do |format|

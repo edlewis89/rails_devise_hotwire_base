@@ -11,16 +11,13 @@
   <% end %>
 
 
-  <div class="mb-3 max-w-xs mx auto bg-white">
-
-    <div data-controller="autocomplete" data-autocomplete-url-value="/contractors//autocomplete">
-      <input type="text" class="w-full" data-autocomplete-target="input" placeholder="Type to search..."/>
-      <ul data-autocomplete-target="results"></ul>
+  <div class="mb-3 max-w-xs mx-auto bg-white">
+    <div data-controller="autocomplete" data-autocomplete-url-value="/contractors//autocomplete" class="position-relative">
+      <input type="text" class="w-full form-control" data-autocomplete-target="input" placeholder="Type to search..."/>
+      <ul data-autocomplete-target="results" class="list-group position-absolute w-100 start-0"></ul>
     </div>
+    <input type="hidden" name="contractor_id" data-autocomplete-target="hidden" value="">
   </div>
-
-  <%= form.hidden_field :user_id, value: current_user.id %>
-  <%= form.hidden_field :contractor_id, value: @contractor.id %>
 
   <div class="mb-3">
     <%= form.label :title, class: "form-label" %>
@@ -39,3 +36,19 @@
 
   <%= form.submit "Submit", class: "btn btn-primary" %>
 <% end %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const autocompleteInput = document.querySelector('[data-autocomplete-target="input"]');
+        const selectInput = document.querySelector('select[name="review[contractor_id]"]'); // Selecting by name
+        const hiddenField = document.querySelector('[data-autocomplete-target="hidden"]');
+
+        autocompleteInput.addEventListener('change', function() {
+            const selectedContractorId = selectInput.value; // Getting the selected value from the <select> element
+
+            if (hiddenField) {
+                hiddenField.value = selectedContractorId;
+            }
+        });
+    });
+</script>

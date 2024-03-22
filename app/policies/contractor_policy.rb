@@ -35,6 +35,10 @@ class ContractorPolicy < ApplicationPolicy
     user.admin? || user.property_owner? || user.general?
   end
 
+  def autocomplete?
+    user.admin? || user.property_owner?
+  end
+
   def update?
     user.present? && (user.admin? || user.property_owner? || user.service_provider? || user.pro? || user.premium? || user == record)
   end

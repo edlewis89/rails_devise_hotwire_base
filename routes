@@ -1,5 +1,11 @@
+Constructed query: {:query=>{:multi_match=>{:query=>"homeowner@example.com", :fields=>["email"]}}}
  >>>>>>>>>>>>>>>>profiles {:query=>{:multi_match=>{:query=>"homeowner@example.com", :fields=>["email"]}}}
                                          Prefix Verb   URI Pattern                                                                                       Controller#Action
+                                    reviews_new GET    /reviews/new(.:format)                                                                            reviews#new
+                                 reviews_create GET    /reviews/create(.:format)                                                                         reviews#create
+                                   reviews_edit GET    /reviews/edit(.:format)                                                                           reviews#edit
+                                 reviews_update GET    /reviews/update(.:format)                                                                         reviews#update
+                                reviews_destroy GET    /reviews/destroy(.:format)                                                                        reviews#destroy
                                 dashboard_index GET    /dashboard/index(.:format)                                                                        dashboard#index
                                new_user_session GET    /users/sign_in(.:format)                                                                          devise/sessions#new
                                    user_session POST   /users/sign_in(.:format)                                                                          devise/sessions#create
@@ -50,6 +56,7 @@
                                                 PUT    /homeowners/:id(.:format)                                                                         homeowners#update
                                                 DELETE /homeowners/:id(.:format)                                                                         homeowners#destroy
                              search_contractors GET    /contractors/index(.:format)                                                                      contractors#index
+           contractors_autocomplete_contractors GET    /contractors/autocomplete(.:format)                                                               contractors#autocomplete
                                 edit_contractor POST   /contractors/:id/edit(.:format)                                                                   contractors#edit
  accept_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_id/contractor_homeowner_requests/:id/accept(.:format)                    contractor_homeowner_requests#accept
 decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_id/contractor_homeowner_requests/:id/decline(.:format)                   contractor_homeowner_requests#decline
@@ -91,8 +98,15 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
            new_service_request_service_response GET    /service_requests/:service_request_id/service_responses/new(.:format)                             service_responses#new
                      accept_service_request_bid POST   /service_requests/:service_request_id/bids/:id/accept(.:format)                                   bids#accept
                      reject_service_request_bid POST   /service_requests/:service_request_id/bids/:id/reject(.:format)                                   bids#reject
+         confirm_acceptance_service_request_bid POST   /service_requests/:service_request_id/bids/:id/confirm_acceptance(.:format)                       bids#confirm_acceptance
+                                                GET    /service_requests/:service_request_id/bids(.:format)                                              bids#index
                                                 POST   /service_requests/:service_request_id/bids(.:format)                                              bids#create
                         new_service_request_bid GET    /service_requests/:service_request_id/bids/new(.:format)                                          bids#new
+                       edit_service_request_bid GET    /service_requests/:service_request_id/bids/:id/edit(.:format)                                     bids#edit
+                            service_request_bid GET    /service_requests/:service_request_id/bids/:id(.:format)                                          bids#show
+                                                PATCH  /service_requests/:service_request_id/bids/:id(.:format)                                          bids#update
+                                                PUT    /service_requests/:service_request_id/bids/:id(.:format)                                          bids#update
+                                                DELETE /service_requests/:service_request_id/bids/:id(.:format)                                          bids#destroy
                                service_requests GET    /service_requests(.:format)                                                                       service_requests#index
                                                 POST   /service_requests(.:format)                                                                       service_requests#create
                             new_service_request GET    /service_requests/new(.:format)                                                                   service_requests#new
@@ -116,6 +130,13 @@ decline_contractor_contractor_homeowner_request PATCH  /contractors/:contractor_
                                   advertisement PATCH  /advertisements/:id(.:format)                                                                     advertisements#update
                                                 PUT    /advertisements/:id(.:format)                                                                     advertisements#update
                                                 DELETE /advertisements/:id(.:format)                                                                     advertisements#destroy
+                                        reviews GET    /reviews(.:format)                                                                                reviews#index
+                                                POST   /reviews(.:format)                                                                                reviews#create
+                                     new_review GET    /reviews/new(.:format)                                                                            reviews#new
+                                    edit_review GET    /reviews/:id/edit(.:format)                                                                       reviews#edit
+                                         review PATCH  /reviews/:id(.:format)                                                                            reviews#update
+                                                PUT    /reviews/:id(.:format)                                                                            reviews#update
+                                                DELETE /reviews/:id(.:format)                                                                            reviews#destroy
                                       dashboard GET    /dashboard(.:format)                                                                              dashboard#index
                                     sidekiq_web        /sidekiq                                                                                          Sidekiq::Web
                                       send_data POST   /send_data(.:format)                                                                              home#send_data

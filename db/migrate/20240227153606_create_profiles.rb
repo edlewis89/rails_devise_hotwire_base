@@ -7,8 +7,12 @@ class CreateProfiles < ActiveRecord::Migration[7.1]
       t.boolean :availability, default: false
       t.boolean :have_insurance, default: false
       t.boolean :have_license, default: false
+      t.boolean :receive_bid_accept_notification, default: true
+      t.boolean :receive_bid_confirm_notification, default: true
+      t.boolean :have_license, default: false
       t.string :name,               null: false, default: ""
       t.string :phone_number,       null: false, default: ""
+      t.string :secure_id, null: false, default: "" # New secure_id attribute
       # Add a column to hold the image metadata
       t.string :image_data
       t.string :website
@@ -30,6 +34,7 @@ class CreateProfiles < ActiveRecord::Migration[7.1]
     # while still enforcing uniqueness for non-NULL values.
     #add_index :profiles, :homeowner_id
     #add_index :profiles, :contractor_id
+    #add_index :profiles, :secure_id, unique: true
     add_index :profiles, :name
     add_index :profiles, :phone_number
   end

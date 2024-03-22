@@ -161,6 +161,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
     t.boolean "have_license", default: false
     t.string "name", default: "", null: false
     t.string "phone_number", default: "", null: false
+    t.string "secure_id", default: "", null: false
     t.string "image_data"
     t.string "website"
     t.string "license_number"
