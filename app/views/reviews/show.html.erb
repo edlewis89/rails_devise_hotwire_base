@@ -1,18 +1,25 @@
-<p>
-  <strong>Rating:</strong>
-  <%= @review.rating %>
-</p>
+<div class="container">
+  <h1>Review Details</h1>
 
-<p>
-  <strong>Comment:</strong>
-  <%= @review.comment %>
-</p>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Review</h5>
+      <p class="card-text"><strong>Rating:</strong> <%= @review.rating %></p>
+      <p class="card-text"><strong>Comment:</strong> <%= @review.content %></p>
+      <p class="card-text">Submitted by: <%= @review.homeowner.name %></p>
 
-<p>
-  Submitted by: <%= @review.homeowner.name %>
-</p>
+      <% if current_user.admin? || current_user == @review.homeowner || current_user == @review.contractor %>
+        <div class="btn-toolbar" role="toolbar">
+          <div class="btn-group mr-2" role="group">
+            <%= link_to 'Edit', edit_review_path(@review), class: "btn btn-secondary" %>
+          </div>
+          <div class="btn-group mr-2" role="group">
+            <%= link_to 'Delete', @review, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 
-<% if current_user == @review.homeowner || current_user == @review.contractor %>
-  <%= link_to 'Edit', edit_review_path(@review) %>
-  <%= link_to 'Delete', @review, method: :delete, data: { confirm: 'Are you sure?' } %>
-<% end %>
+  <%= link_to 'Back to All Reviews', reviews_path, class: "btn btn-primary mt-3" %>
+</div>

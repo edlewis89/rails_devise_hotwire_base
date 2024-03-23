@@ -233,11 +233,11 @@
                   </a>
                   <ul class="dropdown-menu">
                     <% if current_user.premium? %>
-                      <li><%= link_to "Create Service Request", new_service_request_path, class: "dropdown-item" %></li>
-                      <li><%= link_to "My Requests", service_requests_path, class: "dropdown-item" %></li>
+                      <li><%= link_to "Post Service Request", new_service_request_path, class: "dropdown-item" %></li>
                     <% end %>
                     <li><%= link_to "Write a Review", reviews_path, class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
+                    <li><%= link_to "Manage Service Requests", service_requests_path, class: "dropdown-item" %></li>
                     <li><%= link_to "Profile", edit_homeowner_path(current_user), class: "dropdown-item" %></li>
                   </ul>
                 </li>
@@ -285,6 +285,7 @@
                     <%= link_to 'Manage Contractors', contractors_path, class: "dropdown-item", data: { turbo: "false" } %>
                     <%= link_to 'Manage Homeowners', homeowners_path, class: "dropdown-item", data: { turbo: "false" } %>
                     <%= link_to 'Manage Ads', advertisements_path, class: "dropdown-item", data: { turbo: "false" } %>
+                    <%= link_to 'Manage Reviews', reviews_path, class: "dropdown-item", data: { turbo: "false" } %>
                     <li><hr class="dropdown-divider"></li>
                     <%= link_to 'Edit Profile', admins_path, class: "dropdown-item" %>
                   </ul>

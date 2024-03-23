@@ -36,7 +36,6 @@ class Profile < ApplicationRecord
   scope :admin_profiles, -> { joins(:user).where(users: { type: 'Admin' }) }
   scope :ad_manager_profiles, -> { joins(:user).where(users: { type: 'AdManager' }) }
 
-
   before_commit on: [:create, :update] do
     ensure_index_exists unless index_exists?
   end

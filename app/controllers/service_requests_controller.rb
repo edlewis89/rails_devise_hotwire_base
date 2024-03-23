@@ -118,7 +118,7 @@ class ServiceRequestsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def service_request_params
-    params.require(:service_request).permit(:id, :title, :description, :status, :range, :location, :budget, :timeline, :due_date, service_ids: [], images: [], remove_images: [])
+    params.require(:service_request).permit(:id, :title, :description, :status, :zipcode_radius, :location, :budget, :timeline, :due_date, service_ids: [], images: [], remove_images: [])
   end
 
   def set_bids

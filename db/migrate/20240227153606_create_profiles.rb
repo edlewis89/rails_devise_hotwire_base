@@ -9,7 +9,6 @@ class CreateProfiles < ActiveRecord::Migration[7.1]
       t.boolean :have_license, default: false
       t.boolean :receive_bid_accept_notification, default: true
       t.boolean :receive_bid_confirm_notification, default: true
-      t.boolean :have_license, default: false
       t.string :name,               null: false, default: ""
       t.string :phone_number,       null: false, default: ""
       t.string :secure_id, null: false, default: "" # New secure_id attribute

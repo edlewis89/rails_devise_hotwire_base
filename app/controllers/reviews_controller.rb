@@ -8,7 +8,11 @@ class ReviewsController < ApplicationController
   before_action :find_review, only: %i[edit update destroy]
 
   def index
-    @reviews = current_user.reviews
+    @reviews = if current_user.admin?
+                 Review.paginate(page: params[:page] || 1, per_page: 5)
+               else
+                 current_user.reviews
+               end
   end
 
   def new
@@ -21,7 +25,7 @@ class ReviewsController < ApplicationController
 
     @review = Review.new(review_params.merge(homeowner_id: @reviewer_id))
     if @review.save
-      flash_message = "Review was successfully created."
+      flash_message = 'Review was successfully created.'
       render_success_message(flash_message)
     else
       render_error_message(@review)
@@ -35,15 +39,17 @@ class ReviewsController < ApplicationController
     @reviewer_id = current_user.id  # Assuming current_user is the reviewer
 
     if @review.update(review_params.merge(homeowner_id: @reviewer_id))
-      redirect_to reviews_path, notice: "Review updated successfully."
+      flash_message = 'Review updated successfully.'
+      render_success_message(flash_message)
     else
-      render :edit
+      render_error_message(@review)
     end
   end
 
   def destroy
     @review.destroy
-    redirect_to reviews_path, notice: "Review deleted successfully."
+    flash_message = 'Review deleted successfully.'
+    render_success_message(flash_message)
   end
 
   private
@@ -68,9 +74,9 @@ class ReviewsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: [
-          turbo_stream.update('new_review', partial: "reviews/form", locals: { review: Review.new }),
-          turbo_stream.prepend('reviews', partial: "reviews/review", locals: { review: @review }),
-          turbo_stream.update("flash", partial: "shared/notices", locals: { msg_type: :alert, message: message })
+          turbo_stream.update('new_review', partial: 'reviews/form', locals: { review: Review.new }),
+          turbo_stream.prepend('reviews', partial: 'reviews/review', locals: { review: @review }),
+          turbo_stream.update('flash', partial: 'shared/notices', locals: { msg_type: :alert, message: message })
         ]
       end
       format.html { redirect_to review_url(@review), notice: message }
@@ -82,8 +88,8 @@ class ReviewsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: [
-          turbo_stream.replace('form-container', partial: "reviews/form", locals: { review: model }),
-          turbo_stream.replace("form-container", partial: "shared/notices", locals: { msg_type: :error, message: full_messages(model.errors.full_messages) })
+          turbo_stream.replace('form-container', partial: 'reviews/form', locals: { review: model }),
+          turbo_stream.replace('form-container', partial: 'shared/notices', locals: { msg_type: :error, message: full_messages(model.errors.full_messages) })
         ]
       end
       format.html { render :new, status: :unprocessable_entity }

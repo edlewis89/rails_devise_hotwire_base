@@ -8,3 +8,10 @@ class Hash
     end
   end
 end
+
+# Define MI_IN_KM if not already defined
+module Geocoder
+  module Calculations
+    MI_IN_KM = 1.60934 unless defined?(MI_IN_KM)
+  end
+end

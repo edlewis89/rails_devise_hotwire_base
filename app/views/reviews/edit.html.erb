@@ -1,5 +1,11 @@
 <div class="container">
   <h1>Edit Review</h1>
-  <%= render "form", review: @review %>
+  <div class="card">
+    <div class="card-body">
+      <%= render "form", review: @review %>
+    </div>
+  </div>
+
+  <%= link_to 'Back to All Reviews', reviews_path, class: "btn btn-primary mt-3" %>
 </div>
 

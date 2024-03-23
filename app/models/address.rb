@@ -1,9 +1,8 @@
 class Address < ApplicationRecord
   belongs_to :addressable, polymorphic: true, touch: true
 
-  #validates :city, presence: true
-  #validates :state, presence: true
-  #validates :city, presence: true
+  # validates :state, presence: true
+  # validates :city, presence: true
   validates :zipcode, presence: true
 
   after_commit :flush_cache
@@ -21,8 +20,8 @@ class Address < ApplicationRecord
   attribute :longitude, :float
 
   # Geocoding method to populate latitude and longitude based on city and ZIP code
-  #geocoded_by :city_and_zipcode
-  #after_validation :geocode, if: ->(obj){ obj.city_changed? || obj.zipcode_changed? }
+  geocoded_by :city_and_zipcode
+  after_validation :geocode, if: ->(obj){ obj.city_changed? || obj.zipcode_changed? || obj.new_record? }
 
   # Method to calculate service area based on radius in miles
   def within_service_area?(other_address, radius_in_miles)

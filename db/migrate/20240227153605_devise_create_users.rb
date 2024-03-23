@@ -23,6 +23,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
       ## Tier enum
       t.integer :subscription_level, null: false, default: 0
 
+      # Zipcode radius determines the allowed service request geographical area.
+      t.integer :zipcode_radius, default: 15
+
       # t.references :profileable, polymorphic: true, index: true # if using polymorphic association
 
       t.string :type # This column is used for STI

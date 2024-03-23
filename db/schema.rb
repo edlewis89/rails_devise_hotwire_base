@@ -159,6 +159,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
     t.boolean "availability", default: false
     t.boolean "have_insurance", default: false
     t.boolean "have_license", default: false
+    t.boolean "receive_bid_accept_notification", default: true
+    t.boolean "receive_bid_confirm_notification", default: true
     t.string "name", default: "", null: false
     t.string "phone_number", default: "", null: false
     t.string "secure_id", default: "", null: false
@@ -204,7 +206,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
     t.string "image_data"
     t.text "description"
     t.string "location"
-    t.integer "range", default: 15
+    t.integer "zipcode_radius", default: 15
     t.integer "status", default: 0, null: false
     t.decimal "budget", precision: 10, scale: 2
     t.datetime "due_date"
@@ -252,6 +254,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
     t.datetime "last_seen_at"
     t.integer "role", default: 0, null: false
     t.integer "subscription_level", default: 0, null: false
+    t.integer "zipcode_radius", default: 15
     t.string "type"
     t.boolean "active", default: false
     t.boolean "public", default: true

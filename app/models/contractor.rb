@@ -54,7 +54,7 @@ class Contractor < User
     contractors = contractors.where(public: true) if public_only
 
     # Filter based on zipcode
-    contractors = contractors.within_range(zipcode, service_request.range)
+    contractors = contractors.within_range(zipcode, service_request.zipcode_radius)
 
     contractors
   end
@@ -108,6 +108,21 @@ class Contractor < User
   def average_rating
     reviews.average(:rating)
   end
+
+  def service_requests_within_zipcode_radius
+    return [] unless profile&.addresses.present?
+
+    contractor_address = profile.addresses.last
+
+    # Keep it in miles.  No need to convert to KM.
+    zipcode_radius_km = zipcode_radius #* Geocoder::Calculations::MI_IN_KM
+
+    ServiceRequest.joins(homeowner: { profile: :addresses })
+                  .where("ST_DWithin(ST_MakePoint(addresses.longitude, addresses.latitude)::geography,
+                                     ST_MakePoint(?, ?)::geography,
+                                     ?)", contractor_address.longitude, contractor_address.latitude, zipcode_radius_km)
+  end
+
 
   private
 

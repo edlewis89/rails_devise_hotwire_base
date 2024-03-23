@@ -6,7 +6,7 @@ class CreateServiceRequests < ActiveRecord::Migration[7.1]
       t.string :image_data
       t.text :description
       t.string :location
-      t.integer :range, default: 15
+      t.integer :zipcode_radius, default: 15
       t.integer :status, null: false, default: 0
       t.decimal :budget, precision: 10, scale: 2 # Adjust precision and scale as per your needs
       t.datetime :due_date

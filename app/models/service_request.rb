@@ -7,9 +7,15 @@ class ServiceRequest < ApplicationRecord
   has_many_attached :images
   has_many :bids
 
+  has_one :profile, through: :homeowner
+  has_many :addresses, through: :profile
+
+  # Assuming the address model has latitude and longitude attributes
+  delegate :latitude, :longitude, to: :addresses
+
   scope :for_service_request, ->(service_request_id) { where(service_request_id: service_request_id) }
   # Scope to return all responses for a given contractor
-  scope :for_contractor, ->(contractor_id) { joins(:service_responses).where(service_responses: { contractor_id: contractor_id }) }
+  scope :responses_by_contractor, ->(contractor_id) { joins(:service_responses).where(service_responses: { contractor_id: contractor_id }) }
 
   validates :title, :description, :location, :budget, :timeline, presence: true
 
@@ -88,6 +94,59 @@ class ServiceRequest < ApplicationRecord
   def has_confirmed_bids_for_user?(user)
     confirmed_bids.exists?(contractor: user)
   end
+
+  # Method to filter service requests within a contractor's zipcode radius
+  # def self.within_contractor_zipcode_radius(contractor)
+  #   contractor_address = contractor.profile.addresses.last
+  #   return [] unless contractor_address.present? && contractor_address.latitude.present? && contractor_address.longitude.present?
+  #
+  #   within_radius = []
+  #   ServiceRequest.all.each do |request|
+  #     request.addresses.each do |address|
+  #       next unless address.latitude.present? && address.longitude.present?
+  #
+  #       distance = Geocoder::Calculations.distance_between(
+  #         [contractor_address.latitude, contractor_address.longitude],
+  #         [address.latitude, address.longitude],
+  #         units: :mi
+  #       )
+  #       within_radius << request if distance <= request.zipcode_radius
+  #     end
+  #   end
+  #   within_radius
+  # end
+  def eligible_contractors
+    homeowner_address = homeowner.profile.addresses.last
+    return [] unless homeowner_address.present?
+
+    # Convert zipcode_radius from miles to kilometers
+    # zipcode_radius_km = zipcode_radius * Geocoder::Calculations::MI_IN_KM
+
+    # Do not convert.  Keep it in miles.
+    zipcode_radius_km = zipcode_radius # * Geocoder::Calculations::MI_IN_KM
+
+    # Find all contractors within the specified radius of the homeowner's address
+    Contractor.joins(profile: :addresses)
+              .where("ST_DWithin(ST_MakePoint(addresses.longitude, addresses.latitude)::geography,
+                    ST_MakePoint(?, ?)::geography,
+                    ?)", homeowner_address.longitude, homeowner_address.latitude, zipcode_radius_km)
+  end
+
+
+  def self.for_contractor(contractor)
+    return [] unless contractor.profile.addresses.present?
+
+    contractor_address = contractor.profile.addresses.last
+
+    # No conversion needed.  Keep it in miles.
+    zipcode_radius_km = contractor.zipcode_radius # * Geocoder::Calculations::MI_IN_KM
+
+    ServiceRequest.joins(homeowner: { profile: :addresses })
+                  .where("ST_DWithin(ST_MakePoint(addresses.longitude, addresses.latitude)::geography,
+                                     ST_MakePoint(?, ?)::geography,
+                                     ?)", contractor_address.longitude, contractor_address.latitude, zipcode_radius_km)
+  end
+
 
   private
 

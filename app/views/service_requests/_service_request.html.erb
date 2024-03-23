@@ -11,7 +11,7 @@
         { label: "Timeline:", value: service_request.timeline },
         { label: "Due Date:", value: service_request.due_date },
         { label: "Service:", value: service_request.services.pluck(:name).join(', ') },
-        { label: "Range:", value: service_request.range },
+        { label: "Zipcode Radius:", value: service_request.zipcode_radius },
         { label: "Status:", value: service_request.status.humanize },
       ] %>
 

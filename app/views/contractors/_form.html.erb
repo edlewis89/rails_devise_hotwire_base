@@ -1,4 +1,4 @@
-<%= simple_form_for @contractor, html: { class: "form-horizontal" } do |c| %>
+<%= form_with(model: @contractor, html: { class: "form-horizontal" }) do |c| %>
   <!-- Contractor fields -->
   <!-- Contractor form fields go here -->
   <%= debug @contractor.errors %>
@@ -49,11 +49,11 @@
     <div class="form-group">
       <%= c.label :email, class: "control-label col-sm-4" %>
       <div class="col-sm-8">
-        <%= c.input :email, label: false, placeholder: "Enter email", input_html: { class: "form-control" } %>
+        <%= c.text_field :email, placeholder: "Enter email", class: "form-control" %>
       </div>
     </div>
 
-    <%= c.simple_fields_for :profile, html: { class: "form-horizontal" } do |p| %>
+    <%= c.fields_for :profile do |p| %>
       <!-- Check for Profile errors -->
       <% if @contractor.profile.errors.any? %>
         <% @contractor.profile.errors.full_messages.each do |message| %>
@@ -81,49 +81,49 @@
           <div class="form-group">
             <%= p.label :name, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :name, label: false, placeholder: "Enter name", input_html: { class: "form-control" } %>
+              <%= p.text_field :name, placeholder: "Enter name", class: "form-control" %>
             </div>
           </div>
 
           <div class="form-group">
             <%= p.label :years_of_experience, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :years_of_experience, label: false, placeholder: "Enter years of experience", input_html: { class: "form-control" } %>
+              <%= p.text_field :years_of_experience, placeholder: "Enter years of experience", class: "form-control" %>
             </div>
           </div>
 
           <div class="form-group">
             <%= p.label :certifications, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :certifications_array, label: false, placeholder: "Enter certifications (comma separated)", input_html: { class: "form-control" } %>
+              <%= p.text_field :certifications_array, placeholder: "Enter certifications (comma separated)", class: "form-control" %>
             </div>
           </div>
 
           <div class="form-group">
             <%= p.label :hourly_rate, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :hourly_rate, label: false, placeholder: "Enter hourly rate", input_html: { class: "form-control" } %>
+              <%= p.text_field :hourly_rate, placeholder: "Enter hourly rate", class: "form-control" %>
             </div>
           </div>
 
           <div class="form-group">
             <%= p.label :specializations, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :specializations_array, label: false, placeholder: "Enter specializations (comma separated)", input_html: { class: "form-control" } %>
+              <%= p.text_field :specializations_array, placeholder: "Enter specializations (comma separated)", class: "form-control" %>
             </div>
           </div>
 
           <div class="form-group">
             <%= p.label :languages_spoken, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :languages_array, label: false, placeholder: "Enter languages spoken (comma separated)", input_html: { class: "form-control" } %>
+              <%= p.text_field :languages_array, placeholder: "Enter languages spoken (comma separated)", class: "form-control" %>
             </div>
           </div>
 
           <div class="form-group">
             <%= p.label :have_license, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :have_license, as: :boolean, label: false, input_html: { class: "form-control", id: "have_license_checkbox" } %>
+              <%= p.check_box :have_license, class: "form-control", id: "have_license_checkbox" %>
             </div>
           </div>
 
@@ -131,7 +131,7 @@
             <div class="form-group">
               <%= p.label :license_number, class: "control-label col-sm-4" %>
               <div class="col-sm-8">
-                <%= p.input :license_number, label: false, placeholder: "Enter license number", input_html: { class: "form-control" } %>
+                <%= p.text_field :license_number, placeholder: "Enter license number", class: "form-control" %>
               </div>
             </div>
           </div>
@@ -144,73 +144,73 @@
           <div class="form-group">
             <%= p.label :phone_number, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :phone_number, label: false, placeholder: "Enter phone number", input_html: { class: "form-control" } %>
+              <%= p.text_field :phone_number, placeholder: "Enter phone number", class: "form-control" %>
             </div>
           </div>
 
           <div class="form-group">
             <%= p.label :website, class: "control-label col-sm-4" %>
             <div class="col-sm-8">
-              <%= p.input :website, label: false, placeholder: "Enter website", input_html: { class: "form-control" } %>
+              <%= p.text_field :website, placeholder: "Enter website", class: "form-control" %>
             </div>
-          </div>
+           </div>
+         </div>
 
           <div class="form-group">
             <%= p.label :service_area, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.input :service_area, label: false, placeholder: "Enter service area", input_html: { class: "form-control" } %>
-            </div>
-          </div>
-
-
-          <%= p.simple_fields_for :addresses, @profile.addresses.first_or_initialize, html: { class: "form-horizontal" } do |a| %>
-            <%#= a.hidden_field :addressable_id, value: @address.id %>
-            <div class="form-group">
-              <%= a.label :city, class: "control-label col-sm-4" %>
               <div class="col-sm-8">
-                <%= a.input :city, label: false, placeholder: "Enter city", input_html: { class: "form-control" } %>
+                <%= p.text_field :service_area, placeholder: "Enter service area", class: "form-control" %>
               </div>
             </div>
 
+
+            <%= p.fields_for :addresses, @profile.addresses.first_or_initialize do |a| %>
+              <div class="form-group">
+                <%= a.label :city, class: "control-label col-sm-4" %>
+                <div class="col-sm-8">
+                  <%= a.text_field :city, placeholder: "Enter city", class: "form-control" %>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <%= a.label :state, class: "control-label col-sm-4" %>
+                <div class="col-sm-8">
+                  <%= a.text_field :state, placeholder: "Enter state", class: "form-control" %>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <%= a.label :zipcode, class: "control-label col-sm-4" %>
+                <div class="col-sm-8">
+                  <%= a.text_field :zipcode, placeholder: "Enter zipcode", class: "form-control" %>
+                </div>
+              </div>
+            <% end %>
+
             <div class="form-group">
-              <%= a.label :state, class: "control-label col-sm-4" %>
+              <%= p.label :have_insurance, class: "control-label col-sm-4" %>
               <div class="col-sm-8">
-                <%= a.input :state, label: false, placeholder: "Enter state", input_html: { class: "form-control" } %>
+                <%= p.check_box :have_insurance, class: "form-control", id: "have_insurance_checkbox" %>
               </div>
             </div>
 
-            <div class="form-group">
-              <%= a.label :zipcode, class: "control-label col-sm-4" %>
-              <div class="col-sm-8">
-                <%= a.input :zipcode, label: false, placeholder: "Enter zipcode", input_html: { class: "form-control" } %>
+            <div id="insurance_fields" style="display:none;">
+              <div class="form-group">
+                <%= p.label :insurance_provider, class: "control-label col-sm-4" %>
+                <div class="col-sm-8">
+                  <%= p.text_field :insurance_provider, placeholder: "Enter insurance provider", class: "form-control" %>
+                </div>
               </div>
-            </div>
-          <% end %>
 
-          <div class="form-group">
-            <%= p.label :have_insurance, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.input :have_insurance, as: :boolean, label: false, input_html: { class: "form-control", id: "have_insurance_checkbox" } %>
-            </div>
-          </div>
-
-          <div id="insurance_fields" style="display:none;">
-            <div class="form-group">
-              <%= p.label :insurance_provider, class: "control-label col-sm-4" %>
-              <div class="col-sm-8">
-                <%= p.input :insurance_provider, label: false, placeholder: "Enter insurance provider", input_html: { class: "form-control" } %>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <%= p.label :insurance_policy_number, class: "control-label col-sm-4" %>
-              <div class="col-sm-8">
-                <%= p.input :insurance_policy_number, label: false, placeholder: "Enter insurance policy number", input_html: { class: "form-control" } %>
+              <div class="form-group">
+                <%= p.label :insurance_policy_number, class: "control-label col-sm-4" %>
+                <div class="col-sm-8">
+                  <%= p.text_field :insurance_policy_number, placeholder: "Enter insurance policy number", class: "form-control" %>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
     <% end %>
 
     <div class="form-group">
@@ -224,11 +224,11 @@
     <div class="form-group">
       <div class="row">
         <div class="col-sm-10 offset-sm-2 text-end">
-          <%= c.button :submit, "Submit Profile", class: "btn btn-primary" %>
+          <%= c.submit "Submit Profile", class: "btn btn-primary" %>
         </div>
       </div>
     </div>
-  </div><!-- Contractor Fluid -->
+    </div><!-- Contractor Fluid -->
 <% end %><!-- form -->
 
 
