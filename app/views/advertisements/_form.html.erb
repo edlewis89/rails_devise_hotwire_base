@@ -39,6 +39,16 @@
     <%= form.collection_select(:service_id, Service.all, :id, :name, { include_blank: true }, class: "form-select") %>
   </div>
 
+  <div class="mb-3">
+    <%= form.label :advertisement_type, class: "form-label" %>
+    <%= form.select :advertisement_type, Advertisement.advertisement_type_values, { include_blank: true }, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :placement, class: "form-label" %>
+    <%= form.select :placement, Advertisement.placement_values, { include_blank: true }, class: "form-select" %>
+  </div>
+
   <!-- Nested addresses fields -->
   <div class="mb-3">
     <%= form.fields_for :addresses do |address_fields| %>

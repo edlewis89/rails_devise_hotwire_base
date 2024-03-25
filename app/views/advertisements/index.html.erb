@@ -1,9 +1,8 @@
-<!-- app/views/ads/index.html.erb -->
 <div class="container">
   <h1 class="mb-4">Advertisements</h1>
 
   <ul class="list-group">
-    <% @ads&.each do |ad| %>
+    <% @ads.each do |ad| %>
       <li class="list-group-item d-flex justify-content-between align-items-center">
         <%= ad.title %>
         <%= image_tag ad.image_data.url, class: "img-thumbnail" %>
@@ -17,6 +16,8 @@
       </li>
     <% end %>
   </ul>
+
+  <%= will_paginate @ads %>
 
   <%= link_to 'New Advertisement', new_advertisement_path, class: 'btn btn-success mt-4' %>
 </div>

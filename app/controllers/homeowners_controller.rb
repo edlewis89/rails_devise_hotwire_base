@@ -1,12 +1,12 @@
 class HomeownersController < ApplicationController
 
-  before_action :authenticate_user!, except: %i[index show]
+  before_action :authenticate_user!, except: %i[show]
   before_action :authorize_user, except: %i[index show]
   before_action :set_homeowner, only: %i[ show edit update destroy ]
 
   # GET /homeowners or /homeowners.json
   def index
-    if current_user.admin?
+    if current_user&.admin?
       @homeowners = Homeowner.order(created_at: :desc).paginate(page: params[:page], per_page: 5)
     else
       @homeowner = current_user

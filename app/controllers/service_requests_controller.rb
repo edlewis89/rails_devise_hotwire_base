@@ -10,6 +10,9 @@ class ServiceRequestsController < ApplicationController
   def index
     if current_user.property_owner?
       @service_requests = current_user.service_requests.order(created_at: :desc).paginate(page: params[:page], per_page: 5)
+    elsif current_user.service_provider?
+      # only allow service provider to view the SRs that are within zipcode radius.
+      @service_requests = ServiceRequest.for_contractor(current_user).order(created_at: :desc).paginate(page: params[:page], per_page: 5)
     else
       @service_requests = ServiceRequest.order(created_at: :desc).paginate(page: params[:page], per_page: 5)
     end

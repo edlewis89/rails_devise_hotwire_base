@@ -5,7 +5,12 @@ class Homeowner < User
   has_many :service_requests, foreign_key: :homeowner_id, dependent: :destroy
   has_many :reviews
 
-  delegate :name, :phone_number, to: :profile
+  accepts_nested_attributes_for :profile
+
+  delegate :name, :phone_number, to: :profile, prefix: false, allow_nil: false
+  delegate :availability, :service_area,
+           :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
+           :insurance_policy_number, :have_insured, :have_license, to: :profile, prefix: false, allow_nil: true
 
   Rails.logger.info "#{name}: #{all.to_sql}"
 

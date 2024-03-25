@@ -1,18 +1,22 @@
 class AdvertisementsController < ApplicationController
-  before_action :authenticate_user!, except: %i[index show]
+  before_action :authenticate_user!, except: %i[show]
   before_action :authorize_user, except: %i[index show]
   before_action :set_ad, only: [:show, :edit, :update, :destroy]
 
   def index
     @user_zipcode = current_user.primary_address_zipcode
     @services = Service.pluck(:name) # Retrieve all service names
+    if current_user&.admin?
+      # Find advertisements matching the user's zipcode for all services
+      @ads = Advertisement.order(created_at: :desc).paginate(page: params[:page] || 1, per_page: 5)
+    else
 
-    # Find advertisements matching the user's zipcode for all services
-    @ads = Advertisement.joins(:addresses)
-                        .where(addresses: { zipcode: @user_zipcode })
-                        .includes(:service)
-                        .order(created_at: :desc)
-    #.paginate(page: params[:page] || 1, per_page: 5)
+      # Find advertisements matching the user's zipcode for all services
+      @ads = Advertisement.joins(:addresses)
+                          .where(addresses: { zipcode: @user_zipcode })
+                          .includes(:service)
+                          .order(created_at: :desc).paginate(page: params[:page] || 1, per_page: 5)
+    end
   end
 
   def edit
@@ -29,7 +33,7 @@ class AdvertisementsController < ApplicationController
     @ad = Advertisement.new(ad_params)
 
     if @ad.save
-      redirect_to @ad, notice: 'Ad was successfully created.'
+      redirect_to advertisements_path, notice: 'Ad was successfully created.'
     else
       render :new
     end
@@ -116,7 +120,7 @@ class AdvertisementsController < ApplicationController
   end
 
   def ad_params
-    params.require(:advertisement).permit(:title, :image_data, :url, :service_id,
+    params.require(:advertisement).permit(:title, :image_data, :url, :service_id, :advertisement_type, :placement,
                                           addresses_attributes: [:addressable_id, :street, :city, :state, :zipcode])
   end
 end

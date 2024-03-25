@@ -24,7 +24,20 @@ class User < ApplicationRecord
 
   has_one :profile, foreign_key: 'user_id', dependent: :destroy
 
+  accepts_nested_attributes_for :profile
 
+  delegate :name, :phone_number, to: :profile, prefix: false, allow_nil: false
+  delegate :availability, :service_area,
+           :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
+           :insurance_policy_number, :have_insured, :have_license, to: :profile, prefix: false, allow_nil: true
+
+  # delegate :zipcode, to: :primary_address, prefix: true, allow_nil: true
+  # delegate :city, to: :primary_address, prefix: true, allow_nil: true
+
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+
+  scope :homeowners, -> { where(type: 'Homeowner') }
+  scope :contractors, -> { where(type: 'Contractor') }
   # Define a scope for active records
   scope :active_users, -> { where(active: true) }
   # Define a scope for public users
@@ -45,19 +58,6 @@ class User < ApplicationRecord
     joins(:profile).where(profiles: { profileable_id: user_id, profileable_type: profileable_type })
   end
 
-  scope :homeowners, -> { where(type: 'Homeowner') }
-  scope :contractors, -> { where(type: 'Contractor') }
-
-  delegate :name, to: :profile, prefix: true, allow_nil: true
-  delegate :have_license, to: :profile, allow_nil: true, prefix: false
-  delegate :zipcode, to: :primary_address, prefix: true, allow_nil: true
-  delegate :city, to: :primary_address, prefix: true, allow_nil: true
-
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-
-  accepts_nested_attributes_for :profile
-  #after_create :create_user_profile  #unable to do this cause name and phonenumber are validated to be present
-
   def is_active?
     active
   end
@@ -77,6 +77,14 @@ class User < ApplicationRecord
 
   def profile
     profile ||= Profile.find_or_initialize_by(user_id: id)
+  end
+
+  def primary_address_city
+    primary_address&.city
+  end
+
+  def primary_address_zipcode
+    primary_address&.zipcode
   end
 
   private

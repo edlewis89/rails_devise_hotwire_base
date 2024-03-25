@@ -1,20 +1,22 @@
-<!-- app/views/dashboard/index.html.erb -->
 <div class="container">
   <h1>Dashboard</h1>
   <div class="row">
     <div class="col-md-6">
-      <h2>Analytics</h2>
-      <ul>
-        <li>Total Active Users Count (< 15min ): <%= @active_users_count %></li>
-        <li>Total Service Requests: <%= @service_request_count %></li>
-        <li>Total Bid Count: <%= @bid_count %></li>
-        <li>Total Bid Count per Service Request: <%= @service_request_bids %></li>
-        <li>Total Property Owner Accounts: <%= @homeowner_count %></li>
-        <li>Total Contractor Accounts: <%= @contractor_count %></li>
-        <li>Total Non-Licensed Contractors: <%= @licensed_contractor_count_without_license %></li>
-        <li>Total Licensed Contractors: <%= @licensed_contractor_count %></li>
-        <!-- Add more analytics metrics as needed -->
-      </ul>
+      <div class="card">
+        <div class="card-body">
+          <ul class="list-group">
+            <li class="list-group-item">Total Active Users Count (< 15min ): <span class="badge bg-primary"><%= @active_users_count %></span></li>
+            <li class="list-group-item">Total Service Requests: <span class="badge bg-primary"><%= @service_request_count %></span></li>
+            <li class="list-group-item">Total Bid Count: <span class="badge bg-primary"><%= @bid_count %></span></li>
+            <li class="list-group-item">Total Bid Count per Service Request: <span class="badge bg-primary"><%= @service_request_bids %></span></li>
+            <li class="list-group-item">Total Property Owner Accounts: <span class="badge bg-primary"><%= @homeowner_count %></span></li>
+            <li class="list-group-item">Total Contractor Accounts: <span class="badge bg-primary"><%= @contractor_count %></span></li>
+            <li class="list-group-item">Total Non-Licensed Contractors: <span class="badge bg-primary"><%= @licensed_contractor_count_without_license %></span></li>
+            <li class="list-group-item">Total Licensed Contractors: <span class="badge bg-primary"><%= @licensed_contractor_count %></span></li>
+            <!-- Add more analytics metrics as needed -->
+          </ul>
+        </div>
+      </div>
     </div>
     <div class="col-md-6">
       <!-- Add additional dashboard elements here -->

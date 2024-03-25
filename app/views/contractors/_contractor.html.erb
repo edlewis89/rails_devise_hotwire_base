@@ -4,6 +4,7 @@
     <div class="container">
       <% attributes = [
         { label: "Role:", value: contractor.role.humanize },
+        { label: "Zipcode Radius:", value: contractor.zipcode_radius },
         { label: "Subscription Level:", value: contractor.subscription_level.humanize },
         { label: "Photo:", value: contractor.profile&.image_data },
         { label: "Name:", value: contractor.profile&.name },

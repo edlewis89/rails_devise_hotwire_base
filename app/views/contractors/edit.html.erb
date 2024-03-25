@@ -12,8 +12,10 @@
     <%#= link_to "Back to contractors", contractors_path, class: "btn  btn-primary" %>
   <%# end %>
 <!--</div>-->
-
+<div class="notice-container">
+  <%= render 'shared/notices' %>
+</div>
 <!-- edit.html.erb -->
-<%= turbo_frame_tag :edit_contractor_form do %>
-  <%= render partial: 'contractors/form', locals: { contractor: @contractor } %>
+<%= turbo_frame_tag :contractor_container do %>
+  <%= render partial: 'form', locals: { contractor: @contractor } %>
 <% end %>

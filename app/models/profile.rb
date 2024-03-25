@@ -8,25 +8,24 @@ class Profile < ApplicationRecord
   accepts_nested_attributes_for :addresses
 
   # Validations, attr_accessors, and other model code...
-  validates :name, presence: true
-  validates :phone_number, presence: true
-  validates :availability, inclusion: { in: [true, false] }
+  validates :name, :phone_number, presence: true
+  validates :availability, allow_blank: true, inclusion: { in: [true, false] }
   validates :website, allow_blank: true, format: { with: URI.regexp }, if: -> { website.present? }
-  validates :years_of_experience, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :hourly_rate, numericality: { greater_than_or_equal_to: 0 }
-  validates :license_number, presence: true, if: Proc.new { |contractor| contractor.license_number.present? }
-  validate :unique_license_number?, if: -> { license_number.present? }
+  validates :years_of_experience, allow_blank: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :hourly_rate, allow_blank: true, numericality: { greater_than_or_equal_to: 0 }
+  #validates :license_number, presence: true, if: Proc.new { |contractor| contractor.license_number.present? }
+  #validate :unique_license_number?, if: -> { license_number.present? }
 
-  validates_presence_of :insurance_provider, :insurance_policy_number, if: :require_insurance?
+  #validates_presence_of :insurance_provider, :insurance_policy_number, if: :require_insurance?
 
   # If you want to allow remote image URLs for uploading
   attr_accessor :remote_image_url
   mount_uploader :image_data, ImageUploader
 
-  delegate :role, :active, :public, :email, :type, to: :user, prefix: true, allow_nil: true
+  delegate :role, :active, :public, :email, :type, :zipcode_radius, to: :user, prefix: true, allow_nil: true
   delegate :city, :state, :zipcode, to: :primary_address, prefix: true, allow_nil: true
 
-  after_create :validate_service_area_for_service_provider
+  #after_create :validate_service_area_for_service_provider
 
   scope :active_profiles, -> { joins(:user).where(users: { active: true }) }
   scope :active_and_public_profiles, -> { joins(:user).where(users: { active: true, public: true }) }

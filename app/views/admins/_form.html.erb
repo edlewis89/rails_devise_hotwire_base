@@ -28,6 +28,10 @@
               <%= c.check_box :public, class: "custom-control-input", id: "publicSwitch" %>
               <%= c.label :public, class: "custom-control-label", for: "publicSwitch" %>
             </div>
+            <div class="form-group">
+              <%= c.label :zipcode_radius, class: "mr-2" %>
+              <%= c.number_field :zipcode_radius, class: "form-control" %>
+            </div>
           <% end %>
         </div>
       </div>
@@ -41,7 +45,7 @@
       </div>
     </div>
 
-    <%= c.simple_fields_for :profile, @profile, html: { class: "form-horizontal" } do |p| %>
+    <%= c.simple_fields_for :profile, html: { class: "form-horizontal" } do |p| %>
       <!-- Profile fields -->
       <%= p.hidden_field :user_id, value: @admin.id %>
       <div class="row">
@@ -138,9 +142,7 @@
             </div>
           </div>
 
-
-          <%= p.simple_fields_for :addresses, @address, html: { class: "form-horizontal" } do |a| %>
-            <%= a.hidden_field :addressable_id, value: @address.id %>
+          <%= p.simple_fields_for :addresses, @admin.profile.addresses.first_or_initialize, html: { class: "form-horizontal" } do |a| %>
             <div class="form-group">
               <%= a.label :city, class: "control-label col-sm-4" %>
               <div class="col-sm-8">
@@ -151,7 +153,7 @@
             <div class="form-group">
               <%= a.label :state, class: "control-label col-sm-4" %>
               <div class="col-sm-8">
-                <%= a.input :state, label: false, placeholder: "Enter state", input_html: { class: "form-control" } %>
+                <%= a.select :state, options_for_select(State.pluck(:name, :abbreviation), a.object.state), { include_blank: "Select State" }, { class: "form-control" } %>
               </div>
             </div>
 
@@ -165,8 +167,6 @@
           <!-- Add more address fields here -->
 
           <% end %>
-
-
 
           <div class="form-group">
             <%= p.label :have_insurance, class: "control-label col-sm-4" %>

@@ -1,8 +1,8 @@
-<%= form_with(model: @contractor, html: { class: "form-horizontal" }) do |c| %>
+<%= form_for @contractor, data: { turbo_frame: 'contractor' }, html: { class: "form-horizontal" } do |contractor_form| %>
+  <%#= form_for @contractor, html: { class: "form-horizontal" } do |contractor_form| %>
   <!-- Contractor fields -->
   <!-- Contractor form fields go here -->
-  <%= debug @contractor.errors %>
-  <%= debug @contractor.profile.errors %>
+
   <!-- Check for Contractor errors -->
   <% if @contractor.errors.any? %>
     <% @contractor.errors.full_messages.each do |message| %>
@@ -12,207 +12,172 @@
     <% end %>
   <% end %>
 
+  <!-- Check for Contractor errors -->
+  <% if @contractor.profile.errors.any? %>
+    <%  @contractor.profile.errors.full_messages.each do |message| %>
+      <p class="error">
+        <%= message %>
+      </p>
+    <% end %>
+  <% end %>
+
   <div class="container-fluid">
-    <!-- Contractor fields -->
-    <!-- Contractor form fields go here -->
-
-    <div class="row align-items-center">
+    <!-- Contractor Profile -->
+    <div class="row align-items-center mb-4">
       <div class="col">
-        <div class="d-inline-flex align-items-center">
-          <h1 class="mr-10">Contractor Profile</h1>
-          <% if current_user.admin? %>
-            <div class="custom-control custom-switch">
-              <%= c.check_box :active, class: "custom-control-input", id: "activeSwitch" %>
-              <%= c.label :active, class: "custom-control-label", for: "activeSwitch" %>
-            </div>
-            <div class="custom-control custom-switch">
-              <%= c.check_box :public, class: "custom-control-input", id: "publicSwitch" %>
-              <%= c.label :public, class: "custom-control-label", for: "publicSwitch" %>
-            </div>
-            <!-- Role -->
-            <div class="form-group custom-control custom-switch">
-              <%= c.label :role, class: "form-label" %>
-              <%= c.select :role, Contractor.roles.keys.map { |role| [role.humanize, role] }, {}, class: 'form-select' %>
-            </div>
-
-            <!-- Tier -->
-            <div class="form-group custom-control custom-switch">
-              <%= c.label "Tier", class: "form-label" %>
-              <%= c.select :subscription_level, Contractor.subscription_levels.keys.map { |level| [level.humanize, level] }, {}, class: 'form-select' %>
-            </div>
-          <% end %>
+        <h1 class="mb-0">Contractor Profile</h1>
+      </div>
+      <!-- Admin switches -->
+      <% if current_user.admin? %>
+        <div class="col-auto">
+          <div class="form-check form-switch">
+            <%= contractor_form.check_box :active, class: "form-check-input", id: "activeSwitch" %>
+            <%= contractor_form.label :active, class: "form-check-label", for: "activeSwitch" %>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Add more fields in the first column as needed -->
-    <div class="form-group">
-      <%= c.label :email, class: "control-label col-sm-4" %>
-      <div class="col-sm-8">
-        <%= c.text_field :email, placeholder: "Enter email", class: "form-control" %>
-      </div>
-    </div>
-
-    <%= c.fields_for :profile do |p| %>
-      <!-- Check for Profile errors -->
-      <% if @contractor.profile.errors.any? %>
-        <% @contractor.profile.errors.full_messages.each do |message| %>
-          <p class="error">
-            <%= message %>
-          </p>
-        <% end %>
+        <div class="col-auto">
+          <div class="form-check form-switch">
+            <%= contractor_form.check_box :public, class: "form-check-input", id: "publicSwitch" %>
+            <%= contractor_form.label :public, class: "form-check-label", for: "publicSwitch" %>
+          </div>
+        </div>
       <% end %>
+    </div>
 
-      <!-- Profile fields -->
-      <%= p.hidden_field :user_id, value: @contractor.id %>
+    <!-- Admin fields -->
+    <% if current_user.admin? %>
       <div class="row">
-        <!-- Add more fields in the first column as needed -->
         <div class="col-md-6">
-          <div class="form-group">
-            <%= p.label 'Photo', class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <% if @contractor.profile.image_data.present? %>
-                <%= image_tag @contractor.profile.image_data.url, class: "img-fluid" %>
-              <% end %>
-              <%= p.file_field :image_data %>
-            </div>
+          <div class="mb-3">
+            <%= contractor_form.label :role, class: "form-label" %>
+            <%= contractor_form.select :role, Contractor.roles.keys.map { |role| [role.humanize, role] }, {}, class: 'form-select' %>
           </div>
-
-          <div class="form-group">
-            <%= p.label :name, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :name, placeholder: "Enter name", class: "form-control" %>
-            </div>
+          <div class="mb-3">
+            <%= contractor_form.label "Tier", class: "form-label" %>
+            <%= contractor_form.select :subscription_level, Contractor.subscription_levels.keys.map { |level| [level.humanize, level] }, {}, class: 'form-select' %>
           </div>
-
-          <div class="form-group">
-            <%= p.label :years_of_experience, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :years_of_experience, placeholder: "Enter years of experience", class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <%= p.label :certifications, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :certifications_array, placeholder: "Enter certifications (comma separated)", class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <%= p.label :hourly_rate, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :hourly_rate, placeholder: "Enter hourly rate", class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <%= p.label :specializations, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :specializations_array, placeholder: "Enter specializations (comma separated)", class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <%= p.label :languages_spoken, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :languages_array, placeholder: "Enter languages spoken (comma separated)", class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <%= p.label :have_license, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.check_box :have_license, class: "form-control", id: "have_license_checkbox" %>
-            </div>
-          </div>
-
-          <div id="license_fields" style="display:none;">
-            <div class="form-group">
-              <%= p.label :license_number, class: "control-label col-sm-4" %>
-              <div class="col-sm-8">
-                <%= p.text_field :license_number, placeholder: "Enter license number", class: "form-control" %>
-              </div>
-            </div>
-          </div>
-          <!-- Add more Profile fields here -->
-        </div>
-
-
-        <div class="col-md-6">
-          <!-- Add more fields in the second column as needed -->
-          <div class="form-group">
-            <%= p.label :phone_number, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :phone_number, placeholder: "Enter phone number", class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <%= p.label :website, class: "control-label col-sm-4" %>
-            <div class="col-sm-8">
-              <%= p.text_field :website, placeholder: "Enter website", class: "form-control" %>
-            </div>
-           </div>
-         </div>
-
-          <div class="form-group">
-            <%= p.label :service_area, class: "control-label col-sm-4" %>
-              <div class="col-sm-8">
-                <%= p.text_field :service_area, placeholder: "Enter service area", class: "form-control" %>
-              </div>
-            </div>
-
-
-            <%= p.fields_for :addresses, @profile.addresses.first_or_initialize do |a| %>
-              <div class="form-group">
-                <%= a.label :city, class: "control-label col-sm-4" %>
-                <div class="col-sm-8">
-                  <%= a.text_field :city, placeholder: "Enter city", class: "form-control" %>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <%= a.label :state, class: "control-label col-sm-4" %>
-                <div class="col-sm-8">
-                  <%= a.text_field :state, placeholder: "Enter state", class: "form-control" %>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <%= a.label :zipcode, class: "control-label col-sm-4" %>
-                <div class="col-sm-8">
-                  <%= a.text_field :zipcode, placeholder: "Enter zipcode", class: "form-control" %>
-                </div>
-              </div>
-            <% end %>
-
-            <div class="form-group">
-              <%= p.label :have_insurance, class: "control-label col-sm-4" %>
-              <div class="col-sm-8">
-                <%= p.check_box :have_insurance, class: "form-control", id: "have_insurance_checkbox" %>
-              </div>
-            </div>
-
-            <div id="insurance_fields" style="display:none;">
-              <div class="form-group">
-                <%= p.label :insurance_provider, class: "control-label col-sm-4" %>
-                <div class="col-sm-8">
-                  <%= p.text_field :insurance_provider, placeholder: "Enter insurance provider", class: "form-control" %>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <%= p.label :insurance_policy_number, class: "control-label col-sm-4" %>
-                <div class="col-sm-8">
-                  <%= p.text_field :insurance_policy_number, placeholder: "Enter insurance policy number", class: "form-control" %>
-                </div>
-              </div>
-            </div>
+          <div class="mb-3">
+            <%= contractor_form.label "Search Radius", class: "form-label" %>
+            <%= contractor_form.number_field :zipcode_radius, class: 'form-control' %>
           </div>
         </div>
+      </div>
     <% end %>
 
+    <!-- Email field -->
+    <div class="row">
+      <div class="mb-3">
+        <%= contractor_form.label :email, class: "form-label" %>
+        <% if current_user.admin? %>
+          <%= contractor_form.text_field :email, placeholder: "Enter email", class: "form-control", required: true %>
+        <% else %>
+          <%= contractor_form.text_field :email, placeholder: "Enter email", class: "form-control", required: true, disabled: true %>
+        <% end %>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Profile fields -->
+      <%= contractor_form.fields_for :profile do |profile_form| %>
+        <%= profile_form.hidden_field :user_id, value: @contractor.id %>
+        <!-- Profile Image upload -->
+        <div class="mb-3">
+          <%= profile_form.label 'Photo', class: "form-label" %>
+          <% if @contractor.profile.image_data.present? %>
+            <%= image_tag @contractor.profile.image_data.url, class: "img-fluid mb-3" %>
+          <% end %>
+          <%= profile_form.file_field :image_data, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :name, class: "form-label" %>
+          <%= profile_form.text_field :name, placeholder: "Enter name", class: "form-control"%>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :phone_number, class: "form-label" %>
+          <%= profile_form.text_field :phone_number, placeholder: "Enter phone number", class: "form-control"%>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :years_of_experience, class: "form-label" %>
+          <%= profile_form.text_field :years_of_experience, placeholder: "Enter years of experience", class: "form-control"%>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :certifications, class: "form-label" %>
+          <%= profile_form.text_field :certifications_array, placeholder: "Enter certifications (comma separated)", class: "form-control"%>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :specializations, class: "form-label" %>
+          <%= profile_form.text_field :specializations_array, placeholder: "Enter specializations (comma separated)", class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :languages_spoken, class: "form-label" %>
+          <%= profile_form.text_field :languages_array, placeholder: "Enter languages spoken (comma separated)", class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :hourly_rate, class: "form-label" %>
+          <%= profile_form.text_field :hourly_rate, placeholder: "Enter hourly rate", class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :service_area, class: "form-label" %>
+          <%= profile_form.text_field :service_area, placeholder: "Enter service area", class: "form-control"%>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :have_license, class: "control-label col-sm-4" %>
+          <%= profile_form.check_box :have_license, class: "form-check-input", id: "have_license_checkbox" %>
+        </div>
+
+        <div class="mb-3">
+          <div id="license_fields" style="display:none;">
+            <%= profile_form.label :license_number, class: "control-label col-sm-4" %>
+            <%= profile_form.text_field :license_number, placeholder: "Enter license number", class: "form-control" %>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <%= profile_form.label :have_insurance, class: "control-label col-sm-4" %>
+          <%= profile_form.check_box :have_insurance, class: "form-check-input", id: "have_insurance_checkbox" %>
+        </div>
+
+        <div id="insurance_fields" style="display:none;">
+          <div class="mb-3">
+            <%= profile_form.label :insurance_provider, class: "control-label col-sm-4" %>
+            <%= profile_form.text_field :insurance_provider, placeholder: "Enter insurance provider", class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= profile_form.label :insurance_policy_number, class: "control-label col-sm-4" %>
+            <%= profile_form.text_field :insurance_policy_number, placeholder: "Enter insurance policy number", class: "form-control" %>
+          </div>
+        <!-- Add more Profile fields here -->
+      </div>
+
+      <%= profile_form.fields_for :addresses, @contractor.profile.addresses.first_or_initialize do |address_form| %>
+        <div class="mb-3">
+          <%= address_form.label :city, class: "control-label col-sm-4" %>
+          <%= address_form.text_field :city, placeholder: "Enter city", class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= address_form.label :state, class: "control-label col-sm-4" %>
+          <%= address_form.text_field :state, placeholder: "Enter state", class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= address_form.label :zipcode, class: "control-label col-sm-4" %>
+          <%= address_form.text_field :zipcode, placeholder: "Enter zipcode", class: "form-control" %>
+        </div>
+      <% end %> <!-- Address -->
+    <% end %> <!-- Profile-->
+  </div>
+
+    <!-- Cancel and submit buttons -->
     <div class="form-group">
       <div class="row">
         <div class="col-sm-10 offset-sm-2 text-end">
@@ -224,13 +189,11 @@
     <div class="form-group">
       <div class="row">
         <div class="col-sm-10 offset-sm-2 text-end">
-          <%= c.submit "Submit Profile", class: "btn btn-primary" %>
+          <%= contractor_form.submit "Submit Profile", class: "btn btn-primary", data: { turbo_disable: false }  %>
         </div>
       </div>
-    </div>
-    </div><!-- Contractor Fluid -->
+    </div></div><!-- Contractor Fluid -->
 <% end %><!-- form -->
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -256,30 +219,26 @@
                 licenseFields.style.display = 'none';
             }
         });
-
-
-
     });
 
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const addAddressBtn = document.getElementById('add-address-btn');
-    //     const newAddressFields = document.getElementById('new-address-fields');
-    //
-    //     // Check if the newAddressFields element exists before accessing its innerHTML property
-    //     if (newAddressFields) {
-    //         if (addAddressBtn) {
-    //             addAddressBtn.addEventListener('click', function() {
-    //                 const addressFields = document.querySelector('.address-fields').innerHTML;
-    //                 const newAddressFieldsHTML = `<div class="address-fields">${addressFields.replace(/addresses_attributes\]\[\d+\]/g, `addresses_attributes][${addressIndex}]`)}</div>`;
-    //                 newAddressFields.insertAdjacentHTML('beforeend', newAddressFieldsHTML);
-    //                 addressIndex++;
-    //             });
-    //         } else {
-    //             console.error('Element with ID "add-address-btn" not found.');
-    //         }
-    //     } else {
-    //         console.error('Element with ID "new-address-fields" not found.');
-    //     }
-    // });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to toggle the required attribute based on visibility
+        function toggleRequiredAttribute() {
+            var association = this.getAttribute('data-association');
+            var isVisible = this.offsetParent !== null;
+            var elements = document.querySelectorAll('[data-association="' + association + '"] [required]');
+            elements.forEach(function(element) {
+                element.required = isVisible;
+            });
+        }
 
+        // Attach event listeners to toggle required attribute
+        var elements = document.querySelectorAll('[data-association]');
+        elements.forEach(function(element) {
+            element.addEventListener('change', toggleRequiredAttribute);
+            toggleRequiredAttribute.call(element); // Trigger initial state
+        });
+    });
 </script>

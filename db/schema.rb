@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_25_023129) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,8 +46,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
     t.string "street"
     t.string "city"
     t.string "state"
+    t.string "county"
     t.string "zipcode"
-    t.string "country"
+    t.string "country", default: "United States"
+    t.string "country_code", default: "US"
     t.float "latitude"
     t.float "longitude"
     t.text "additional_info"
@@ -69,6 +71,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
     t.string "url"
     t.string "image_data"
     t.string "link"
+    t.integer "placement", default: 2
+    t.integer "advertisement_type", default: 0
     t.bigint "service_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -241,6 +245,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_20_180621) do
   create_table "services", force: :cascade do |t|
     t.string "name"
     t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "states", force: :cascade do |t|
+    t.string "name"
+    t.string "abbreviation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -15,7 +15,7 @@ class ContractorsController < ApplicationController
 
   def new
     @contractor = Contractor.new
-    @contractor.profile.addresses.build
+    @contractor.profile.addresses.new
   end
 
   def edit
@@ -39,7 +39,8 @@ class ContractorsController < ApplicationController
       flash_message = "Contractor and profile were successfully updated."
       render_success_message(flash_message)
     else
-      render_error_message(@contractor)
+      update_error_response(@contractor, @profile) # Pass both models
+      #render_error_message(@contractor)
     end
   end
 
@@ -83,7 +84,7 @@ class ContractorsController < ApplicationController
   end
 
   def contractor_params
-    params.require(:contractor).permit(:id, :role, :subscription_level, :active, :public, :email, profile_attributes: [
+    params.require(:contractor).permit(:id, :role, :subscription_level, :zipcode_radius, :active, :public, :email, profile_attributes: [
       :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
@@ -118,16 +119,56 @@ class ContractorsController < ApplicationController
     end
   end
 
+
+  def update_error_response(contractor, profile)
+    if contractor.errors.any?
+      render_error_message(contractor)
+    else
+      render_error_message(profile)
+    end
+  end
+
   def render_error_message(model)
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: [
-          turbo_stream.replace('form-container', partial: "contractors/form", locals: { contractor: model }),
-          turbo_stream.replace("form-container", partial: "shared/notices", locals: { msg_type: :error, message: full_messages(model.errors.full_messages) })
+          turbo_stream.replace('contractor_container', partial: "contractors/form", locals: { contractor: model }),
+          turbo_stream.replace("contractor_container", partial: "shared/notices", locals: { msg_type: :error, message: full_messages(model.errors.full_messages) })
         ]
       end
-      format.html { render :new, status: :unprocessable_entity }
+      format.html { render :edit, status: :unprocessable_entity }
       format.json { render json: model.errors, status: :unprocessable_entity }
     end
   end
+
+  # def render_error_response(model)
+  #   respond_to do |format|
+  #     format.html { render :new, status: :unprocessable_entity }
+  #     format.json { render json: model.errors, status: :unprocessable_entity }
+  #   end
+  # end
+  #
+  # def render_success_response(model, success_message)
+  #   respond_to do |format|
+  #     format.html { redirect_to model, notice: success_message }
+  #     format.json { render :show, status: :created, location: model }
+  #   end
+  # end
+
+
+  # def render_error_message(model)
+  #   binding.pry
+  #   respond_to do |format|
+  #     format.html { render :edit, status: :unprocessable_entity }
+  #     format.json { render json: model.errors, status: :unprocessable_entity }
+  #   end
+  # end
+
+  # def update_success_response(model, success_message)
+  #   respond_to do |format|
+  #     format.html { redirect_to model, notice: success_message }
+  #     format.json { render :show, status: :ok, location: model }
+  #   end
+  # end
+
 end

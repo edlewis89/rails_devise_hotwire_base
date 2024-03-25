@@ -1,0 +1,43 @@
+// app/javascript/controllers/user_profile_controller.js
+
+import { Controller } from "stimulus";
+
+export default class extends Controller {
+    static targets = ["contractor", "addressFields"];
+
+    connect() {
+        console.log("Connected to Contractor controller");
+    }
+
+    // Action to handle submission of profile form
+    submitProfileForm(event) {
+        event.preventDefault();
+        const formData = new FormData(this.contractorTarget);
+
+        // Perform an AJAX request to update the user profile
+        fetch(this.contractorTarget.action, {
+            method: "PATCH",
+            body: formData,
+            headers: {
+                "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Profile updated successfully, you can handle further actions here
+                } else {
+                    // Handle errors if any
+                    console.error("Contractor update failed");
+                }
+            })
+            .catch(error => {
+                console.error("Error occurred:", error);
+            });
+    }
+
+    // Action to add new address fields dynamically
+    addAddressFields() {
+        const newFields = this.addressFieldsTarget.cloneNode(true);
+        this.addressFieldsTarget.parentNode.appendChild(newFields);
+    }
+}

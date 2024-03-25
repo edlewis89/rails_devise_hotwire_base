@@ -4,8 +4,10 @@ class CreateAddresses < ActiveRecord::Migration[7.1]
       t.string :street
       t.string :city
       t.string :state
+      t.string :county
       t.string :zipcode
-      t.string :country
+      t.string :country, default: "United States"
+      t.string :country_code, default: "US"
       t.float :latitude
       t.float :longitude
       t.text :additional_info

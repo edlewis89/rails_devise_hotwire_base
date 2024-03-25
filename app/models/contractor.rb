@@ -12,11 +12,16 @@ class Contractor < User
 
   has_many :reviews
 
-  delegate :name, :phone_number, :availability, :service_area,
+  accepts_nested_attributes_for :profile
+
+  delegate :name, :phone_number, to: :profile, prefix: false, allow_nil: false
+  delegate :availability, :service_area,
            :website, :years_of_experience, :hourly_rate, :license_number, :insurance_provider,
-           :insurance_policy_number, :have_insured, :have_license, to: :profile, allow_nil: true
+           :insurance_policy_number, :have_insured, :have_license, to: :profile, prefix: false, allow_nil: true
 
   delegate :type, to: :self, prefix: true, allow_nil: true
+
+  before_validation :populate_service_area
 
   def profile
     profile ||= Profile.find_or_initialize_by(user_id: id)
@@ -121,6 +126,12 @@ class Contractor < User
                   .where("ST_DWithin(ST_MakePoint(addresses.longitude, addresses.latitude)::geography,
                                      ST_MakePoint(?, ?)::geography,
                                      ?)", contractor_address.longitude, contractor_address.latitude, zipcode_radius_km)
+  end
+
+  def populate_service_area
+    if primary_address_city.present? && profile.present?
+      profile.update(service_area: primary_address_city)
+    end
   end
 
 

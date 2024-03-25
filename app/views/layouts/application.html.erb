@@ -118,7 +118,7 @@
         }
 
         .carousel-item img {
-            transform: rotate(270deg);
+            transform: rotate(90deg);
         }
 
         .sidenav {
@@ -178,7 +178,28 @@
             color: red;
             /* Add any other styles to highlight the label */
         }
+
+        /* CSS for vertical text */
+        .no-ads-message {
+            writing-mode: vertical-rl; /* Vertical text from bottom to top */
+            /*#transform: rotate(90deg); !* Rotate text 180 degrees to make it upright *!*/
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
     </style>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            alert("Latitude: " + position.coords.latitude +
+                "\nLongitude: " + position.coords.longitude);
+        }
+    </script>
   </head>
   <body>
 
@@ -309,6 +330,15 @@
                 <li class="nav-item">
                   User: <%= current_user&.email %>
                 </li>
+
+                <li class="nav-item">
+                  Location: <%= @user_location %>
+                  <button onclick="getLocation()">Get Location</button>
+                </li>
+
+                <li class="nav-item">
+                  Location: <%= @user_timezone %>
+                </li>
               </ul>
             <% else %>
               <!-- Log in -->
@@ -332,6 +362,29 @@
   <div class="container-fluid main-content">
     <div class="row content">
       <div class="col-sm-2 sidenav">
+        <!-- Featured Ads -->
+        <div class="featured-ads">
+          <!-- Display featured ads here -->
+          <% if @regular_ads.present? %>
+            <% @regular_ads.each do |ad| %>
+              <%= render "ad_partial", ad: ad %>
+            <% end %>
+          <% elsif @featured_ads.present? %>
+            <!-- If no regular ads, display featured ads -->
+            <% @featured_ads.each do |ad| %>
+              <%= render "ad_partial", ad: ad %>
+            <% end %>
+          <% else %>
+            <p>No ads available</p>
+          <% end %>
+        </div>
+        <!-- Ad Banner -->
+        <div class="ad-banner">
+          <!-- Insert your ad code or image here -->
+<!--          <img src="your-ad-image.jpg" alt="Ad Banner">-->
+        </div>
+
+        <!-- Sidebar Links -->
         <div class="row">
           <p><a href="#">Link</a></p>
           <p><a href="#">Link</a></p>
@@ -350,35 +403,93 @@
 
       <div class="col-sm-2 sidenav">
         <div class="row">
-          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-              <% if @ads.present? %>
-                <% @ads.each_with_index do |ad, index| %>
-                  <div class="carousel-item <%= 'active' if index.zero? %>">
-                    <%= link_to ad.url do %>
-                      <%= image_tag ad.image_data.url, class: "d-block w-100", alt: ad.title if ad.image_data.present? %>
-                    <% end %>
+          <!-- Top Vertical -->
+          <div class="col-sm-14">
+            <div id="carouselTop" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <% if @ads_top.present? %>
+                  <% @ads_top.each_with_index do |ad, index| %>
+                    <div class="carousel-item <%= 'active' if index.zero? %>">
+                      <%= render partial: "advertisements/ad_partial", locals: { ad: ad } %>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <!-- Placeholder or default content when no ads are available -->
+                  <div class="carousel-item active">
+                    <p class="no-ads-message">No ads available</p>
                   </div>
                 <% end %>
-              <% else %>
-                <div class="carousel-item active">
-                  <%= image_tag "rentabud_navbar.png", class: "d-block w-100", alt: "Placeholder Image" %>
-                  <!-- Or any placeholder message -->
-                  <div class="carousel-caption">
-                    <h5>No ads available</h5>
-                    <p>Check back later for more content</p>
-                  </div>
-                </div>
-              <% end %>
+              </div>
+              <!-- Controls -->
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselTop" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselTop" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Middle Vertical -->
+          <div class="col-sm-14">
+            <div id="carouselMiddle" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <% if @ads_middle.present? %>
+                  <% @ads_middle.each_with_index do |ad, index| %>
+                    <div class="carousel-item <%= 'active' if index.zero? %>">
+                      <%= render partial: "advertisements/ad_partial", locals: { ad: ad } %>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <!-- Placeholder or default content when no ads are available -->
+                  <div class="carousel-item active">
+                    <p class="no-ads-message">No ads available</p>
+                  </div>
+                <% end %>
+              </div>
+              <!-- Controls -->
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselMiddle" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselMiddle" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Bottom Vertical -->
+          <div class="col-sm-14">
+            <div id="carouselBottom" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <% if @ads_bottom.present? %>
+                  <% @ads_bottom.each_with_index do |ad, index| %>
+                    <div class="carousel-item <%= 'active' if index.zero? %>">
+                      <%= render partial: "advertisements/ad_partial", locals: { ad: ad } %>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <!-- Placeholder or default content when no ads are available -->
+                  <div class="carousel-item active">
+                    <p class="no-ads-message">No ads available</p>
+                  </div>
+                <% end %>
+              </div>
+              <!-- Controls -->
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselBottom" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselBottom" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -509,3 +620,5 @@
     //     });
     // });
 </script>
+
+

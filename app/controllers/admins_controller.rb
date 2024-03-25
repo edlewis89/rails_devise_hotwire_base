@@ -22,14 +22,13 @@ class AdminsController < ApplicationController
   # GET /admins/new
   def new
     @admin = Admin.new
+    @admin.profile.addresses.new
   end
 
   # GET /admins/1/edit
   def edit
-    @admin = Admin.find(params[:id])
     @profile = @admin.profile
-    # Only allowing to update 1 address for now.
-    @address = @profile&.addresses&.first || Address.new
+    @profile.addresses.build unless @profile.addresses.any?
 
     respond_to do |format|
       format.html # Render HTML template for editing
@@ -67,9 +66,8 @@ class AdminsController < ApplicationController
   # PATCH/PUT /admins/1 or /admins/1.json
   def update
     @admin = Admin.find(params[:id])
-
     respond_to do |format|
-      if @admin.update(admin_params) && @admin.profile&.update(profile_params)
+      if @admin.update(admin_params) && @admin.profile.update(profile_params)
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update(@admin, partial: "admins/admin", locals: { admin: @admin }),
@@ -142,21 +140,20 @@ class AdminsController < ApplicationController
 
   # Permit admin parameters
   def admin_params
-    params.require(:admin).permit(:active, :public, :email, profile_attributes: [
+    params.require(:admin).permit(:id, :role, :subscription_level, :zipcode_radius, :active, :public, :email, profile_attributes: [
       :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:id, :addressable_id, :city, :state, :zipcode, :_destroy]
     ])
   end
 
-  # Permit profile parameters
   def profile_params
     params.require(:admin).require(:profile_attributes).permit(
-      :id, :user_id, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
+      :id, :user_id, :role, :subscription_level, :image_data, :name, :years_of_experience, :certifications_array, :hourly_rate,
       :specializations_array, :languages_array, :have_license, :license_number,
       :phone_number, :website, :service_area, :have_insurance, :insurance_provider,
-      :insurance_policy_number, addresses_attributes: [:addressable_id, :city, :state, :zipcode, :_destroy]
+      :insurance_policy_number, addresses_attributes: [:id, :addressable_id, :city, :state, :zipcode, :_destroy]
     )
   end
 

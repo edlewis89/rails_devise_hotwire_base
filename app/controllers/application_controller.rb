@@ -3,12 +3,11 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_analytics
   before_action :update_last_seen, if: :user_signed_in?
+  before_action :set_carousel_ads, if: :user_signed_in?
 
   #after_action :verify_authorized, except: :index, unless: :devise_controller?
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-
-  #before_action :set_ads
 
   protected
 
@@ -27,15 +26,83 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_ads
-    @user_location = current_user&.primary_address_city || request.location.city
+  def request_location
+    if Rails.env.test? || Rails.env.development?
+      Geocoder.search(ENV.fetch("GEOCODE_LOCAL_IP_ADDRESS", "127.0.0.1")).first
+    else
+      request.location
+    end
+  end
+
+  def get_time_zone
+    # if current_user&.primary_address
+    #   latitude = current_user.primary_address.latitude
+    #   longitude = current_user.primary_address.longitude
+    #
+    #   if latitude && longitude
+    #     begin
+    #       timezone = Timezone.fetch(lat: latitude, lng: longitude)
+    #       timezone_name = timezone&.name
+    #     rescue Timezone::Error => e
+    #       Rails.logger.error "Error fetching timezone: #{e.message}"
+    #     end
+    #   else
+    #     Rails.logger.error "Latitude or longitude missing for primary address"
+    #   end
+    # else
+    #   Rails.logger.error "Primary address not found for current user"
+    # end
+  end
+
+
+  def set_carousel_ads
+    @user_timezone = get_time_zone
+    @user_location = current_user&.primary_address_city || request_location&.city
     @services = Service.pluck(:name) # Retrieve all service names
 
     # Find advertisements matching the user's location (zipcode or city) for all services
-    @ads = Advertisement.joins(:addresses)
-                        .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
-                        .includes(:service)
-                        .order(created_at: :desc) || []
+    @ads_top = Advertisement.where(placement: :top)
+                            .joins(:addresses)
+                            .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                            .includes(:service)
+                            .order(created_at: :desc) || []
+
+    @ads_middle = Advertisement.where(placement: :middle)
+                               .joins(:addresses)
+                               .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                               .includes(:service)
+                               .order(created_at: :desc) || []
+
+    @ads_bottom = Advertisement.where(placement: :bottom)
+                               .joins(:addresses)
+                               .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                               .includes(:service)
+                               .order(created_at: :desc) || []
+
+    @ads_left = Advertisement.where(placement: :left)
+                             .joins(:addresses)
+                             .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                             .includes(:service)
+                             .order(created_at: :desc) || []
+
+    @ads_right = Advertisement.where(placement: :right)
+                              .joins(:addresses)
+                              .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                              .includes(:service)
+                              .order(created_at: :desc) || []
+
+    @ads_regular = Advertisement.where(advertisement_type: :regular)
+                              .joins(:addresses)
+                              .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                              .includes(:service)
+                              .order(created_at: :desc) || []
+
+    @ads_featured = Advertisement.where(advertisement_type: :featured)
+                              .joins(:addresses)
+                              .where("addresses.zipcode = ? OR addresses.city = ?", @user_location, @user_location)
+                              .includes(:service)
+                              .order(created_at: :desc) || []
+
   end
 
   def configure_permitted_parameters

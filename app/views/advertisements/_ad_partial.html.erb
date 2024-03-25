@@ -1,0 +1,11 @@
+<!-- _ad_partial.html.erb -->
+<div class="ad">
+  <h4><%= ad.title %></h4>
+  <div class="ad-content">
+    <% if ad.image_data.present? %>
+      <%= link_to ad.url do %>
+        <%= image_tag ad.image_data.url, alt: ad.title, class: "ad-image", onclick: "selectImage(this)" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
